@@ -267,6 +267,8 @@ function sideEdge(g,x,z0,z1,y,height=.62){cube(g,x,y,z0,.14,height,z1-z0,mat.int
 // des mêmes percements que les murs hauts. Une porte n'est jamais obstruée en coupe.
 // --- Ground floor: based on 12.95 × 8.77 m plan ---
 plankFloor(levels[0].slab,-4.48,0,12.95,8.77,.04,mat.concrete);
+// La chambre photographiée dispose d'un parquet clair, pas d'un sol de garage.
+plankFloor(levels[0].slab,.14,.16,3.75,2.84,.09,mat.wood);
 wall(levels[0].walls,'x',0,-4.48,8.47,0,2.67,.22,mat.stucco,[[.75,1.83,1.08,2.05,'window']]);
 wall(levels[0].walls,'x',8.57,-4.48,8.47,0,2.67,.22,mat.stucco,[[-3.70,-1.08,0,2.30,'garage'],[.63,1.51,1.00,2.06,'window'],[4.40,8.08,0,2.36,'open']]);
 wall(levels[0].walls,'z',-4.48,0,8.77,0,2.67,.2,mat.stucco);
@@ -1108,7 +1110,7 @@ for(let i=0;i<rooms.length;i++){
   }
 }
 const floorNames={all:'Vue extérieure',0:'Rez-de-jardin',1:'Premier étage',2:'Deuxième étage'};
-const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Garages encaissés dans la roche, sans jardin au niveau bas. Terrasse continue au premier étage tout autour de la maison, jusqu’à la piscine creusée dans la roche.',1:'Escalier demi-tournant gauche, accès libre entre les deux volées, raccord de palier en parquet, séjour, cuisine et loggias.',2:'Deux chambres, salle de bains, WC et couloir.'};
+const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Chambre meublée au parquet chêne près des WC sous escalier, avec garages encaissés dans la roche et sans jardin au niveau bas. La terrasse et la piscine se trouvent au niveau supérieur.',1:'Escalier demi-tournant gauche, accès libre entre les deux volées, raccord de palier en parquet, séjour, cuisine et loggias.',2:'Deux chambres, salle de bains, WC et couloir.'};
 let activeFloor='all',selected=null,roofOn=true,furnished=true,overhead=false,motion=null;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 function tweenTo(pos,target,duration=730){motion={start:performance.now(),duration,fromP:camera.position.clone(),toP:pos.clone(),fromT:controls.target.clone(),toT:target.clone()};}
