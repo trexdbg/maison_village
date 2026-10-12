@@ -111,7 +111,9 @@ const mat = {
   glass: new THREE.MeshPhysicalMaterial({color:'#93cbd3',transparent:true,opacity:.36,roughness:.08,metalness:.05,side:THREE.DoubleSide,depthWrite:false}),
   glassClear: new THREE.MeshPhysicalMaterial({color:'#cbe6e1',transparent:true,opacity:.25,roughness:.05,side:THREE.DoubleSide,depthWrite:false}),
   water: new THREE.MeshPhysicalMaterial({color:'#35acc5',roughness:.11,metalness:.1,transparent:true,opacity:.92}),
-  lawn: new THREE.MeshStandardMaterial({color:'#729c5f',roughness:1}),
+  // Le terrain au rez-de-jardin est de la roche excavée, jamais une pelouse.
+  bedrock: new THREE.MeshStandardMaterial({map:canvasTexture('stone'),color:'#9f9688',roughness:1}),
+  poolLiner: new THREE.MeshStandardMaterial({color:'#b4d4d1',roughness:.83}),
   tree: new THREE.MeshStandardMaterial({color:'#4b7650',roughness:1}),
   tree2: new THREE.MeshStandardMaterial({color:'#688b58',roughness:1}),
   bark: new THREE.MeshStandardMaterial({color:'#86705a',roughness:1}),
@@ -662,44 +664,153 @@ for(let x=-4.32;x<8.58;x+=.28){
 cube(levels[1].trim,4.27,y1+2.44,8.89,4.05,.16,.28,mat.stone,false);
 cube(levels[1].trim,.83,y1+2.18,8.88,2.63,.075,.25,mat.white,false);
 
-// --- Street, terrace, pool and planting as seen in the reference photos. ---
-cube(exterior,-7,-.23,-5,28,.22,22,mat.lawn,false);
+// --- Géologie : maison et piscine taillées dans un flanc rocheux. ---
+// Les différents niveaux sont posés dans la roche : aucune pelouse à la cote
+// des garages. Les strates sont des triangles à facettes, non des murs verts.
+const rockColors=['#8d8478','#aaa092','#b6a99a','#9d9183','#7c796f','#c0b1a0'].map(c=>new THREE.Color(c));
+const rockFacets=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,flatShading:true,side:THREE.DoubleSide});
+function fracturedSurface(group, grid){
+  const positions=[],colors=[];
+  function triangle(a,b,c,i){
+    const shade=rockColors[(i+rockColors.length*10)%rockColors.length];
+    for(const p of [a,b,c]){
+      positions.push(p[0],p[1],p[2]);
+      colors.push(shade.r,shade.g,shade.b);
+    }
+  }
+  for(let i=0;i<grid.length-1;i++)for(let j=0;j<grid[i].length-1;j++){
+    const a=grid[i][j],b=grid[i+1][j],c=grid[i][j+1],d=grid[i+1][j+1];
+    triangle(a,b,c,(i*7+j*11)%6);
+    triangle(b,d,c,(i*13+j*5+2)%6);
+  }
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
+  geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+  geo.computeVertexNormals();
+  const mesh=new THREE.Mesh(geo,rockFacets);
+  mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);
+}
+// Talus rocheux montant derrière le mur nord de la maison et la terrasse haute.
+// L'arête basse reste hors des pièces et hors du bassin.
+function rockBank(x0,x1,frontZ,backZ,frontY,backY,segments){
+  const grid=[];
+  for(let i=0;i<=segments;i++){
+    const column=[],x=x0+(x1-x0)*i/segments;
+    for(let j=0;j<=5;j++){
+      const t=j/5;
+      const edge=(i===0||i===segments)?0:Math.sin(i*2.17+j*1.81)*.12;
+      const rough=j===0?0:Math.sin(i*1.37+j*2.41)*.12;
+      column.push([x+edge,frontY+(backY-frontY)*Math.pow(t,.90)+rough,frontZ+(backZ-frontZ)*t+(j===0?0:Math.cos(i*1.7+j*2.0)*.10)]);
+    }
+    grid.push(column);
+  }
+  fracturedSurface(exterior,grid);
+}
+// Faces éclatées du soubassement creusé (face est et face côté rue).
+function rockCutFace(axis,at,from,to,bottom,top){
+  const cols=Math.ceil((to-from)/.55),grid=[];
+  for(let i=0;i<=cols;i++){
+    const column=[],v=from+(to-from)*i/cols;
+    for(let j=0;j<=5;j++){
+      const t=j/5;
+      const offset=Math.sin(i*1.94+j*2.12)*.075;
+      const y=bottom+(top-bottom)*t;
+      column.push(axis==='x'?[at+offset,y,v]:[v,y,at+offset]);
+    }
+    grid.push(column);
+  }
+  fracturedSurface(exterior,grid);
+}
+// Le terrain naturel est de la pierre continue sous le bâtiment et la piscine.
+cube(exterior,-7,-.34,-5,28,.32,22,mat.bedrock,false);
+rockBank(-6.87,8.34,-.36,-4.91,-.02,1.85,27);
+rockBank(8.38,19.60,-2.32,-4.90,y1-.19,y1+1.10,20);
+rockBank(-6.91,-4.59,8.77,-4.88,-.02,1.70,7);
+
+// Cour et accès sur rue, au niveau bas de la maison.
 cube(exterior,-6.6,-.08,8.85,16,.12,6.40,mat.concrete,false);
-// Side tiled terrace at living level. Approximate boundary (the plan gives a terrace area).
-cube(exterior,8.47,y1-.17,-2.1,8.6,.23,11.25,mat.tile,false);
+
+// Le terrassement rocheux porte intégralement la terrasse supérieure.
+const rockBaseY=-.24,terraceUnderside=y1-.17;
+function rockFoundation(x,z,w,d,top=terraceUnderside){
+  cube(exterior,x,rockBaseY,z,w,top-rockBaseY,d,mat.bedrock,false);
+}
+// Quatre masses autour de la fouille : aucun plancher n'obstrue la piscine.
+rockFoundation(8.47,-2.10,8.60,2.22);
+rockFoundation(8.47,.12,1.04,4.30);
+rockFoundation(13.38,.12,3.69,4.30);
+rockFoundation(8.47,4.42,8.60,4.73);
+// Roche au fond de la fouille, sous le bassin.
+rockFoundation(9.51,.12,3.87,4.30,y1-1.12);
+rockCutFace('x',17.07,-2.1,9.15,rockBaseY,terraceUnderside);
+rockCutFace('z',9.15,8.47,17.07,rockBaseY,terraceUnderside);
+
+// Dallage supérieur en quatre surfaces qui laissent une vraie excavation.
+cube(exterior,8.47,y1-.17,-2.1,8.6,.23,2.22,mat.tile,false);
+cube(exterior,8.47,y1-.17,.12,1.04,.23,4.30,mat.tile,false);
+cube(exterior,13.38,y1-.17,.12,3.69,.23,4.30,mat.tile,false);
+cube(exterior,8.47,y1-.17,4.42,8.6,.23,4.73,mat.tile,false);
 cube(exterior,16.82,y1-.16,-2.10,.23,1.42,11.2,mat.stucco);
 cube(exterior,8.6,y1-.04,-2.08,8.2,.07,.2,mat.warmwhite,false);
-// Concrete coping and recessed turquoise basin approx 13.9m².
-cube(exterior,9.51,y1+.01,.12,3.87,.055,4.30,mat.white,false);
-cube(exterior,9.70,y1+.069,.34,3.48,.037,3.87,mat.water,false);
-// Pool lane ripple glints.
+
+// Bassin creusé DANS la roche : fond, parois revêtues et eau abaissée sous
+// les margelles ; on voit la profondeur depuis la visite en surplomb.
+cube(exterior,9.70,y1-1.12,.33,3.48,.08,3.87,mat.poolLiner,false);
+cube(exterior,9.70,y1-1.09,.33,.09,1.12,3.87,mat.poolLiner,false);
+cube(exterior,13.09,y1-1.09,.33,.09,1.12,3.87,mat.poolLiner,false);
+cube(exterior,9.79,y1-1.09,.33,3.30,1.12,.09,mat.poolLiner,false);
+cube(exterior,9.79,y1-1.09,4.11,3.30,1.12,.09,mat.poolLiner,false);
+cube(exterior,9.72,y1-.37,.35,3.44,.05,3.83,mat.water,false);
+for(const [x,z,w,d] of [
+  [9.51,.12,3.87,.21],[9.51,4.21,3.87,.21],
+  [9.51,.33,.19,3.88],[13.19,.33,.19,3.88]
+])cube(exterior,x,y1+.01,z,w,.065,d,mat.white,false);
+// Reflets limités à la surface réellement encastrée.
 const rippleMat=new THREE.MeshBasicMaterial({color:'#c8f9f3',transparent:true,opacity:.38,depthWrite:false});
-for(let i=0;i<9;i++){const wave=new THREE.Mesh(new THREE.TorusGeometry(.32+i*.019,.009,4,24,Math.PI*.9),rippleMat);wave.rotation.x=-Math.PI/2;wave.position.set(10.15+(i%3)*.95,y1+.096,1.05+(i%4)*.78);exterior.add(wave);}
-// White removable-style safety fence in the reference photographs.
+for(let i=0;i<9;i++){
+  const wave=new THREE.Mesh(new THREE.TorusGeometry(.30+i*.019,.009,4,24,Math.PI*.9),rippleMat);
+  wave.rotation.x=-Math.PI/2;
+  wave.position.set(10.15+(i%3)*.95,y1-.305,1.05+(i%4)*.78);
+  exterior.add(wave);
+}
+// Clôture de sécurité conservée à la cote du sol de terrasse.
 for(const [x0,z0,x1,z1] of [[9.20,-.17,13.66,-.17],[9.20,4.68,13.66,4.68],[9.20,-.17,9.20,4.68],[13.66,-.17,13.66,4.68]]){
-  const length=Math.hypot(x1-x0,z1-z0);const n=Math.ceil(length/.26);
-  for(let i=0;i<=n;i++){const t=i/n;cube(exterior,x0+(x1-x0)*t,y1+.02,z0+(z1-z0)*t,.028,.95,.028,mat.white,false);}
+  const length=Math.hypot(x1-x0,z1-z0),n=Math.ceil(length/.26);
+  for(let i=0;i<=n;i++){
+    const t=i/n;
+    cube(exterior,x0+(x1-x0)*t,y1+.02,z0+(z1-z0)*t,.028,.95,.028,mat.white,false);
+  }
   trimLine(exterior,[x0,y1+.96,z0],[x1,y1+.96,z1],mat.white);
   trimLine(exterior,[x0,y1+.16,z0],[x1,y1+.16,z1],mat.white);
 }
-// Artificial grass corner, children's area.
-cube(exterior,13.95,y1+.01,5.2,2.75,.048,3.54,mat.lawn,false);
-// Retaining wall and upper greenery, lower parapet on street.
+// Ancien rectangle de faux gazon supprimé : le dallage continue autour du bassin.
 cube(exterior,14.22,y1+.02,-2.12,.21,1.53,5.22,mat.stucco);
 cube(exterior,8.46,y1+.01,8.92,8.6,.83,.18,mat.stucco);
 for(let x=8.62;x<16.94;x+=.23)cube(exterior,x,y1+.79,9.14,.035,.67,.035,mat.green,false);
 trimLine(exterior,[8.55,y1+1.48,9.15],[17.01,y1+1.48,9.15],mat.green);
-// Street markings and drain, front drive slopes.
+
+// Rue et avaloir (pas de jardin au rez-de-jardin).
 for(let x=-5.7;x<4.8;x+=1.48)cube(exterior,x,.068,10.5,.85,.012,.085,mat.warmwhite,false);
 for(let i=0;i<9;i++)cube(exterior,4.02+i*.13,.05,10.38,.048,.012,.86,mat.dark,false);
 function plant(g,x,z,y,s=.95){
   cyl(g,x,y,z,.08*s,.9*s,mat.bark,7);
-  for(let k=0;k<5;k++){const a=k*2.4; sphere(g,x+Math.cos(a)*.3*s,y+.96*s+(k%2)*.27*s,z+Math.sin(a)*.34*s,.53*s,k%2===0?mat.tree:mat.tree2)}
+  for(let k=0;k<5;k++){
+    const a=k*2.4;
+    sphere(g,x+Math.cos(a)*.3*s,y+.96*s+(k%2)*.27*s,z+Math.sin(a)*.34*s,.53*s,k%2===0?mat.tree:mat.tree2);
+  }
 }
-for(const [x,z,y,s] of [[15.48,-.91,y1,.80],[16.25,6.05,y1,.84],[15.8,8.30,y1,.68],[-5.38,2.0,0,.66],[12.3,-2.20,y1,.64]])plant(exterior,x,z,y,s);
-for(let x=9.3;x<16.55;x+=.58) sphere(exterior,x,y1+.3,-1.88,.34,mat.tree2);
-// A couple of garden seating objects.
-for(const x of [14.4,15.4]){cube(exterior,x,y1+.20,5.57,.58,.09,1.31,mat.dark);cube(exterior,x,y1+.24,6.58,.57,.37,.08,mat.dark)}
+// Végétation décorative UNIQUEMENT en bacs sur la terrasse, pas en pleine terre.
+for(const [x,z,s] of [[15.48,-.91,.80],[16.25,6.05,.84],[15.8,8.30,.68]]){
+  cube(exterior,x-.35,y1+.06,z-.35,.70,.39,.70,mat.stone);
+  plant(exterior,x,z,y1+.42,s);
+}
+cube(exterior,9.10,y1+.06,-2.02,7.67,.39,.42,mat.stone);
+for(let x=9.30;x<16.55;x+=.58)sphere(exterior,x,y1+.49,-1.81,.29,mat.tree2);
+// Mobilier de terrasse conservé.
+for(const x of [14.4,15.4]){
+  cube(exterior,x,y1+.20,5.57,.58,.09,1.31,mat.dark);
+  cube(exterior,x,y1+.24,6.58,.57,.37,.08,mat.dark);
+}
 
 // --- Room selection / photo references ---
 const rooms = [
