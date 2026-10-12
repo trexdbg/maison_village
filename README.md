@@ -178,3 +178,13 @@ Les positions et largeurs sont des indications de modélisation, à confirmer pa
 - **Publication** : libellés et plan actualisés, passage de la visite 3D à V17, renouvellement du cache de `viewer.js` et de `app.js`.
 
 Les dimensions sont celles de la maquette, et restent à vérifier par relevé sur place avant exécution.
+
+## Mise à jour V18 — douche, cumulus et accès chambre corrigés (12 octobre 2026)
+
+- **Fenêtre de chambre** : la fenêtre de façade du rez-de-jardin, avec allège, deux volets verts, barreaux et store intérieur, est rétablie à son emplacement d'origine (x≈0,63–1,51 m, z=8,57 m). Elle n'est plus remplacée par une porte.
+- **Porte chambre → loggia** : porte verte pleine de largeur indicative 89 cm replacée dans le mur *latéral* de la chambre, x=4,04 m, z=7,22–8,11 m. Son ouverture traverse les cloisons haute et basse ; la porte est visible en 3D et distincte de la fenêtre. L'accès existant depuis la pièce de vie est conservé.
+- **Buanderie** : douche de 92 cm ramenée dans l'angle au fond à gauche, au contact des deux murs ; lavabo avec miroir immédiatement à droite ; deux machines repositionnées à droite, sur l'ancien emplacement de la vasque et de la douche. Une seule douche est modélisée.
+- **Cumulus** : ballon vertical blanc surélevé dans l'angle opposé à la douche, à côté du dressing du mur donnant vers le garage. Deux dressings et porte depuis le dégagement escalier / WC conservés.
+- **Site** : modèles et descriptions actualisés en V18, avec invalidation du cache de `viewer.js` et `app.js`.
+
+Les implantations restent indicatives et doivent être vérifiées sur place avant toute réalisation.
