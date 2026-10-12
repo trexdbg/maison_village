@@ -74,3 +74,13 @@ Cette version privilégie **l'escalier, les percements et les volumes**, avant t
 **Précision** : les plans fournis donnent des dimensions générales et la position des portes/fenêtres, mais pas tous les tableaux, appuis ni les relevés d'élévation. Les dimensions des menuiseries, la nature de certains ouvrants et l'escalier en U sont donc des **interprétations architecturales** à confirmer sur site. Ce modèle n'est pas un plan d'exécution.
 
 Si GitHub Pages affiche une ancienne version, attendre la fin du déploiement puis effectuer un rafraîchissement forcé (`Ctrl+Maj+R` ou équivalent). Pour inspecter l'escalier, ouvrir « Premier étage » puis cliquer sur « Voir l'escalier ».
+
+
+## Mise à jour V6 — escalier inversé et WC sous escalier (12 octobre 2026)
+
+- Première marche au **côté droit**, après suppression de la petite cloison gênant le passage, puis escalier **quart-tournant à gauche** avec marches, palier et rampes.
+- Le **WC du rez-de-chaussée** et son lave-mains sont ajoutés sous la volée haute, avec murets en coupe et photo `06-wc-rdc.jpg` sélectionnable depuis la maquette.
+- Le bouton **Voir l’escalier** cadre le rez-de-chaussée pour montrer ensemble le départ et les toilettes.
+- Fichiers HTML et JS versionnés V6 pour invalider l’ancien cache du navigateur.
+
+Ces volumes restent une interprétation approximative des photos et plans, et ne constituent pas des cotes de travaux.
