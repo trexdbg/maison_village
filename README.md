@@ -98,3 +98,11 @@ Le détail coté de l'escalier a conduit à remplacer l'ancienne géométrie en 
 - Mise à jour de la sélection des pièces, de la caméra « Voir l'escalier » et de la version du script en **V7** pour éviter l'ancienne 3D en cache.
 
 Les 18 hauteurs de marche sont une représentation géométrique indicative et ne remplacent pas un relevé sur place.
+
+## Mise à jour V9 — Rez-de-jardin et piscine taillés dans la roche (12 octobre 2026)
+
+- Le **rez-de-jardin est construit dans la roche** : suppression de la grande pelouse fictive sous et derrière les garages ; substrat minéral et talus rocheux facettés visibles autour du bâtiment.
+- La terrasse du niveau piscine possède désormais un soubassement rocheux jusqu'au niveau inférieur, avec faces de coupe apparentes.
+- La piscine est **creusée dans le massif rocheux**, avec réservation dans le dallage, fond et parois de bassin, margelles et eau abaissée sous le niveau de la terrasse ; aucun vide fictif en dessous.
+- L'ancien carré de gazon artificiel près du bassin est supprimé. La végétation décorative restante est placée en bacs sur la terrasse, pas dans un jardin au niveau bas.
+- Les dispositions intérieures et le palier du premier étage (V8) sont conservés. Le relief représente visuellement l'encaissement, sans prétendre à un relevé géotechnique.
