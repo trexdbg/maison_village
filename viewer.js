@@ -213,17 +213,28 @@ archMesh.position.set(4.29,.06,8.86);archMesh.castShadow=true;archMesh.receiveSh
 for(const x of [0,4.04])lowPartition(levels[0].cut,'z',x,.10,8.58,0,.87);
 lowPartition(levels[0].cut,'x',3.1,0,4,0,.86);
 lowPartition(levels[0].cut,'x',6.05,4.04,8.25,0,.86);
-// garage floor tire guides
-for(let x of [-3.5,-1.8,5.1,6.8])cube(levels[0].furniture,x,.055,2.6,.09,.013,3.5,mat.warmwhite,false);
+// Garage au rez-de-chaussée : deux volumes libres, sans voiture ni guidage de pneus.
 function cabinet(g,x,y,z,w,h,d,m=mat.warmwhite){cube(g,x,y,z,w,h,d,m);cube(g,x,y,z+d-.012,w,.02,.022,mat.wood,false);}
 // Utility room based on photo: washing machines, boiler, storage.
 for(let k=0;k<2;k++){cube(levels[0].furniture,.28+k*.72,.06,.30,.64,.90,.69,mat.white);cyl(levels[0].furniture,.59+k*.72,.53,.996,.23,.025,mat.dark,22)}
 cabinet(levels[0].furniture,2.3,.04,.3,.75,1.88,.65);
 cyl(levels[0].furniture,3.36,.10,1.1,.28,1.75,mat.white,20);
 for(let n=0;n<5;n++)cube(levels[0].furniture,.22,.55+n*.31,2.22,1.4,.06,.4,mat.wood,false);
-function car(g,x,y,z,scale=.96){const body=new THREE.Group();g.add(body);body.position.set(x,y,z);body.scale.setScalar(scale);cube(body,0,.23,0,1.66,.40,3.38,mat.dark);cube(body,.23,.57,.62,1.20,.58,2.02,mat.charcoal);for(const xx of [.17,1.49])for(const zz of [.52,2.85]){const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.28,.28,.12,15),mat.dark);wheel.rotation.z=Math.PI/2;wheel.position.set(xx,.23,zz);body.add(wheel)}cube(body,.2,.70,2.66,1.24,.3,.03,mat.glass,false)}
-car(levels[0].furniture,-3.30,.04,.85,.86);
-car(levels[0].furniture,5.1,.04,.8,.9);
+// Garages dégagés, avec rangements et atelier à l'arrière comme sur la nouvelle photo.
+function storage(g,x,z,y,w=1.45) {
+  for(const xx of [x,x+w-.05])cube(g,xx,y,z,.05,1.78,.42,mat.metal,false);
+  for(let i=1;i<=4;i++)cube(g,x,y+i*.34,z,w,.045,.43,mat.wood,false);
+  for(let i=0;i<4;i++)cube(g,x+.13+(i%2)*.55,y+.39+i*.34,z+.06,.43,.16,.27,i%2?mat.warmwhite:mat.wood,false);
+}
+function bench(g,x,z,y,w=1.4) {
+  cube(g,x,y+.80,z,w,.09,.62,mat.wood);
+  for(const xx of [x+.07,x+w-.11])for(const zz of [z+.07,z+.52])cube(g,xx,y,zz,.04,.80,.04,mat.metal);
+}
+storage(levels[0].furniture,-4.05,6.87,.05,1.35);
+bench(levels[0].furniture,-2.33,6.88,.05,1.3);
+storage(levels[0].furniture,6.26,4.74,.05,1.44);
+bench(levels[0].furniture,4.71,4.84,.05,1.31);
+cyl(levels[0].furniture,5.39,.06,6.11,.24,.75,mat.terracotta2,16);
 // Front small window & shutter.
 addWindow(levels[0].walls,'x',8.82,-.20,1.15,1.02,1.07);
 shutter(levels[0].trim,.0,1.05,8.955,.45,1.05);
@@ -325,18 +336,59 @@ function bath(g,x,z,y){
 }
 function vanity(g,x,z,y){cube(g,x,y+.16,z,1.20,.67,.53,mat.pink);cube(g,x,y+.83,z,1.20,.09,.53,mat.white);cyl(g,x+.72,y+.90,z+.23,.20,.03,mat.warmwhite,20);cyl(g,x+.75,y+.96,z+.23,.025,.16,mat.metal,9)}
 function toilet(g,x,z,y){cube(g,x,y+.17,z,.42,.37,.65,mat.white);cyl(g,x+.22,y+.47,z+.33,.25,.09,mat.white,18);cube(g,x+.02,y+.49,z+.49,.38,.16,.10,mat.white)}
-function stairs(g,x,z,y){for(let i=0;i<9;i++){cube(g,x,y+i*.12,z+i*.18,1.92,.105,.21,mat.wood,false);}trimLine(g,[x+.06,y+.46,z+.06],[x+.06,y+1.43,z+1.70],mat.metal)}
+// Escalier en L, 15 hauteurs, 2 volées et palier. Marche claire, nez de marche bois, garde-corps noir.
+function stairs(g,x,z,y){
+  const rise=.18,run=.20,landing=1.24,width=.83;
+  // Première volée dans la longueur.
+  for(let i=0;i<6;i++){
+    const stepY=y+i*rise,stepZ=z+i*run;
+    cube(g,x,stepY,stepZ,width,rise+.035,run,mat.white);
+    cube(g,x,stepY+rise+.012,stepZ+.01,width,.022,.06,mat.wood,false);
+  }
+  const ly=y+6*rise,lz=z+6*run;
+  cube(g,x,ly,lz,1.93,.16,.75,mat.white);
+  cube(g,x+.02,ly+.155,lz+.02,1.89,.018,.70,mat.tile,false);
+  // Seconde volée, à angle droit au-dessus du palier.
+  for(let i=0;i<9;i++){
+    const sx=x+.14+i*.195,sy=ly+i*rise;
+    cube(g,sx,sy,lz+.75,.195,rise+.04,.79,mat.white);
+    cube(g,sx+.01,sy+rise+.012,lz+.77,.172,.023,.055,mat.wood,false);
+  }
+  // Muret blanc avec main courante sombre près de la première volée.
+  cube(g,x-.09,y,z-.02,.11,.94,1.46,mat.interior,false);
+  cube(g,x-.10,y+.94,z-.02,.13,.039,1.46,mat.wood,false);
+  // Montants fins de garde-corps sur le retour du palier.
+  for(let i=0;i<9;i++)cube(g,x+.11+i*.198,ly+.11,lz+1.48,.026,.88,.026,mat.dark,false);
+  trimLine(g,[x+.11,ly+1.01,lz+1.50],[x+1.85,ly+1.01,lz+1.50],mat.dark);
+  // Petit portillon noir à barreaux évoquant la photo du bas.
+  for(let i=0;i<8;i++)cube(g,x+1.88,y+.13,z+.14+i*.105,.025,1.02,.025,mat.dark,false);
+  trimLine(g,[x+1.88,y+1.17,z+.14],[x+1.88,y+1.17,z+.93],mat.dark);
+}
 
 // Ground utility and mezzanine staircase.
-stairs(levels[0].furniture,.16,3.30,.05);
+stairs(levels[0].furniture,.20,3.20,.05);
 bed(levels[1].furniture,.85,.65,1.88,2.03,y1,mat.linen);
 wardrobe(levels[1].furniture,.2,2.68,y1,1.05);
 sofa(levels[1].furniture,4.47,2.30,y1);
 dining(levels[1].furniture,5.15,4.61,y1);
+// Mobilier et décoration supplémentaires inspirés des photographies.
+cube(levels[1].furniture,4.48,y1+.03,5.48,1.08,.43,.53,mat.wood);
+cube(levels[1].furniture,4.50,y1+.46,5.50,1.04,.06,.48,mat.linen);
+cyl(levels[1].furniture,4.32,y1+.03,5.85,.10,.41,mat.glassClear,12);
+for(let k=0;k<5;k++)trimLine(levels[1].furniture,[4.32,y1+.33,5.85],[4.18+k*.045,y1+.96+(k%2)*.13,5.82],mat.wood);
+cyl(levels[1].furniture,7.91,y1+.02,5.76,.10,1.34,mat.wood,10);
+cube(levels[1].furniture,7.66,y1+1.34,5.52,.51,.32,.50,mat.linen,false);
+// Suspension bois au-dessus du coin repas, avec cinq ampoules.
+cube(levels[1].furniture,5.35,y1+2.25,4.92,1.36,.06,.09,mat.wood,false);
+for(let i=0;i<5;i++){
+ const px=5.47+i*.28;
+ trimLine(levels[1].furniture,[px,y1+2.24,4.96],[px,y1+1.63,4.96],mat.dark);
+ cyl(levels[1].furniture,px,y1+1.56,4.96,.06,.14,mat.terracotta2,10);
+}
 cube(levels[1].furniture,7.64,y1+.28,1.28,.11,1.15,1.65,mat.wood);
 cube(levels[1].furniture,7.64,y1+.75,1.48,.06,.87,1.25,mat.dark,false);
 kitchen(levels[1].furniture,y1);
-stairs(levels[1].furniture,.30,3.56,y1);
+stairs(levels[1].furniture,.20,3.32,y1);
 // Loggia children's toys / shelves, following the photos.
 cabinet(levels[1].furniture,-3.82,y1+.02,6.12,1.08,.72,.45,mat.white);
 for(let i=0;i<3;i++)cube(levels[1].furniture,-3.71+i*.31,y1+.75,6.3,.24,.21,.24,i===1?mat.pink:mat.mint);
@@ -409,9 +461,9 @@ for(const x of [14.4,15.4]){cube(exterior,x,y1+.20,5.57,.58,.09,1.31,mat.dark);c
 
 // --- Room selection / photo references ---
 const rooms = [
-  [{id:'garage1',name:'Garage 1',area:'35,3 m²',desc:'Garage côté gauche, conformément au plan du rez-de-chaussée.',x:-4.3,z:.2,w:4.1,d:8.28,photo:'02-garage-entree.jpg'},
+  [{id:'garage1',name:'Garage 1',area:'35,3 m²',desc:'Garage sans voiture, avec rangement et établi en fond de pièce.',x:-4.3,z:.2,w:4.1,d:8.28,photo:'02-garage-entree.jpg'},
    {id:'technique',name:'Buanderie / annexe',area:'11,8 m² (plan)',desc:'Pièce annexe et buanderie équipée (usage exact à confirmer).',x:.14,z:.15,w:3.75,d:2.8,photo:'03-buanderie.jpg'},
-   {id:'garage2',name:'Garage 2',area:'22,7 m²',desc:'Second garage prévu au plan.',x:4.20,z:.16,w:3.99,d:5.76,photo:'02-garage-entree.jpg'},
+   {id:'garage2',name:'Garage 2',area:'22,7 m²',desc:'Second garage, sans voiture, avec espace atelier.',x:4.20,z:.16,w:3.99,d:5.76,photo:'02-garage-entree.jpg'},
    {id:'loggia0',name:'Loggia',area:'8,5 m²',desc:'Loggia au rez-de-chaussée.',x:4.2,z:6.15,w:4.0,d:2.38,photo:'02-garage-entree.jpg'}],
   [{id:'chambre1',name:'Chambre 1',area:'13,2 m²',desc:'Chambre du premier étage, parquet et fenêtre sur l’extérieur.',x:.15,z:.15,w:3.65,d:3.18,photo:'13-chambre-bureau.jpg'},
    {id:'entree',name:'Entrée / escalier',area:'5,5 m²',desc:'Entrée et distribution avec escalier central.',x:2.25,z:3.63,w:1.57,d:2.04,photo:'04-entree.jpg'},
@@ -442,7 +494,7 @@ for(let i=0;i<rooms.length;i++){
   }
 }
 const floorNames={all:'Vue extérieure',0:'Rez-de-chaussée',1:'Premier étage',2:'Deuxième étage'};
-const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Deux garages, buanderie, escalier et annexes.',1:'Séjour, cuisine, chambre, entrée et loggias.',2:'Deux chambres, salle de bains, WC et couloir.'};
+const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Deux garages sans voiture, buanderie, nouvel escalier et annexes.',1:'Séjour redécoré, cuisine, chambre, escalier et loggias.',2:'Deux chambres, salle de bains, WC et couloir.'};
 let activeFloor='all',selected=null,roofOn=true,furnished=true,overhead=false,motion=null;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 function tweenTo(pos,target,duration=730){motion={start:performance.now(),duration,fromP:camera.position.clone(),toP:pos.clone(),fromT:controls.target.clone(),toT:target.clone()};}

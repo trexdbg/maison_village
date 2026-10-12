@@ -53,3 +53,7 @@ Le module `viewer.js` a été reconstruit autour de géométries Three.js, sans 
 **Précision** : les murs extérieurs et les dimensions proviennent d'une reconstitution manuelle sur la base des captures fournies ; les détails non lisibles (allèges, position exacte des portes/fenêtres, élévations, escaliers, toiture) sont approximés. Cela reste un outil de présentation, et non un modèle BIM technique.
 
 Kozikaza a fermé en 2025. Son successeur Kazaplan (Leroy Merlin) est un outil d'édition autonome ; ce site utilise Three.js sous licence libre pour fonctionner sans compte ni export propriétaire. Si un modèle GLB/GLTF exact est créé à l'avenir, il sera possible de le charger via Three.js.
+
+## Mise à jour V3 — 12 octobre 2026
+
+Le modèle Three.js publié comprend désormais des garages sans voiture, des rangements en fond de garage, un escalier en L avec palier et rambardes et une décoration enrichie du salon. Le code de la visite passe en version 3 avec des URLs de scripts renouvelées pour contourner le cache.
