@@ -148,3 +148,12 @@ Correction d'une inversion de pièces dans la V11, à partir du plan coté fourn
 - La correction conserve les changements récents de la terrasse et de la maison voisine en contre-haut introduits en V12.
 
 La V11 contenait une erreur de localisation ; la V13 remplace expressément ses indications d'emplacement.
+
+## Mise à jour V14 — suppression complète des zones rouges (12 octobre 2026)
+
+- Suppression **géométrique** de la terrasse excédentaire sur le côté ouest (bande d'environ 2 m), au lieu d'une simple retouche de l'image : disparition du dallage, de la fondation, du talus et de ses garde-corps.
+- Réduction du cheminement arrière au périmètre conservé et déplacement des bordures vers le nouveau bord de terrasse.
+- Suppression **géométrique** du faux terre-plein de **12,6 × 14,7 m** de la parcelle voisine à droite de la piscine : l'espace rouge n'est ni terrasse, ni jardin appartenant à la maison présentée.
+- Conservation d'un **volume de maison voisine en contre-haut**, entièrement séparé par un mur de soutènement ; son soubassement est limité à l'emprise bâtie. Volumétrie de contexte indicative.
+- Le rez-de-jardin reste encaissé dans la roche, la piscine excavée reste au niveau terrasse, et les corrections intérieures V13 sont conservées.
+- Actualisation du script à `viewer.js?v=14-suppression-zones-rouges-20261012` pour éviter le cache GitHub Pages.
