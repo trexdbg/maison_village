@@ -949,7 +949,7 @@ function rockCutFace(axis,at,from,to,bottom,top){
 // Le terrain naturel est de la pierre continue sous le bâtiment et la piscine.
 cube(exterior,-7,-.34,-5,28,.32,22,mat.bedrock,false);
 rockBank(-6.87,8.34,-.36,-4.91,-.02,1.85,27);
-rockBank(8.38,19.60,-2.32,-4.90,y1-.19,y1+1.10,20);
+rockBank(8.38,17.07,-2.32,-4.90,y1-.19,y1+1.10,16);
 rockBank(-6.91,-4.59,8.77,-4.88,-.02,1.70,7);
 
 // Cour et accès sur rue, au niveau bas de la maison.
@@ -1074,7 +1074,7 @@ function plant(g,x,z,y,s=.95){
   }
 }
 // Végétation décorative UNIQUEMENT en bacs sur la terrasse, pas en pleine terre.
-for(const [x,z,s] of [[15.48,-.91,.80],[16.25,6.05,.84],[15.8,8.30,.68]]){
+for(const [x,z,s] of [[15.48,-.91,.80]]){
   cube(exterior,x-.35,y1+.06,z-.35,.70,.39,.70,mat.stone);
   plant(exterior,x,z,y1+.42,s);
 }
@@ -1085,6 +1085,63 @@ for(const x of [14.4,15.4]){
   cube(exterior,x,y1+.20,5.57,.58,.09,1.31,mat.dark);
   cube(exterior,x,y1+.24,6.58,.57,.37,.08,mat.dark);
 }
+
+// --- Propriété voisine À L'EST : maison EN CONTRE-HAUT, hors de la terrasse. ---
+// Le trait jaune des annotations s'arrête au mur x=17.07. La surface à droite
+// (marquée en rouge) appartient à un autre bâti sur une parcelle plus élevée.
+// Volumétrie volontairement schématique : aucune ouverture/cote voisine attestée.
+const neighborProperty=new THREE.Group();
+neighborProperty.name='Contexte : maison voisine en contre-haut (indicatif)';
+scene.add(neighborProperty);
+const neighborLevel=y1+2.12;  // le terrain voisin domine la plage de piscine
+const neighborGround=new THREE.MeshStandardMaterial({color:'#b9aa97',roughness:1});
+const neighborWall=new THREE.MeshStandardMaterial({color:'#d7c5ac',roughness:.98});
+const neighborRoof=new THREE.MeshStandardMaterial({color:'#a76b4d',roughness:.94,side:THREE.DoubleSide});
+const neighborTrim=new THREE.MeshStandardMaterial({color:'#f0e9db',roughness:.83});
+// Sol de la parcelle voisine : aucun dallage/aucune terrasse ne traverse la limite.
+cube(neighborProperty,17.49,rockBaseY,-5.05,12.6,neighborLevel-rockBaseY,14.7,mat.bedrock,false);
+cube(neighborProperty,17.49,neighborLevel-.11,-5.05,12.6,.13,14.7,neighborGround,false);
+// Mur de soutènement privatif, plus haut que le muret de notre piscine.
+cube(neighborProperty,17.49,y1-.12,-2.17,.32,neighborLevel-y1+.27,11.32,mat.stone,false);
+cube(neighborProperty,17.46,neighborLevel+.10,-2.17,.38,.12,11.32,neighborTrim,false);
+// Maison voisine établie sur cette parcelle surélevée, en retrait de la piscine.
+const nx=19.15,nz=-4.20,nw=8.20,nd=5.80,wallH=2.72;
+const eave=neighborLevel+wallH,ridge=eave+1.20,mid=nx+nw/2;
+cube(neighborProperty,nx,neighborLevel,nz,nw,wallH,nd,neighborWall,false);
+cube(neighborProperty,nx-.16,neighborLevel-.11,nz-.15,nw+.32,.17,nd+.30,neighborTrim,false);
+// Pignon et deux pans de tuiles ; les deux pans sont bien visibles en rotation.
+function neighborTriangle(vertices,material=neighborRoof){
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices.flat(),3));
+  geo.computeVertexNormals();
+  const face=new THREE.Mesh(geo,material);
+  face.castShadow=true;face.receiveShadow=true;neighborProperty.add(face);
+}
+for(const z of [nz,nz+nd])neighborTriangle([
+  [nx,eave,z],[mid,ridge,z],[nx+nw,eave,z]
+],neighborWall);
+const roofFront=nz-.38,roofBack=nz+nd+.38;
+for(const [edge,center] of [[nx-.35,mid],[nx+nw+.35,mid]]){
+  neighborTriangle([
+    [edge,eave,roofFront],[center,ridge,roofFront],[center,ridge,roofBack],
+    [edge,eave,roofFront],[center,ridge,roofBack],[edge,eave,roofBack]
+  ]);
+  // Jointures discrètes donnant la lecture d'une toiture en tuiles.
+  for(let k=1;k<16;k++){
+    const t=k/16,x=edge+(center-edge)*t,y=eave+(ridge-eave)*t+.014;
+    trimLine(neighborProperty,[x,y,roofFront],[x,y,roofBack],neighborRoof);
+  }
+}
+trimLine(neighborProperty,[mid,ridge+.03,roofFront],[mid,ridge+.03,roofBack],neighborRoof);
+// Fenêtres schématiques sur la façade visible, sans prétendre reproduire le voisin.
+const neighborGlass=new THREE.MeshStandardMaterial({color:'#657a78',roughness:.25,metalness:.08});
+for(const wx of [20.20,24.44]){
+  cube(neighborProperty,wx,neighborLevel+.88,nz+nd+.013,1.48,1.21,.07,neighborTrim,false);
+  cube(neighborProperty,wx+.10,neighborLevel+.98,nz+nd+.086,1.28,1.01,.024,neighborGlass,false);
+  cube(neighborProperty,wx+.71,neighborLevel+.96,nz+nd+.115,.045,1.04,.038,neighborTrim,false);
+  cube(neighborProperty,wx-.06,neighborLevel+.84,nz+nd+.02,1.60,.075,.16,neighborTrim,false);
+}
+// La maison voisine se masque en vue des étages pour ne pas occulter la visite intérieure.
 
 // --- Room selection / photo references ---
 const rooms = [
@@ -1158,6 +1215,7 @@ function renderVisibility(){
   roof.visible=all&&roofOn;
   // Exterior grounds continue to frame the building in plan view.
   exterior.visible=true;
+  neighborProperty.visible=all;
   roofButton.setAttribute('aria-pressed',String(roofOn));
   furnitureButton.setAttribute('aria-pressed',String(furnished));
   furnitureButton.textContent=furnished?'🛋 Masquer les meubles':'🛋 Afficher les meubles';
