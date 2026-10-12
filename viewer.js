@@ -675,7 +675,10 @@ function underStairToilet(parent,x,z,y){
   g.name='WC avec entree laterale vers escalier';
   g.position.set(-pivotX,0,-pivotZ);
   orientation.add(g);
-  const za=z+1.00,zb=z+1.79;
+  // Extension de 29 cm vers le pied de l'escalier, sous la volée basse.
+  // Pivot 90° inchangé ; les marches et leur accès côté x=2.17 restent libres.
+  const za=z+1.00,zb=z+2.08;
+  const sinkOffset=.18, panelOffset=.24;
   const wallWhite=new THREE.MeshStandardMaterial({color:'#f4f3ef',roughness:.94,side:THREE.DoubleSide});
   const oak=new THREE.MeshStandardMaterial({map:canvasTexture('wood'),color:'#bd8d5f',roughness:.83});
   const joint=new THREE.MeshStandardMaterial({color:'#896647',roughness:1});
@@ -763,39 +766,39 @@ function underStairToilet(parent,x,z,y){
     cube(g,x+.244,y+1.476+k*.016,za+.060,.073,.006,.005,panelInk,false);
 
   // Lave-mains rectangulaire compact à gauche, posé sur un meuble blanc.
-  cube(g,x+.140,y+.064,za+.426,.232,.672,.307,porcelain);
-  cube(g,x+.130,y+.737,za+.408,.290,.068,.332,porcelain);
-  cube(g,x+.154,y+.805,za+.444,.226,.003,.243,wallWhite,false);
-  cube(g,x+.362,y+.348,za+.471,.010,.245,.013,chrome,false);
-  cube(g,x+.196,y+.819,za+.474,.020,.102,.020,chrome,false);
-  cube(g,x+.197,y+.910,za+.473,.092,.016,.018,chrome,false);
-  cube(g,x+.286,y+.870,za+.482,.018,.045,.017,chrome,false);
+  cube(g,x+.140,y+.064,za+.426+sinkOffset,.232,.672,.307,porcelain);
+  cube(g,x+.130,y+.737,za+.408+sinkOffset,.290,.068,.332,porcelain);
+  cube(g,x+.154,y+.805,za+.444+sinkOffset,.226,.003,.243,wallWhite,false);
+  cube(g,x+.362,y+.348,za+.471+sinkOffset,.010,.245,.013,chrome,false);
+  cube(g,x+.196,y+.819,za+.474+sinkOffset,.020,.102,.020,chrome,false);
+  cube(g,x+.197,y+.910,za+.473+sinkOffset,.092,.016,.018,chrome,false);
+  cube(g,x+.286,y+.870,za+.482+sinkOffset,.018,.045,.017,chrome,false);
   // Poignée de tiroir horizontale à la manière du meuble photographié.
-  cube(g,x+.352,y+.547,za+.485,.019,.017,.214,chrome,false);
+  cube(g,x+.352,y+.547,za+.485+sinkOffset,.019,.017,.214,chrome,false);
   // Brosse WC et petit porte-rouleau discrets, proches du lave-mains.
-  cyl(g,x+.220,y+.069,za+.309,.038,.132,chrome,18);
-  cube(g,x+.128,y+.699,za+.316,.100,.016,.018,chrome,false);
-  cyl(g,x+.170,y+.681,za+.340,.033,.042,porcelain,20);
+  cyl(g,x+.220,y+.069,za+.309+sinkOffset,.038,.132,chrome,18);
+  cube(g,x+.128,y+.699,za+.316+sinkOffset,.100,.016,.018,chrome,false);
+  cyl(g,x+.170,y+.681,za+.340+sinkOffset,.033,.042,porcelain,20);
 
   // Tableau électrique blanc sur le mur de droite, avec rangées de disjoncteurs.
   // Le relief des interrupteurs et les repères colorés évitent le bloc uni.
-  cube(g,x+.785,y+.216,za+.337,.045,1.18,.397,porcelain,false);
-  cube(g,x+.773,y+.251,za+.354,.020,1.105,.365,wallWhite,false);
+  cube(g,x+.785,y+.216,za+.337+panelOffset,.045,1.18,.397,porcelain,false);
+  cube(g,x+.773,y+.251,za+.354+panelOffset,.020,1.105,.365,wallWhite,false);
   for(let row=0;row<5;row++){
     const yy=y+.330+row*.200;
-    cube(g,x+.763,yy,za+.368,.011,.145,.328,panelGrey,false);
-    cube(g,x+.753,yy+.011,za+.376,.007,.015,.308,row===2?meterGreen:panelInk,false);
+    cube(g,x+.763,yy,za+.368+panelOffset,.011,.145,.328,panelGrey,false);
+    cube(g,x+.753,yy+.011,za+.376+panelOffset,.007,.015,.308,row===2?meterGreen:panelInk,false);
     for(let k=0;k<7;k++){
-      const zz=za+.382+k*.043;
+      const zz=za+.382+panelOffset+k*.043;
       cube(g,x+.750,yy+.049,zz,.009,.082,.034,porcelain,false);
       cube(g,x+.742,yy+.094,zz+.010,.011,.028,.015,panelInk,false);
     }
   }
   // Boîtier de compteur vert-jaune caractéristique de la photo.
-  cube(g,x+.737,y+1.430,za+.546,.084,.255,.175,meterGreen,false);
-  cube(g,x+.724,y+1.523,za+.573,.015,.087,.119,panelInk,false);
-  cube(g,x+.718,y+1.540,za+.586,.008,.061,.092,panelGrey,false);
-  cube(g,x+.724,y+1.458,za+.613,.012,.028,.040,chrome,false);
+  cube(g,x+.737,y+1.430,za+.546+panelOffset,.084,.255,.175,meterGreen,false);
+  cube(g,x+.724,y+1.523,za+.573+panelOffset,.015,.087,.119,panelInk,false);
+  cube(g,x+.718,y+1.540,za+.586+panelOffset,.008,.061,.092,panelGrey,false);
+  cube(g,x+.724,y+1.458,za+.613+panelOffset,.012,.028,.040,chrome,false);
 }
 // Garde-corps entourant uniquement les bords libres des trémies aux étages.
 function shaftRail(g,x0,z0,x1,z1,y){
@@ -1151,7 +1154,7 @@ const rooms = [
    {id:'chambre-rdc',name:'Chambre du rez-de-chaussée',area:'14,4 m² (plan)',desc:'Au sud de l’escalier, entre le garage gauche et la loggia droite : parquet chêne, lit double, deux chevets, commode claire, rideaux écrus et suspension en rotin. Accès latéraux dégagés.',x:.14,z:5.51,w:3.75,d:3.01,photo:'13-chambre-bureau.jpg'},
    {id:'garage2',name:'Garage 2',area:'22,7 m²',desc:'Second garage, sans voiture, avec espace atelier.',x:4.20,z:.16,w:3.99,d:5.76,photo:'02-garage-entree.jpg'},
    {id:'escalier-rdc',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Départ en haut à droite du plan, cinq marches vers la gauche, huit marches tournantes à gauche, puis cinq marches vers la droite jusqu’à l’étage. Pas de palier.',x:1.09,z:3.49,w:1.05,d:.83,photo:'04-entree.jpg'},
-   {id:'wc-sous-escalier',name:'WC sous l’escalier',area:'Dimensions indicatives',desc:'WC pivotés de 90° sous la pente de l’escalier, porte tournée vers l’escalier ; parquet chêne, cuvette suspendue, lave-mains et tableau électrique.',x:.14,z:4.43,w:.79,d:.75,photo:'06-wc-rdc.jpg'},
+   {id:'wc-sous-escalier',name:'WC sous l’escalier',area:'Dimensions indicatives',desc:'WC sous l’escalier agrandis jusqu’au pied de la volée basse ; cuvette suspendue, meuble vasque et tableau électrique, orientation à 90° conservée.',x:.13,z:4.39,w:1.10,d:.84,photo:'06-wc-rdc.jpg'},
    {id:'loggia0',name:'Loggia',area:'8,5 m²',desc:'Loggia au rez-de-chaussée.',x:4.2,z:6.15,w:4.0,d:2.38,photo:'02-garage-entree.jpg'}],
   [{id:'chambre1',name:'Chambre 1',area:'13,2 m²',desc:'Chambre du premier étage, parquet et fenêtre sur l’extérieur.',x:.15,z:.15,w:3.65,d:3.18,photo:'13-chambre-bureau.jpg'},
    {id:'entree',name:'Entrée / distribution',area:'5,5 m²',desc:'Palier de distribution entre les pièces, contigu à la cage d’escalier.',x:2.25,z:3.63,w:1.57,d:2.04,photo:'04-entree.jpg'},
