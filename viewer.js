@@ -421,7 +421,20 @@ function toilet(g,x,z,y){cube(g,x,y+.17,z,.42,.37,.65,mat.white);cyl(g,x+.22,y+.
 // Escalier en U compact, reconstruit dans la trémie figurant sur les trois plans.
 // Deux volées parallèles en sens inverse et un palier tournant, sans empiéter sur le couloir.
 // Les marches sont des éléments d'architecture, indépendants de l'option mobilier.
-function stairs(g,x,z,y){
+function stairs(parent,x,z,y){
+  // Orientation corrigée depuis la vue du garage : la première volée
+  // se dirige vers la gauche (flèche rouge) avant de tourner pour monter.
+  // Une rotation autour du centre de la trémie conserve le placement
+  // et les détails de la cage d'escalier sur chacun des niveaux.
+  const centerX=x+1.08, centerZ=z+1.08;
+  const rotated=new THREE.Group();
+  rotated.name='Escalier quart de tour - orientation corrigee 90 degres';
+  rotated.position.set(centerX,0,centerZ);
+  rotated.rotation.y=Math.PI/2;
+  parent.add(rotated);
+  const g=new THREE.Group();
+  g.position.set(-centerX,0,-centerZ);
+  rotated.add(g);
   const h=2.70, rise=h/16, left=x+.10, right=x+1.13, width=.85;
   const tread=new THREE.MeshStandardMaterial({color:'#ece6db',roughness:.77});
   const nosing=new THREE.MeshStandardMaterial({color:'#bd9b77',roughness:.78});
