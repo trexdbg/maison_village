@@ -409,15 +409,18 @@ wall(levels[1].walls,'x',0,0,8.47,y1,2.66,.18,mat.stucco);
 wall(levels[1].walls,'x',8.72,0,8.47,y1,2.66,.18,mat.stucco,[[1.40,3.34,.81,2.11,'window'],[4.35,8.20,.71,2.36,'sliding']]);
 // Suppression de la baie barrée sur le mur extérieur côté cuisine (x = 0).
 // La fenêtre non barrée située côté chambre est conservée.
-wall(levels[1].walls,'z',0,0,8.90,y1,2.66,.18,mat.stucco,[[.4,1.85,.75,2.1,'window']]);
+// Le passage libre vers la loggia vitrée se situe au bout de la cuisine.
+wall(levels[1].walls,'z',0,0,8.90,y1,2.66,.18,mat.stucco,[[.4,1.85,.75,2.1,'window'],[6.32,7.63,0,2.35,'open']]);
 // Fenêtre barrée entre salle à manger et terrasse/piscine (x = 8.29) rebouchée ;
 // la porte-fenêtre et la baie de la loggia restent présentes.
 wall(levels[1].walls,'z',8.29,0,8.90,y1,2.66,.18,mat.stucco,[[1.20,2.65,0,2.35,'french'],[6.62,8.50,.24,2.30,'sliding']]);
 // Low partition walls, with cut door gaps.
-lowPartition(levels[1].cut,'z',3.96,.1,3.46,y1,.78);lowPartition(levels[1].cut,'z',3.96,3.46,5.93,y1,.82,[[4.20,5.04,0,.82,'']]);lowPartition(levels[1].cut,'z',3.96,6.00,8.9,y1,.77,[[7.02,7.94,0,.77,'']]);
+lowPartition(levels[1].cut,'z',3.96,.1,3.46,y1,.78);lowPartition(levels[1].cut,'z',3.96,3.46,5.93,y1,.82,[[4.20,5.04,0,.82,'']]);// Passage cuisine / loggia côté bureau, décalé pour adosser le plateau au mur.
+lowPartition(levels[1].cut,'z',3.96,6.00,8.9,y1,.77,[[6.33,7.28,0,.77,'']]);
 lowPartition(levels[1].cut,'x',3.50,0,3.96,y1,.74,[[2.50,3.37,0,.74,'']]);
 lowPartition(levels[1].cut,'x',5.95,0,3.96,y1,.74,[[2.70,3.55,0,.74,'']]);
-lowPartition(levels[1].cut,'x',6.35,4,8.29,y1,.72,[[5.17,7.48,0,.72,'']]);
+// Baie vitrée du salon vers la loggia : vraie ouverture et panneaux coulissants.
+wall(levels[1].walls,'x',6.35,4.04,8.25,y1,2.66,.14,mat.stucco,[[4.86,8.02,0,2.38,'sliding']]);
 // Stronger room flooring based on photographic details.
 plankFloor(levels[1].slab,.16,.16,3.62,3.18,y1+.018,mat.wood);
 plankFloor(levels[1].slab,2.18,3.58,1.63,2.17,y1+.018,mat.wood);
@@ -428,11 +431,13 @@ cube(levels[1].trim,4.60,3.49,8.99,3.50,.74,.09,mat.green,false);
 for(let v=4.7;v<=8.05;v+=.19)cube(levels[1].trim,v,3.51,9.09,.024,.7,.025,mat.mint,false);
 // First-floor loggias have glazed fronts, painted side edges.
 for(const x of [-4.22,-.15])cube(levels[1].trim,x,y1,5.59,.15,1.28,3.3,mat.stucco);
-addWindow(levels[1].trim,'x',8.72,-4.12,-.10,y1+.18,2.25,true);
+// Fenêtre de la loggia vitrée : même allège, hauteur et type que la fenêtre de la loggia.
+// Le soubassement sous le vitrage accueille le buffet à vaisselle.
+wall(levels[1].walls,'x',8.72,-4.22,0,y1,2.66,.18,mat.stucco,[[-4.12,-.10,.71,2.36,'sliding']]);
 for(let v=-4.17;v<-.16;v+=.82)cube(levels[1].trim,v,y1+.14,8.74,.045,2.20,.085,mat.white,false);
 // Rear of left loggia is a glazed room.
 addWindow(levels[1].trim,'x',5.58,-4.05,-.12,y1+.16,2.26,true);
-// Right loggia partition with full height opening.
+// Poteaux périphériques de la loggia, avec la baie salon-loggia juste derrière.
 for(const x of [4.0,8.29])cube(levels[1].trim,x,y1,6.3,.15,1.2,2.6,mat.stucco);
 // La baie de la loggia figure déjà dans son ouverture en façade, sans vitrage doublé.
 // Window shutters and barred first-floor bedroom window.
@@ -485,6 +490,40 @@ function sofa(g,x,z,y){
 }
 function wardrobe(g,x,z,y,w=1.4){cube(g,x,y,z,w,2.03,.55,mat.wood);cube(g,x+w/2-.014,y+.05,z+.55,.026,1.88,.04,mat.warmwhite,false);for(const xx of [x+w*.45,x+w*.55])cube(g,xx,y+1.0,z+.57,.018,.21,.02,mat.metal,false);}
 function bureau(g,x,z,y){cube(g,x,y+.75,z,1.25,.08,.59,mat.white);for(const xx of [x+.04,x+1.17])for(const zz of [z+.05,z+.50])cube(g,xx,y+.02,zz,.045,.72,.045,mat.wood);cube(g,x+.20,y+.80,z+.14,.35,.022,.28,mat.dark);}
+// Bibliothèque basse sous la fenêtre de la loggia (allège à 71 cm).
+function loggiaBookcase(g,x,z,y){
+  const w=1.38,d=.31;
+  cube(g,x,y+.06,z,w,.055,d,mat.wood);
+  cube(g,x,y+.36,z,w,.045,d,mat.wood);
+  cube(g,x,y+.64,z,w,.06,d,mat.wood);
+  cube(g,x,y+.09,z+d-.04,w,.53,.04,mat.warmwhite,false);
+  for(const xx of [x,x+w-.055])cube(g,xx,y+.06,z,.055,.64,d,mat.wood);
+  for(let row=0;row<2;row++)for(let i=0;i<9;i++){
+    cube(g,x+.085+i*.136,y+.115+row*.30,z+.075,.08,.195+(i%3)*.012,.145,
+      i%4===0?mat.green:i%4===1?mat.terracotta2:i%4===2?mat.linen:mat.dark,false);
+  }
+}
+// Bureau orienté le long de la cloison cuisine / loggia, côté loggia.
+function loggiaDesk(g,x,z,y){
+  cube(g,x,y+.73,z,.61,.075,1.18,mat.wood);
+  for(const xx of [x+.05,x+.52])for(const zz of [z+.06,z+1.10])
+    cube(g,xx,y+.03,zz,.035,.70,.035,mat.metal);
+  cube(g,x+.10,y+.81,z+.13,.27,.018,.35,mat.dark,false);
+  cube(g,x+.70,y+.43,z+.43,.42,.07,.40,mat.linen);
+  for(const xx of [x+.75,x+1.05])for(const zz of [z+.50,z+.77])
+    cube(g,xx,y+.02,zz,.032,.40,.032,mat.wood);
+  cube(g,x+1.07,y+.49,z+.43,.07,.37,.40,mat.linen);
+}
+// Buffet à assiettes sous la fenêtre de la loggia vitrée.
+function loggiaSideboard(g,x,z,y){
+  const w=1.74;
+  cube(g,x,y+.055,z,w,.55,.40,mat.warmwhite);
+  cube(g,x-.035,y+.605,z-.02,w+.07,.085,.44,mat.wood);
+  for(let k=1;k<3;k++)cube(g,x+k*w/3-.01,y+.10,z-.018,.018,.46,.028,mat.wood,false);
+  for(let k=0;k<3;k++)cube(g,x+.23+k*.58,y+.32,z-.028,.09,.026,.026,mat.metal,false);
+  // Petit service d'assiettes posé sur le buffet.
+  for(let h=0;h<3;h++)cyl(g,x+.44,y+.69+h*.013,z+.20,.125,.011,mat.white,24);
+}
 // Chambre 14,4 m² du REZ-DE-CHAUSSÉE, au sud de la cage d'escalier.
 // Coordonnées issues du plan fourni : x=.14..3.89, z=5.53..8.52.
 // Les passages latéraux restent dégagés : porte ouest (z~5.55..6.42),
@@ -576,18 +615,29 @@ function groundBedroom(g,y){
 }
 
 function kitchen(g,y){
-  // Graphite fronts, light oak worktop and L-shape as photographed.
-  cube(g,.17,y,.30,3.51,.88,.64,mat.charcoal);cube(g,.16,y+.88,.28,3.55,.075,.67,mat.wood);
-  cube(g,.17,y,6.28,.65,.88,2.30,mat.charcoal);cube(g,.17,y+.88,6.28,.69,.07,2.30,mat.wood);
-  cube(g,3.06,y,6.28,.72,.88,2.25,mat.charcoal);cube(g,3.05,y+.88,6.28,.76,.07,2.25,mat.wood);
-  cube(g,3.04,y,8.16,.76,2.04,.66,mat.charcoal);
-  for(let k=0;k<3;k++)cube(g,.34+k*.91,y+1.45,6.30,.87,.68,.34,mat.charcoal);
-  cube(g,1.55,y+.94,.34,.96,.018,.47,mat.dark,false);for(const xx of [1.82,2.16])for(const zz of [.49,.72])cyl(g,xx,y+.96,zz,.095,.013,mat.metal,12);
-  cube(g,2.47,y+.10,.30,.62,.68,.08,mat.dark,false);cube(g,2.52,y+.19,.24,.52,.49,.024,mat.glass,false);
-  // Breakfast high table and pair of stools.
-  cube(g,1.14,y+1.04,7.0,1.86,.08,.65,mat.wood);
-  for(let k=0;k<2;k++){const xx=1.42+k*.91;cyl(g,xx,y+.0,7.89,.048,.79,mat.metal);cyl(g,xx,y+.80,7.89,.29,.06,mat.white,12)}
+  // Premier étage : cuisine linéaire épurée, sans îlot ni tabouret.
+  // Toute la bande x=0..3.9 / z=6.3..7.7 reste libre pour la circulation
+  // vers la loggia vitrée par la nouvelle ouverture du mur x=0.
+  cube(g,.29,y+.02,8.14,2.66,.83,.58,mat.charcoal);
+  cube(g,.27,y+.85,8.12,2.70,.075,.63,mat.wood);
+  for(let k=1;k<4;k++)cube(g,.30+k*.65,y+.08,8.118,.012,.68,.020,mat.metal,false);
+  // Evier et mitigeur discrets à gauche.
+  cube(g,.55,y+.927,8.29,.60,.012,.34,mat.dark,false);
+  cube(g,.61,y+.938,8.33,.47,.011,.23,mat.metal,false);
+  trimLine(g,[1.13,y+.94,8.55],[1.13,y+1.19,8.55],mat.metal);
+  trimLine(g,[1.13,y+1.19,8.55],[.98,y+1.19,8.55],mat.metal);
+  // Plaque de cuisson encastrée à droite.
+  cube(g,1.84,y+.928,8.25,.72,.016,.39,mat.dark,false);
+  for(const xx of [2.02,2.38])for(const zz of [8.35,8.53])
+    cyl(g,xx,y+.946,zz,.065,.009,mat.metal,14);
+  // Un seul linéaire de placards hauts, léger visuellement.
+  cube(g,.36,y+1.58,8.39,2.20,.61,.32,mat.warmwhite);
+  for(let k=1;k<3;k++)cube(g,.36+k*.73,y+1.64,8.371,.012,.46,.018,mat.wood,false);
+  // Réfrigérateur aligné au fond, à l'opposé du passage vers la loggia vitrée.
+  cube(g,3.08,y+.02,8.12,.64,2.02,.63,mat.charcoal);
+  cube(g,3.08,y+1.20,8.105,.64,.015,.012,mat.metal,false);
 }
+
 function bath(g,x,z,y){
   cube(g,x,y+.08,z,1.92,.58,.79,mat.white);cube(g,x+.11,y+.63,z+.10,1.70,.027,.59,mat.warmwhite,false);
   cube(g,x+.19,y+.66,z+.18,1.55,.016,.45,mat.glassClear,false);
@@ -902,30 +952,36 @@ stairs(levels[0].architecture,.04,3.40,.05);
 underStairToilet(levels[0].architecture,.04,3.40,.05);
 bed(levels[1].furniture,.85,.65,1.88,2.03,y1,mat.linen);
 wardrobe(levels[1].furniture,.2,2.68,y1,1.05);
+
+// Salon : canapé dirigé vers le fond z=0, écran fixé exactement en face.
 sofa(levels[1].furniture,4.47,2.30,y1);
-dining(levels[1].furniture,5.15,4.61,y1);
-// Mobilier et décoration supplémentaires inspirés des photographies.
-cube(levels[1].furniture,4.48,y1+.03,5.48,1.08,.43,.53,mat.wood);
-cube(levels[1].furniture,4.50,y1+.46,5.50,1.04,.06,.48,mat.linen);
-cyl(levels[1].furniture,4.32,y1+.03,5.85,.10,.41,mat.glassClear,12);
-for(let k=0;k<5;k++)trimLine(levels[1].furniture,[4.32,y1+.33,5.85],[4.18+k*.045,y1+.96+(k%2)*.13,5.82],mat.wood);
+cube(levels[1].furniture,5.07,y1+.07,.31,1.38,.36,.33,mat.wood);
+cube(levels[1].furniture,5.01,y1+1.01,.205,1.50,.89,.060,mat.dark,false);
+cube(levels[1].furniture,5.075,y1+1.075,.271,1.37,.76,mat.charcoal,false);
+cube(levels[1].furniture,5.66,y1+.51,.245,.12,.49,.05,mat.metal,false);
+// Salon épuré : ni table à manger ni table basse ; luminaire d'appoint discret.
 cyl(levels[1].furniture,7.91,y1+.02,5.76,.10,1.34,mat.wood,10);
 cube(levels[1].furniture,7.66,y1+1.34,5.52,.51,.32,.50,mat.linen,false);
-// Suspension bois au-dessus du coin repas, avec cinq ampoules.
-cube(levels[1].furniture,5.35,y1+2.25,4.92,1.36,.06,.09,mat.wood,false);
-for(let i=0;i<5;i++){
- const px=5.47+i*.28;
- trimLine(levels[1].furniture,[px,y1+2.24,4.96],[px,y1+1.63,4.96],mat.dark);
- cyl(levels[1].furniture,px,y1+1.56,4.96,.06,.14,mat.terracotta2,10);
-}
-cube(levels[1].furniture,7.64,y1+.28,1.28,.11,1.15,1.65,mat.wood);
-cube(levels[1].furniture,7.64,y1+.75,1.48,.06,.87,1.25,mat.dark,false);
+
 kitchen(levels[1].furniture,y1);
 stairs(levels[1].architecture,.04,3.40,y1);
-// Loggia children's toys / shelves, following the photos.
-cabinet(levels[1].furniture,-3.82,y1+.02,6.12,1.08,.72,.45,mat.white);
-for(let i=0;i<3;i++)cube(levels[1].furniture,-3.71+i*.31,y1+.75,6.3,.24,.21,.24,i===1?mat.pink:mat.mint);
-cube(levels[1].furniture,5.1,y1,7.15,1.6,.65,.38,mat.white);
+
+// Loggia (x=4..8.29) : petit bureau contre le mur de la cuisine et bibliothèque
+// basse sous la fenêtre côté façade, sans encombrer la baie vers le salon.
+loggiaDesk(levels[1].furniture,4.18,7.51,y1);
+loggiaBookcase(levels[1].furniture,6.15,8.30,y1);
+
+// Loggia vitrée (x=-4.22..0) : seul espace repas de cet étage.
+// Table et quatre chaises placées sans bloquer le passage depuis la cuisine.
+dining(levels[1].furniture,-3.77,6.34,y1);
+loggiaSideboard(levels[1].furniture,-3.91,8.23,y1);
+// Suspension au-dessus de la nouvelle table (et non au-dessus du salon).
+cube(levels[1].furniture,-3.34,y1+2.24,6.82,1.34,.055,.07,mat.wood,false);
+for(let i=0;i<3;i++){
+  const px=-3.05+i*.41;
+  trimLine(levels[1].furniture,[px,y1+2.22,6.86],[px,y1+1.57,6.86],mat.dark);
+  cyl(levels[1].furniture,px,y1+1.50,6.86,.095,.13,mat.terracotta2,14);
+}
 
 bath(levels[2].furniture,.25,.36,y2);
 vanity(levels[2].furniture,.35,2.53,y2);
@@ -1223,10 +1279,10 @@ const rooms = [
   [{id:'chambre1',name:'Chambre 1',area:'13,2 m²',desc:'Chambre du premier étage, parquet et fenêtre sur l’extérieur.',x:.15,z:.15,w:3.65,d:3.18,photo:'13-chambre-bureau.jpg'},
    {id:'entree',name:'Entrée / distribution',area:'5,5 m²',desc:'Palier de distribution entre les pièces, contigu à la cage d’escalier.',x:2.25,z:3.63,w:1.57,d:2.04,photo:'04-entree.jpg'},
    {id:'escalier',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Deux volées parallèles et tournant balancé à gauche. Départ à droite en haut du plan ; WC sous le tournant au rez-de-chaussée.',x:.09,z:3.46,w:2.07,d:1.85,photo:'04-entree.jpg'},
-   {id:'cuisine',name:'Cuisine',area:'9,2 m²',desc:'Cuisine aux façades anthracite et plan de travail aspect bois.',x:.15,z:6.09,w:3.65,d:2.65,photo:'16-cuisine.jpg'},
-   {id:'sejour',name:'Salon / salle à manger',area:'24,4 m²',desc:'Pièce de vie claire, mur vert sauge, coin repas et canapé.',x:4.18,z:.15,w:4.10,d:6.02,photo:'12-sejour.jpg'},
-   {id:'loggia1',name:'Loggia vitrée',area:'12,3 m²',desc:'Pièce vitrée donnant sur l’extérieur, utilisée comme espace de jeux.',x:-4.07,z:5.72,w:3.95,d:2.98,photo:'05-loggia.jpg'},
-   {id:'loggia2',name:'Loggia',area:'7,5 m²',desc:'Loggia au niveau des pièces de vie.',x:4.17,z:6.5,w:4.10,d:2.20,photo:'05-loggia.jpg'}],
+   {id:'cuisine',name:'Cuisine',area:'9,2 m²',desc:'Cuisine linéaire épurée sans îlot, passage libre vers la loggia vitrée.',x:.15,z:6.09,w:3.65,d:2.65,photo:'16-cuisine.jpg'},
+   {id:'sejour',name:'Salon',area:'24,4 m²',desc:'Canapé face à la télévision sur le mur du fond ; baie coulissante vers la loggia.',x:4.18,z:.15,w:4.10,d:6.02,photo:'12-sejour.jpg'},
+   {id:'loggia1',name:'Loggia vitrée / salle à manger',area:'12,3 m²',desc:'Table à manger avec quatre chaises et buffet à assiettes sous une fenêtre identique à celle de la loggia ; accès depuis la cuisine.',x:-4.07,z:5.72,w:3.95,d:2.98,photo:'05-loggia.jpg'},
+   {id:'loggia2',name:'Loggia / bureau',area:'7,5 m²',desc:'Bureau contre la cloison de la cuisine et petite bibliothèque sous la fenêtre ; grande baie vitrée vers le salon.',x:4.17,z:6.5,w:4.10,d:2.20,photo:'05-loggia.jpg'}],
   [{id:'sdb',name:'Salle de bains',area:'7,6 m²',desc:'Baignoire, vasque, grande faïence grège.',x:.17,z:.15,w:2.18,d:3.14,photo:'08-salle-de-bains.jpg'},
    {id:'couloir',name:'Couloir',area:'10,1 m²',desc:'Couloir desservant les chambres et la salle de bains.',x:2.66,z:.17,w:1.20,d:6.37,photo:'04-entree.jpg'},
    {id:'chambre2',name:'Chambre 2',area:'11,9 m²',desc:'Chambre avec lit double et rangements.',x:4.19,z:.16,w:4.07,d:3.07,photo:'14-chambre-parentale.jpg'},
@@ -1250,7 +1306,7 @@ for(let i=0;i<rooms.length;i++){
   }
 }
 const floorNames={all:'Vue extérieure',0:'Rez-de-jardin',1:'Premier étage',2:'Deuxième étage'};
-const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Ancien garage 1 reconverti en salon / cuisine / salle à manger avec baie vitrée et entrée vers l’escalier. Douche près des WC, chambre cloisonnée et conservée ; garage 2 maintenu.',1:'Escalier demi-tournant gauche, accès libre entre les deux volées, raccord de palier en parquet, séjour, cuisine et loggias.',2:'Deux chambres, salle de bains, WC et couloir.'};
+const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Ancien garage 1 reconverti en salon / cuisine / salle à manger avec baie vitrée et entrée vers l’escalier. Douche près des WC, chambre cloisonnée et conservée ; garage 2 maintenu.',1:'Salon et télévision face au canapé, baie vers la loggia bureau, cuisine épurée avec accès à la loggia vitrée aménagée en salle à manger.',2:'Deux chambres, salle de bains, WC et couloir.'};
 let activeFloor='all',selected=null,roofOn=true,furnished=true,overhead=false,motion=null;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 function tweenTo(pos,target,duration=730){motion={start:performance.now(),duration,fromP:camera.position.clone(),toP:pos.clone(),fromT:controls.target.clone(),toT:target.clone()};}
