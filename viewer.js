@@ -424,70 +424,133 @@ function bath(g,x,z,y){
 }
 function vanity(g,x,z,y){cube(g,x,y+.16,z,1.20,.67,.53,mat.pink);cube(g,x,y+.83,z,1.20,.09,.53,mat.white);cyl(g,x+.72,y+.90,z+.23,.20,.03,mat.warmwhite,20);cyl(g,x+.75,y+.96,z+.23,.025,.16,mat.metal,9)}
 function toilet(g,x,z,y){cube(g,x,y+.17,z,.42,.37,.65,mat.white);cyl(g,x+.22,y+.47,z+.33,.25,.09,mat.white,18);cube(g,x+.02,y+.49,z+.49,.38,.16,.10,mat.white)}
-// Escalier quart-tournant : départ à DROITE, puis virage vers la GAUCHE.
-// Les deux volées restent dans la trémie existante (environ 2,18 x 1,92 m).
-// La première marche est sur le côté droit, à la place de l'ancienne petite cloison.
-// Le volume sous la volée haute accueille le WC du rez-de-chaussée.
+// Escalier selon le plan fourni : demi-tournant GAUCHE, sans palier.
+// Emprise dessinée : 2,13 m de long, 90 cm puis 87 cm de large.
+// Départ à droite dans la volée du HAUT du plan, progression vers la gauche,
+// 8 marches balancées en éventail à l'extrémité gauche, puis retour vers la
+// droite dans la volée du BAS. Les WC se glissent sous ce tournant au RDC.
 function stairs(parent,x,z,y){
-  const g=new THREE.Group();
-  g.name='Escalier quart-tournant - depart droit, virage a gauche';
+  const g = new THREE.Group();
+  g.name = 'Escalier demi-tournant gauche - deux volees paralleles et marches balancees';
   parent.add(g);
-  const h=2.70, rise=h/16, right=x+1.26, width=.86;
-  const tread=new THREE.MeshStandardMaterial({color:'#ece6db',roughness:.77});
-  const nosing=new THREE.MeshStandardMaterial({color:'#bd9b77',roughness:.78});
-  const steel=new THREE.MeshStandardMaterial({color:'#333f3d',metalness:.42,roughness:.45});
+  const h = y < 1 ? 2.67 : 2.70; // raccord exact aux dalles à 2,72 et 5,42 m
+  const rise = h/18;
+  const xLeft=x+.055, xPivot=x+.925, xRight=x+2.13;
+  const zTop=z+.055, zMid=z+.945, zBottom=z+1.825;
+  const run=(xRight-xPivot)/5;
+  const tread = new THREE.MeshStandardMaterial({color:'#eee7dc',roughness:.76});
+  const riser = new THREE.MeshStandardMaterial({color:'#ddd4c7',roughness:.82,side:THREE.DoubleSide});
+  const nosing = new THREE.MeshStandardMaterial({color:'#ae8463',roughness:.72});
+  const steel = new THREE.MeshStandardMaterial({color:'#38433f',metalness:.38,roughness:.47});
+  const pt=(xx,zz)=>({x:xx,z:zz});
 
-  // Huit marches sur le côté DROIT. On avance vers l'arrière jusqu'au palier.
-  for(let i=0;i<7;i++){
-    const top=y+(i+1)*rise, zz=z+1.88-(i+1)*.185;
-    cube(g,right,top-.066,zz,width,.066,.185,tread);
-    cube(g,right,top-.014,zz+.142,width,.018,.043,nosing,false);
-    cube(g,right+.026,top-rise,zz+.148,width-.052,rise-.067,.034,mat.warmwhite,false);
-    cube(g,x+2.145,top,zz+.09,.026,.80,.028,steel,false);
+  // Chaque marche est un véritable plateau polygonal horizontal, avec une
+  // contremarche verticale. On conserve la forme rayonnante du plan, pas un L.
+  function addStep(outline,number,front){
+    const top=y+number*rise;
+    const path=new THREE.Shape();
+    path.moveTo(outline[0].x,outline[0].z);
+    for(let k=1;k<outline.length;k++)path.lineTo(outline[k].x,outline[k].z);
+    path.closePath();
+    const geom=new THREE.ExtrudeGeometry(path,{depth:.055,bevelEnabled:false,steps:1});
+    geom.rotateX(Math.PI/2); // extrusion vers le bas, plan dans le repère X/Z
+    const mesh=new THREE.Mesh(geom,tread);
+    mesh.position.y=top;
+    mesh.castShadow=true;mesh.receiveShadow=true;g.add(mesh);
+    const [a,b]=front,low=y+(number-1)*rise,high=top-.055;
+    const face=new THREE.BufferGeometry();
+    face.setAttribute('position',new THREE.Float32BufferAttribute([
+      a.x,low,a.z, b.x,low,b.z, b.x,high,b.z,
+      a.x,low,a.z, b.x,high,b.z, a.x,high,a.z
+    ],3));
+    face.computeVertexNormals();
+    const panel=new THREE.Mesh(face,riser);
+    panel.castShadow=true;panel.receiveShadow=true;g.add(panel);
+    const dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);
+    const lip=new THREE.Mesh(new THREE.CylinderGeometry(.012,.012,len,7),nosing);
+    lip.position.set((a.x+b.x)/2,top+.004,(a.z+b.z)/2);
+    lip.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),new THREE.Vector3(dx,0,dz).normalize());
+    g.add(lip);
   }
-  // Palier horizontal : le virage se fait à gauche, pas un demi-tour.
-  cube(g,right,y+8*rise-.105,z+.055,width,.105,.57,tread);
-  cube(g,right,y+8*rise-.016,z+.57,width,.018,.04,nosing,false);
 
-  // Huit marches allant vers la GAUCHE, avec les nez de marche orientés vers la gauche.
+  // 1 à 5 : départ du côté droit, première volée allant VERS LA GAUCHE.
+  for(let i=0;i<5;i++){
+    const xr=xRight-i*run, xl=xr-run;
+    addStep([pt(xl,zTop),pt(xr,zTop),pt(xr,zMid),pt(xl,zMid)],i+1,
+      [pt(xl,zTop),pt(xl,zMid)]);
+  }
+
+  // 6 à 13 : balancement à gauche, rayons issus du même pivot que sur le plan.
+  // Les coins réels du rectangle sont insérés dans les éventails pour couvrir
+  // la totalité de la trémie, sans petits triangles manquants.
+  function edge(theta){
+    const dx=-Math.sin(theta),dz=-Math.cos(theta),eps=1e-8;
+    const t=Math.min(
+      dx < -eps ? (xPivot-xLeft)/(-dx) : Infinity,
+      dz < -eps ? (zMid-zTop)/(-dz) : Infinity,
+      dz > eps ? (zBottom-zMid)/dz : Infinity
+    );
+    return pt(xPivot+t*dx,zMid+t*dz);
+  }
+  const corners=[
+    {angle:Math.atan2(xPivot-xLeft,zMid-zTop),p:pt(xLeft,zTop)},
+    {angle:Math.PI-Math.atan2(xPivot-xLeft,zBottom-zMid),p:pt(xLeft,zBottom)}
+  ];
   for(let i=0;i<8;i++){
-    const top=y+(i+9)*rise, xx=x+1.26-(i+1)*.145;
-    cube(g,xx,top-.066,z+.055,.145,.066,.78,tread);
-    cube(g,xx,top-.014,z+.055,.04,.018,.78,nosing,false);
-    cube(g,xx+.028,top-rise,z+.08,.034,rise-.068,.73,mat.warmwhite,false);
-    cube(g,xx+.07,top,z+.865,.028,.79,.028,steel,false);
+    const a=i*Math.PI/8,b=(i+1)*Math.PI/8;
+    const outline=[pt(xPivot,zMid),edge(a)];
+    for(const corner of corners)if(corner.angle>a+1e-8&&corner.angle<b-1e-8)outline.push(corner.p);
+    const front=edge(b);
+    outline.push(front);
+    addStep(outline,6+i,[pt(xPivot,zMid),front]);
   }
 
-  // Rampes avec pente et retour sur le palier.
-  trimLine(g,[x+2.16,y+rise+.82,z+1.79],[x+2.16,y+7*rise+.82,z+.65],steel);
-  trimLine(g,[x+1.20,y+9*rise+.80,z+.88],[x+.17,y+h+.80,z+.88],steel);
-  cube(g,right,y+8*rise,z+.065,.028,.79,.029,steel,false);
-  cube(g,x+2.105,y+8*rise,z+.065,.028,.79,.029,steel,false);
-  trimLine(g,[right,y+8*rise+.79,z+.08],[x+2.12,y+8*rise+.79,z+.08],steel);
-  // Sortie à hauteur du premier étage, au bord de la trémie.
-  cube(g,x+.08,y+h-.028,z+.06,.21,.032,.78,mat.wood,false);
+  // 14 à 18 : volée de retour parallèle en partie BASSE du plan.
+  // Elle remonte jusqu'au plancher de l'étage, à droite de la trémie.
+  for(let i=0;i<5;i++){
+    const xl=xPivot+i*run,xr=xl+run;
+    addStep([pt(xl,zMid),pt(xr,zMid),pt(xr,zBottom),pt(xl,zBottom)],14+i,
+      [pt(xr,zMid),pt(xr,zBottom)]);
+  }
+
+  // Rampes fines sur les deux bords intérieurs des volées (aucun faux palier).
+  function rail(points){
+    for(let k=0;k<points.length;k++){
+      const p=points[k];
+      trimLine(g,[p.x,p.base,p.z],[p.x,p.base+.78,p.z],steel);
+      if(k) {
+        const q=points[k-1];
+        trimLine(g,[q.x,q.base+.78,q.z],[p.x,p.base+.78,p.z],steel);
+      }
+    }
+  }
+  rail(Array.from({length:5},(_,i)=>({
+    x:xRight-(i+.50)*run,z:zMid-.055,base:y+(i+1)*rise
+  })));
+  rail(Array.from({length:5},(_,i)=>({
+    x:xPivot+(i+.50)*run,z:zMid+.055,base:y+(14+i)*rise
+  })));
+  // Le dernier nez rejoint la dalle côté couloir sans franchir la trémie.
+  cube(g,xRight-.035,y+h-.045,zMid+.08,.13,.045,zBottom-zMid-.15,mat.wood,false);
 }
 
-// WC du rez-de-chaussée SOUS la partie haute de l'escalier.
-// Cloisons basses pour qu'on puisse en lire le plan en coupe et voir les sanitaires.
-function underStairToilet(g,x,z,y){
-  g.name='Architecture RDC - escalier et toilettes dessous';
-  // Sol en carreaux, à l'écart de la première volée située à droite.
-  cube(g,x+.10,y+.015,z+.12,1.09,.035,.83,mat.tile,false);
-  cube(g,x+.07,y,z+.10,.09,1.18,.88,mat.interior);
-  cube(g,x+.07,y,z+.10,1.14,1.10,.09,mat.interior);
-  cube(g,x+1.12,y,z+.10,.09,1.08,.78,mat.interior);
-  // Passage de 74 cm dans le muret avant, depuis l'espace de circulation.
-  cube(g,x+.07,y,z+.88,.30,1.06,.075,mat.interior);
-  cube(g,x+1.11,y,z+.88,.09,1.06,.075,mat.interior);
-  // WC, petit lave-mains et miroir : visibles même si les meubles sont masqués.
-  toilet(g,x+.29,z+.20,y);
-  cube(g,x+.87,y+.76,z+.30,.23,.075,.32,mat.white);
-  cyl(g,x+1.00,y+.82,z+.46,.058,.025,mat.metal,14);
-  cube(g,x+.93,y+1.05,z+.13,.20,.40,.018,mat.glassClear,false);
-  // Chambranle en bois, porte ouverte vers l'intérieur (passage dégagé).
-  cube(g,x+.38,y,z+.90,.035,1.45,.035,mat.wood,false);
-  cube(g,x+.38,y,z+.88,.40,.045,.035,mat.wood,false);
+// WC du rez-de-chaussée exactement sous la zone gauche des marches tournantes,
+// en bas à gauche du plan. Son accès est du côté de la volée haute.
+function underStairToilet(parent,x,z,y){
+  const g=new THREE.Group();
+  g.name='WC sous le tournant gauche de l escalier';
+  parent.add(g);
+  const za=z+1.00,zb=z+1.79;
+  cube(g,x+.095,y+.013,za,.80,.035,zb-za,mat.tile,false);
+  cube(g,x+.075,y,za,.09,1.20,zb-za,mat.interior);
+  cube(g,x+.075,y,za,.83,1.12,.075,mat.interior);
+  cube(g,x+.075,y,zb-.065,.83,1.10,.075,mat.interior);
+  // Petite cloison à droite, laissant l'entrée libre sous les marches hautes.
+  cube(g,x+.835,y,za,.075,1.12,.16,mat.interior);
+  toilet(g,x+.245,za+.09,y);
+  cube(g,x+.69,y+.73,za+.10,.16,.075,.24,mat.white);
+  cyl(g,x+.77,y+.81,za+.20,.045,.024,mat.metal,12);
+  cube(g,x+.72,y+1.00,za+.04,.13,.18,.018,mat.glassClear,false);
 }
 // Garde-corps entourant uniquement les bords libres des trémies aux étages.
 function shaftRail(g,x0,z0,x1,z1,y){
@@ -619,12 +682,12 @@ const rooms = [
   [{id:'garage1',name:'Garage 1',area:'35,3 m²',desc:'Garage sans voiture, avec rangement et établi en fond de pièce.',x:-4.3,z:.2,w:4.1,d:8.28,photo:'02-garage-entree.jpg'},
    {id:'technique',name:'Salle de bains (plan) / buanderie',area:'11,8 m² (plan)',desc:'Le plan nomme cet espace « Salle de bain » ; la photo fournie illustre son utilisation comme buanderie.',x:.14,z:.15,w:3.75,d:2.8,photo:'03-buanderie.jpg'},
    {id:'garage2',name:'Garage 2',area:'22,7 m²',desc:'Second garage, sans voiture, avec espace atelier.',x:4.20,z:.16,w:3.99,d:5.76,photo:'02-garage-entree.jpg'},
-   {id:'escalier-rdc',name:'Escalier, départ à droite',area:'Trémie ≈ 2,18 × 1,92 m',desc:'Première volée à droite, palier puis virage à gauche. Le petit mur a été supprimé devant le départ.',x:1.32,z:4.35,w:.83,d:.92,photo:'04-entree.jpg'},
-   {id:'wc-sous-escalier',name:'WC sous l’escalier',area:'Dimensions indicatives',desc:'Toilettes et lave-mains logés sous la deuxième volée de l’escalier au rez-de-chaussée.',x:.15,z:3.52,w:1.06,d:.81,photo:'06-wc-rdc.jpg'},
+   {id:'escalier-rdc',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Départ en haut à droite du plan, cinq marches vers la gauche, huit marches tournantes à gauche, puis cinq marches vers la droite jusqu’à l’étage. Pas de palier.',x:1.09,z:3.49,w:1.05,d:.83,photo:'04-entree.jpg'},
+   {id:'wc-sous-escalier',name:'WC sous l’escalier',area:'Dimensions indicatives',desc:'Toilettes et lave-mains placés sous les marches tournantes, dans la partie basse gauche du plan.',x:.14,z:4.43,w:.79,d:.75,photo:'06-wc-rdc.jpg'},
    {id:'loggia0',name:'Loggia',area:'8,5 m²',desc:'Loggia au rez-de-chaussée.',x:4.2,z:6.15,w:4.0,d:2.38,photo:'02-garage-entree.jpg'}],
   [{id:'chambre1',name:'Chambre 1',area:'13,2 m²',desc:'Chambre du premier étage, parquet et fenêtre sur l’extérieur.',x:.15,z:.15,w:3.65,d:3.18,photo:'13-chambre-bureau.jpg'},
    {id:'entree',name:'Entrée / distribution',area:'5,5 m²',desc:'Palier de distribution entre les pièces, contigu à la cage d’escalier.',x:2.25,z:3.63,w:1.57,d:2.04,photo:'04-entree.jpg'},
-   {id:'escalier',name:'Escalier demi-tournant',area:'Trémie ≈ 2,18 × 1,92 m',desc:'Escalier quart-tournant : départ à droite, montée vers l’arrière puis virage à gauche. WC sous la volée haute au rez-de-chaussée.',x:.09,z:3.46,w:2.07,d:1.85,photo:'04-entree.jpg'},
+   {id:'escalier',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Deux volées parallèles et tournant balancé à gauche. Départ à droite en haut du plan ; WC sous le tournant au rez-de-chaussée.',x:.09,z:3.46,w:2.07,d:1.85,photo:'04-entree.jpg'},
    {id:'cuisine',name:'Cuisine',area:'9,2 m²',desc:'Cuisine aux façades anthracite et plan de travail aspect bois.',x:.15,z:6.09,w:3.65,d:2.65,photo:'16-cuisine.jpg'},
    {id:'sejour',name:'Salon / salle à manger',area:'24,4 m²',desc:'Pièce de vie claire, mur vert sauge, coin repas et canapé.',x:4.18,z:.15,w:4.10,d:6.02,photo:'12-sejour.jpg'},
    {id:'loggia1',name:'Loggia vitrée',area:'12,3 m²',desc:'Pièce vitrée donnant sur l’extérieur, utilisée comme espace de jeux.',x:-4.07,z:5.72,w:3.95,d:2.98,photo:'05-loggia.jpg'},
@@ -652,7 +715,7 @@ for(let i=0;i<rooms.length;i++){
   }
 }
 const floorNames={all:'Vue extérieure',0:'Rez-de-chaussée',1:'Premier étage',2:'Deuxième étage'};
-const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Deux garages sans voiture, escalier partant de droite puis tournant à gauche, et WC en dessous.',1:'Séjour redécoré, cuisine, chambre, escalier et loggias.',2:'Deux chambres, salle de bains, WC et couloir.'};
+const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Deux garages sans voiture, escalier demi-tournant gauche conforme au plan et WC sous le tournant.',1:'Séjour redécoré, cuisine, chambre, escalier et loggias.',2:'Deux chambres, salle de bains, WC et couloir.'};
 let activeFloor='all',selected=null,roofOn=true,furnished=false,overhead=false,motion=null;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 function tweenTo(pos,target,duration=730){motion={start:performance.now(),duration,fromP:camera.position.clone(),toP:pos.clone(),fromT:controls.target.clone(),toT:target.clone()};}
@@ -703,7 +766,7 @@ function chooseRoom(id){const r=rooms[Number(activeFloor)]?.find(r=>r.id===id);i
 function focusStairs(){
   chooseFloor(0);
   showRoom(rooms[0].find(r=>r.id==='escalier-rdc'));
-  tweenTo(new THREE.Vector3(5.4,4.5,7.3),new THREE.Vector3(1.22,1.42,4.42),900);
+  tweenTo(new THREE.Vector3(4.8,6.1,7.9),new THREE.Vector3(1.11,1.30,4.32),900);
 }
 function focusRoom(){if(!selected||activeFloor==='all')return;const y=activeFloor==='0'?0:activeFloor==='1'?y1:y2;const x=selected.x+selected.w/2,z=selected.z+selected.d/2;tweenTo(new THREE.Vector3(x+Math.min(3.6,selected.w*1.05),y+3.5,z+Math.min(3.2,selected.d*1.12)),new THREE.Vector3(x,y+.65,z),850);}
 renderer.domElement.addEventListener('click',e=>{
