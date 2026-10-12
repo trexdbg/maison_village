@@ -285,7 +285,10 @@ archMesh.position.set(4.29,.06,8.86);archMesh.castShadow=true;archMesh.receiveSh
 lowPartition(levels[0].cut,'z',0,.10,8.58,0,.78,[[5.55,6.42,0,.78,'']]);
 // L'ancienne petite cloison devant la volée droite est retirée pour dégager le départ.
 lowPartition(levels[0].cut,'z',4.04,2.25,8.58,0,.78,[[6.30,7.15,0,.78,''],[7.22,8.11,0,.78,'solid']]);
-lowPartition(levels[0].cut,'z',2.18,3.40,5.37,0,.75,[[4.40,5.23,0,.75,'']]);
+// Accès à la première volée et sortie du retour entièrement libres au RDC.
+// Aucune cloison ni porte battante sur x=2.18 : l'ancien mur barrait la
+// première marche (z=3.46 à 4.35) malgré l'ouverture placée en face du retour.
+// Les marches et leurs deux rampes conservent leur géométrie d'origine.
 lowPartition(levels[0].cut,'x',3.40,0,2.18,0,.76);
 lowPartition(levels[0].cut,'x',3.1,0,4,0,.76,[[2.51,3.34,0,.76,'']]);
 lowPartition(levels[0].cut,'x',6.05,4.04,8.25,0,.76,[[4.49,5.40,0,.76,'']]);
@@ -657,9 +660,20 @@ function stairs(parent,x,z,y){
 // coupe pour permettre de voir les équipements depuis la maquette.
 // Le plafond est l'intrados incliné de l'escalier, et non une dalle plate.
 function underStairToilet(parent,x,z,y){
+  // Pivot local de 90° autour du centre des WC : la porte anciennement côté
+  // z positif s'ouvre maintenant vers x positif, en direction de l'escalier.
+  // Tout le volume pivote ensemble (sol, cloisons, sous-face, WC, vasque,
+  // compteur), sans déplacer les marches déjà conformes au plan.
+  const pivotX=x+.49, pivotZ=z+1.395;
+  const orientation=new THREE.Group();
+  orientation.name='WC sous escalier - orientation tournee 90 degres vers lescalier';
+  orientation.position.set(pivotX,0,pivotZ);
+  orientation.rotation.y=Math.PI/2;
+  parent.add(orientation);
   const g=new THREE.Group();
-  g.name='WC sous escalier - intérieur photographié et sous-face inclinée';
-  parent.add(g);
+  g.name='WC avec entree laterale vers escalier';
+  g.position.set(-pivotX,0,-pivotZ);
+  orientation.add(g);
   const za=z+1.00,zb=z+1.79;
   const wallWhite=new THREE.MeshStandardMaterial({color:'#f4f3ef',roughness:.94,side:THREE.DoubleSide});
   const oak=new THREE.MeshStandardMaterial({map:canvasTexture('wood'),color:'#bd8d5f',roughness:.83});
@@ -1078,7 +1092,7 @@ const rooms = [
    {id:'chambre-rdc',name:'Chambre du rez-de-chaussée',area:'11,8 m² (plan)',desc:'Chambre située à côté du WC sous escalier, avec parquet chêne, portes vertes, fenêtre à volets, lit double, rideaux écrus, commode et suspension en rotin. Surface du plan indicative.',x:.14,z:.15,w:3.75,d:2.8,photo:'13-chambre-bureau.jpg'},
    {id:'garage2',name:'Garage 2',area:'22,7 m²',desc:'Second garage, sans voiture, avec espace atelier.',x:4.20,z:.16,w:3.99,d:5.76,photo:'02-garage-entree.jpg'},
    {id:'escalier-rdc',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Départ en haut à droite du plan, cinq marches vers la gauche, huit marches tournantes à gauche, puis cinq marches vers la droite jusqu’à l’étage. Pas de palier.',x:1.09,z:3.49,w:1.05,d:.83,photo:'04-entree.jpg'},
-   {id:'wc-sous-escalier',name:'WC sous l’escalier',area:'Dimensions indicatives',desc:'WC photographiés sous la pente de l’escalier : parquet chêne, cuvette suspendue au fond, lave-mains à gauche et tableau électrique à droite.',x:.14,z:4.43,w:.79,d:.75,photo:'06-wc-rdc.jpg'},
+   {id:'wc-sous-escalier',name:'WC sous l’escalier',area:'Dimensions indicatives',desc:'WC pivotés de 90° sous la pente de l’escalier, porte tournée vers l’escalier ; parquet chêne, cuvette suspendue, lave-mains et tableau électrique.',x:.14,z:4.43,w:.79,d:.75,photo:'06-wc-rdc.jpg'},
    {id:'loggia0',name:'Loggia',area:'8,5 m²',desc:'Loggia au rez-de-chaussée.',x:4.2,z:6.15,w:4.0,d:2.38,photo:'02-garage-entree.jpg'}],
   [{id:'chambre1',name:'Chambre 1',area:'13,2 m²',desc:'Chambre du premier étage, parquet et fenêtre sur l’extérieur.',x:.15,z:.15,w:3.65,d:3.18,photo:'13-chambre-bureau.jpg'},
    {id:'entree',name:'Entrée / distribution',area:'5,5 m²',desc:'Palier de distribution entre les pièces, contigu à la cage d’escalier.',x:2.25,z:3.63,w:1.57,d:2.04,photo:'04-entree.jpg'},
