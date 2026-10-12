@@ -956,10 +956,11 @@ function rockCutFace(axis,at,from,to,bottom,top){
   fracturedSurface(exterior,grid);
 }
 // Le terrain naturel est de la pierre continue sous le bâtiment et la piscine.
-cube(exterior,-7,-.34,-5,28,.32,22,mat.bedrock,false);
-rockBank(-6.87,8.34,-.36,-4.91,-.02,1.85,27);
+// La roche reste dans les limites des volumes construits (aucune esplanade latérale).
+cube(exterior,-4.52,-.34,-2.25,21.59,.32,11.92,mat.bedrock,false);
+rockBank(-4.48,8.34,-.36,-4.91,-.02,1.85,23);
 rockBank(8.38,17.07,-2.32,-4.90,y1-.19,y1+1.10,16);
-rockBank(-6.91,-4.59,8.77,-4.88,-.02,1.70,7);
+// Talus latéral de gauche barré en rouge supprimé.
 
 // Cour et accès sur rue, au niveau bas de la maison.
 cube(exterior,-6.6,-.08,8.85,16,.12,6.40,mat.concrete,false);
@@ -973,15 +974,11 @@ function rockFoundation(x,z,w,d,top=terraceUnderside){
 // Elle s'appuie sur la roche à l'ouest et à l'arrière, mais couvre les garages
 // sans remplir leur volume intérieur de roche. Les coordonnées sont celles du
 // plan : y1 = dalle des pièces de vie et de la piscine.
+// Seules les terrasses du périmètre jaune sont conservées : plus de bande à gauche.
 const terraceWalkways=[
-  // Passage arrière continu : raccorde le côté ouest à la terrasse piscine.
-  {x:-6.50,z:-2.10,w:14.97,d:2.10,foundation:true},
-  // Passage latéral ouest, au-dessus de la roche, jusque devant la loggia.
-  {x:-6.50,z:0,w:2.02,d:9.65,foundation:true},
-  // Toit accessible du premier garage : le garage reste VIDE en dessous.
-  {x:-4.48,z:0,w:4.48,d:5.59,foundation:false},
-  // Retour côté rue, à la cote du premier étage (dalle en porte-à-faux).
-  {x:-4.48,z:8.90,w:12.95,d:.75,foundation:false}
+  {x:-4.48,z:-2.10,w:12.95,d:2.10,foundation:true}, // passage arrière
+  {x:-4.48,z:0,w:4.48,d:5.59,foundation:false}, // toit-terrasse garage
+  {x:-4.48,z:8.90,w:12.95,d:.75,foundation:false} // retour sur rue
 ];
 for(const deck of terraceWalkways){
   if(deck.foundation)rockFoundation(deck.x,deck.z,deck.w,deck.d);
@@ -992,9 +989,9 @@ cube(exterior,-4.48,y1-.28,0,4.48,.11,5.59,mat.concrete,false);
 // Retour de la terrasse au-dessus de la rue (façade d'entrée préservée).
 cube(exterior,-4.48,y1-.29,8.90,12.95,.12,.75,mat.concrete,false);
 // Parois de roche laissées visibles au-dessous du pourtour de la terrasse.
-rockCutFace('x',-6.52,-2.10,9.65,rockBaseY,terraceUnderside);
-rockCutFace('z',-2.12,-6.50,8.47,rockBaseY,terraceUnderside);
-rockCutFace('z',9.67,-6.50,-4.48,rockBaseY,terraceUnderside);
+rockCutFace('x',-4.50,-2.10,5.59,rockBaseY,terraceUnderside);
+rockCutFace('z',-2.12,-4.48,8.47,rockBaseY,terraceUnderside);
+// Suppression de la face rocheuse de la bande gauche extérieure.
 
 // Les quatre blocs de soubassement bordent la piscine excavée.
 // Ils ne débordent pas dans la réservation du bassin.
@@ -1061,11 +1058,12 @@ function terraceGuard(x0,z0,x1,z1){
   }
   trimLine(exterior,[x0,y1+1.07,z0],[x1,y1+1.07,z1],mat.green);
 }
-terraceParapet(-6.63,-2.10,.17,11.75); // bord de falaise, côté ouest
-terraceGuard(-6.55,-2.00,-6.55,9.48);
-terraceParapet(-6.50,9.53,14.97,.16); // côté rue, premier étage
-// Le parapet suit uniquement la limite : il ne traverse pas le toit des garages.
-terraceParapet(-6.50,-2.19,14.97,.17); // retour arrière
+// Le garde-corps borde désormais le garage, au niveau de la ligne jaune.
+terraceParapet(-4.62,-2.10,.14,7.69);
+terraceGuard(-4.53,-2.00,-4.53,5.55);
+terraceParapet(-4.62,8.95,.14,.70);
+terraceParapet(-4.48,9.53,12.95,.16); // façade
+terraceParapet(-4.48,-2.19,12.95,.17); // arrière
 // Ancien rectangle de faux gazon supprimé : le dallage continue autour du bassin.
 cube(exterior,14.22,y1+.02,-2.12,.21,1.53,5.22,mat.stucco);
 cube(exterior,8.46,y1+.01,8.92,8.6,.83,.18,mat.stucco);
@@ -1103,18 +1101,16 @@ const neighborProperty=new THREE.Group();
 neighborProperty.name='Contexte : maison voisine en contre-haut (indicatif)';
 scene.add(neighborProperty);
 const neighborLevel=y1+2.12;  // le terrain voisin domine la plage de piscine
-const neighborGround=new THREE.MeshStandardMaterial({color:'#b9aa97',roughness:1});
 const neighborWall=new THREE.MeshStandardMaterial({color:'#d7c5ac',roughness:.98});
 const neighborRoof=new THREE.MeshStandardMaterial({color:'#a76b4d',roughness:.94,side:THREE.DoubleSide});
 const neighborTrim=new THREE.MeshStandardMaterial({color:'#f0e9db',roughness:.83});
-// Sol de la parcelle voisine : aucun dallage/aucune terrasse ne traverse la limite.
-cube(neighborProperty,17.49,rockBaseY,-5.05,12.6,neighborLevel-rockBaseY,14.7,mat.bedrock,false);
-cube(neighborProperty,17.49,neighborLevel-.11,-5.05,12.6,.13,14.7,neighborGround,false);
-// Mur de soutènement privatif, plus haut que le muret de notre piscine.
-cube(neighborProperty,17.49,y1-.12,-2.17,.32,neighborLevel-y1+.27,11.32,mat.stone,false);
-cube(neighborProperty,17.46,neighborLevel+.10,-2.17,.38,.12,11.32,neighborTrim,false);
-// Maison voisine établie sur cette parcelle surélevée, en retrait de la piscine.
-const nx=19.15,nz=-4.20,nw=8.20,nd=5.80,wallH=2.72;
+// Surface barrée en rouge : suppression de l'ancienne esplanade de 12,6 × 14,7 m.
+// La parcelle voisine ne reçoit aucun dallage, uniquement le volume bâti en contre-haut.
+const nx=17.87,nz=-2.32,nw=6.30,nd=10.62,wallH=2.72;
+cube(neighborProperty,nx-.08,rockBaseY,nz-.10,nw+.16,neighborLevel-rockBaseY,nd+.20,mat.bedrock,false);
+// Le mur séparatif reste indépendant de la terrasse de notre piscine.
+cube(neighborProperty,17.57,y1-.12,-2.24,.30,neighborLevel-y1+.28,11.02,mat.stone,false);
+cube(neighborProperty,17.55,neighborLevel+.08,-2.24,.35,.12,11.02,neighborTrim,false);
 const eave=neighborLevel+wallH,ridge=eave+1.20,mid=nx+nw/2;
 cube(neighborProperty,nx,neighborLevel,nz,nw,wallH,nd,neighborWall,false);
 cube(neighborProperty,nx-.16,neighborLevel-.11,nz-.15,nw+.32,.17,nd+.30,neighborTrim,false);
@@ -1142,14 +1138,7 @@ for(const [edge,center] of [[nx-.35,mid],[nx+nw+.35,mid]]){
   }
 }
 trimLine(neighborProperty,[mid,ridge+.03,roofFront],[mid,ridge+.03,roofBack],neighborRoof);
-// Fenêtres schématiques sur la façade visible, sans prétendre reproduire le voisin.
-const neighborGlass=new THREE.MeshStandardMaterial({color:'#657a78',roughness:.25,metalness:.08});
-for(const wx of [20.20,24.44]){
-  cube(neighborProperty,wx,neighborLevel+.88,nz+nd+.013,1.48,1.21,.07,neighborTrim,false);
-  cube(neighborProperty,wx+.10,neighborLevel+.98,nz+nd+.086,1.28,1.01,.024,neighborGlass,false);
-  cube(neighborProperty,wx+.71,neighborLevel+.96,nz+nd+.115,.045,1.04,.038,neighborTrim,false);
-  cube(neighborProperty,wx-.06,neighborLevel+.84,nz+nd+.02,1.60,.075,.16,neighborTrim,false);
-}
+// Aucune fausse terrasse ni jardin ne prolonge le côté droit : uniquement le bâti voisin.
 // La maison voisine se masque en vue des étages pour ne pas occulter la visite intérieure.
 
 // --- Room selection / photo references ---
