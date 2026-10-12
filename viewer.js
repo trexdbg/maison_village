@@ -735,7 +735,35 @@ const rockBaseY=-.24,terraceUnderside=y1-.17;
 function rockFoundation(x,z,w,d,top=terraceUnderside){
   cube(exterior,x,rockBaseY,z,w,top-rockBaseY,d,mat.bedrock,false);
 }
-// Quatre masses autour de la fouille : aucun plancher n'obstrue la piscine.
+// La terrasse du PREMIER ÉTAGE forme une continuité autour de la maison.
+// Elle s'appuie sur la roche à l'ouest et à l'arrière, mais couvre les garages
+// sans remplir leur volume intérieur de roche. Les coordonnées sont celles du
+// plan : y1 = dalle des pièces de vie et de la piscine.
+const terraceWalkways=[
+  // Passage arrière continu : raccorde le côté ouest à la terrasse piscine.
+  {x:-6.50,z:-2.10,w:14.97,d:2.10,foundation:true},
+  // Passage latéral ouest, au-dessus de la roche, jusque devant la loggia.
+  {x:-6.50,z:0,w:2.02,d:9.65,foundation:true},
+  // Toit accessible du premier garage : le garage reste VIDE en dessous.
+  {x:-4.48,z:0,w:4.48,d:5.59,foundation:false},
+  // Retour côté rue, à la cote du premier étage (dalle en porte-à-faux).
+  {x:-4.48,z:8.90,w:12.95,d:.75,foundation:false}
+];
+for(const deck of terraceWalkways){
+  if(deck.foundation)rockFoundation(deck.x,deck.z,deck.w,deck.d);
+  cube(exterior,deck.x,y1-.17,deck.z,deck.w,.23,deck.d,mat.tile,false);
+}
+// Chape porteuse au-dessus du garage : pas de terre et pas de roche à l'intérieur.
+cube(exterior,-4.48,y1-.28,0,4.48,.11,5.59,mat.concrete,false);
+// Retour de la terrasse au-dessus de la rue (façade d'entrée préservée).
+cube(exterior,-4.48,y1-.29,8.90,12.95,.12,.75,mat.concrete,false);
+// Parois de roche laissées visibles au-dessous du pourtour de la terrasse.
+rockCutFace('x',-6.52,-2.10,9.65,rockBaseY,terraceUnderside);
+rockCutFace('z',-2.12,-6.50,8.47,rockBaseY,terraceUnderside);
+rockCutFace('z',9.67,-6.50,-4.48,rockBaseY,terraceUnderside);
+
+// Les quatre blocs de soubassement bordent la piscine excavée.
+// Ils ne débordent pas dans la réservation du bassin.
 rockFoundation(8.47,-2.10,8.60,2.22);
 rockFoundation(8.47,.12,1.04,4.30);
 rockFoundation(13.38,.12,3.69,4.30);
@@ -745,6 +773,8 @@ rockFoundation(9.51,.12,3.87,4.30,y1-1.12);
 rockCutFace('x',17.07,-2.1,9.15,rockBaseY,terraceUnderside);
 rockCutFace('z',9.15,8.47,17.07,rockBaseY,terraceUnderside);
 
+// Les dalles côté piscine se raccordent aux nouveaux cheminements : une
+// terrasse minérale CONTINUE autour du bâtiment, jamais une pelouse en bas.
 // Dallage supérieur en quatre surfaces qui laissent une vraie excavation.
 cube(exterior,8.47,y1-.17,-2.1,8.6,.23,2.22,mat.tile,false);
 cube(exterior,8.47,y1-.17,.12,1.04,.23,4.30,mat.tile,false);
@@ -783,6 +813,25 @@ for(const [x0,z0,x1,z1] of [[9.20,-.17,13.66,-.17],[9.20,4.68,13.66,4.68],[9.20,
   trimLine(exterior,[x0,y1+.96,z0],[x1,y1+.96,z1],mat.white);
   trimLine(exterior,[x0,y1+.16,z0],[x1,y1+.16,z1],mat.white);
 }
+// Garde-corps et murets sur les nouvelles limites exposées de la terrasse.
+// Ils suivent le pourtour extérieur, à distance des fenêtres et portes.
+function terraceParapet(x,z,w,d){
+  cube(exterior,x,y1+.06,z,w,.33,d,mat.stone,false);
+  cube(exterior,x-.02,y1+.39,z-.02,w+.04,.065,d+.04,mat.white,false);
+}
+function terraceGuard(x0,z0,x1,z1){
+  const n=Math.ceil(Math.hypot(x1-x0,z1-z0)/.24);
+  for(let i=0;i<=n;i++){
+    const t=i/n;
+    cube(exterior,x0+(x1-x0)*t,y1+.45,z0+(z1-z0)*t,.035,.61,.035,mat.green,false);
+  }
+  trimLine(exterior,[x0,y1+1.07,z0],[x1,y1+1.07,z1],mat.green);
+}
+terraceParapet(-6.63,-2.10,.17,11.75); // bord de falaise, côté ouest
+terraceGuard(-6.55,-2.00,-6.55,9.48);
+terraceParapet(-6.50,9.53,14.97,.16); // côté rue, premier étage
+// Le parapet suit uniquement la limite : il ne traverse pas le toit des garages.
+terraceParapet(-6.50,-2.19,14.97,.17); // retour arrière
 // Ancien rectangle de faux gazon supprimé : le dallage continue autour du bassin.
 cube(exterior,14.22,y1+.02,-2.12,.21,1.53,5.22,mat.stucco);
 cube(exterior,8.46,y1+.01,8.92,8.6,.83,.18,mat.stucco);
