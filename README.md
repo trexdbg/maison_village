@@ -126,3 +126,11 @@ Correction à partir de la photographie annotée : le terrain inférieur reste r
 - Script viewer.js versionné V11 pour recharger la nouvelle version sur GitHub Pages et actualiser la présentation.
 
 **À confirmer** : affectation définitive de cette pièce et surface indicative issue du plan (11,8 m²). Les dimensions et positions précises de l'ameublement restent illustratives, à vérifier sur place.
+
+## Mise à jour V12 — limite de terrasse et maison en contre-haut (12 octobre 2026)
+
+- Limite de la terrasse conservée au bord de la propriété (jusqu'au muret côté droit de la piscine) : **aucun dallage prolongé vers la parcelle voisine**. Les bacs décoratifs du coin droit barré en rouge sont supprimés.
+- À droite de la terrasse/piscine se trouve **une autre maison, sur un terrain plus élevé** : le terrain voisin plat/fictif est remplacé dans la scène 3D par un volume de maison sur une plateforme en contre-haut, séparée par un mur de soutènement.
+- Le talus rocheux arrière est arrêté à la limite propre à la maison présentée. La maquette reste en pierre au rez-de-jardin, tandis que la piscine et les terrasses sont au niveau supérieur.
+- La maison voisine est masquée lorsque l'on sélectionne un étage, pour faciliter l'inspection des pièces. Son aspect (dimensions, toiture, fenêtres) est **indicatif**, car seule sa présence et sa position en contre-haut sont confirmées.
+- Invalidation du cache avec `viewer.js?v=12-terrasse-voisin-20261012`.
