@@ -524,14 +524,32 @@ function stairs(parent,x,z,y){
       }
     }
   }
-  rail(Array.from({length:5},(_,i)=>({
+  const railGoingUp=Array.from({length:5},(_,i)=>({
     x:xRight-(i+.50)*run,z:zMid-.055,base:y+(i+1)*rise
-  })));
-  rail(Array.from({length:5},(_,i)=>({
+  }));
+  // Au premier étage, la rampe de la montée suivante part depuis le palier,
+  // sans grille posée en travers de l'entrée de cette volée.
+  if(y>1)railGoingUp.unshift({
+    x:xRight+.07,z:zMid-.055,base:y
+  });
+  rail(railGoingUp);
+  const railComingUp=Array.from({length:5},(_,i)=>({
     x:xPivot+(i+.50)*run,z:zMid+.055,base:y+(14+i)*rise
-  })));
-  // Le dernier nez rejoint la dalle côté couloir sans franchir la trémie.
-  cube(g,xRight-.035,y+h-.045,zMid+.08,.13,.045,zBottom-zMid-.15,mat.wood,false);
+  }));
+  // La main courante accompagne la dernière marche jusqu'au couloir.
+  // L'extrémité est dans l'axe de séparation des deux volées, et non devant elles.
+  if(y<1)railComingUp.push({
+    x:xRight+.07,z:zMid+.055,base:y+h
+  });
+  rail(railComingUp);
+  // Raccord de hauteur avec le parquet : bande de finition encastrée dans
+  // le bord du couloir, avec un nez discret, sans faux palier ni ressaut.
+  if(y<1){
+    cube(g,xRight-.045,y+h-.026,zMid+.09,.255,.044,zBottom-zMid-.17,mat.wood,false);
+    cube(g,xRight-.045,y+h+.013,zMid+.09,.025,.008,zBottom-zMid-.17,nosing,false);
+  } else {
+    cube(g,xRight-.035,y+h-.045,zMid+.08,.13,.045,zBottom-zMid-.15,mat.wood,false);
+  }
 }
 
 // WC du rez-de-chaussée exactement sous la zone gauche des marches tournantes,
@@ -563,7 +581,13 @@ function shaftRail(g,x0,z0,x1,z1,y){
 }
 for(const floor of [1,2]){
   const yy=floor===1?2.72:5.42;
-  shaftRail(levels[floor].architecture,2.18,3.43,2.18,4.38,yy);
+  // Au 1er étage, les deux volées sont accessibles depuis le couloir
+  // par le bord x=2.18 : PAS de barrière devant la première marche.
+  // Au 2e étage seulement, la partie haute est fermée par un garde-corps
+  // puisqu'aucun autre escalier n'y démarre.
+  if(floor===2){
+    shaftRail(levels[floor].architecture,2.18,3.43,2.18,4.38,yy);
+  }
   shaftRail(levels[floor].architecture,.12,5.36,1.03,5.36,yy);
 }
 
@@ -715,7 +739,7 @@ for(let i=0;i<rooms.length;i++){
   }
 }
 const floorNames={all:'Vue extérieure',0:'Rez-de-chaussée',1:'Premier étage',2:'Deuxième étage'};
-const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Deux garages sans voiture, escalier demi-tournant gauche conforme au plan et WC sous le tournant.',1:'Séjour redécoré, cuisine, chambre, escalier et loggias.',2:'Deux chambres, salle de bains, WC et couloir.'};
+const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Deux garages sans voiture, escalier demi-tournant gauche conforme au plan et WC sous le tournant.',1:'Escalier demi-tournant gauche, accès libre entre les deux volées, raccord de palier en parquet, séjour, cuisine et loggias.',2:'Deux chambres, salle de bains, WC et couloir.'};
 let activeFloor='all',selected=null,roofOn=true,furnished=false,overhead=false,motion=null;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 function tweenTo(pos,target,duration=730){motion={start:performance.now(),duration,fromP:camera.position.clone(),toP:pos.clone(),fromT:controls.target.clone(),toT:target.clone()};}
