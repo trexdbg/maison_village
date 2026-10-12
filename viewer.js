@@ -267,8 +267,10 @@ function sideEdge(g,x,z0,z1,y,height=.62){cube(g,x,y,z0,.14,height,z1-z0,mat.int
 // des mêmes percements que les murs hauts. Une porte n'est jamais obstruée en coupe.
 // --- Ground floor: based on 12.95 × 8.77 m plan ---
 plankFloor(levels[0].slab,-4.48,0,12.95,8.77,.04,mat.concrete);
-// La chambre photographiée dispose d'un parquet clair, pas d'un sol de garage.
-plankFloor(levels[0].slab,.14,.16,3.75,2.84,.09,mat.wood);
+// D'après le plan fourni : SDB / buanderie au NORD de l'escalier,
+// chambre 14,4 m² au SUD (côté façade, z croissant).
+plankFloor(levels[0].slab,.14,.16,3.75,2.90,.09,mat.tile);
+plankFloor(levels[0].slab,.14,5.53,3.75,2.99,.09,mat.wood);
 wall(levels[0].walls,'x',0,-4.48,8.47,0,2.67,.22,mat.stucco,[[.75,1.83,1.08,2.05,'window']]);
 wall(levels[0].walls,'x',8.57,-4.48,8.47,0,2.67,.22,mat.stucco,[[-3.70,-1.08,0,2.30,'garage'],[.63,1.51,1.00,2.06,'window'],[4.40,8.08,0,2.36,'open']]);
 wall(levels[0].walls,'z',-4.48,0,8.77,0,2.67,.2,mat.stucco);
@@ -294,9 +296,15 @@ lowPartition(levels[0].cut,'x',3.1,0,4,0,.76,[[2.51,3.34,0,.76,'']]);
 lowPartition(levels[0].cut,'x',6.05,4.04,8.25,0,.76,[[4.49,5.40,0,.76,'']]);
 // Garage au rez-de-chaussée : deux volumes libres, sans voiture ni guidage de pneus.
 function cabinet(g,x,y,z,w,h,d,m=mat.warmwhite){cube(g,x,y,z,w,h,d,m);cube(g,x,y,z+d-.012,w,.02,.022,mat.wood,false);}
-// La pièce accolée aux WC sous escalier correspond à la chambre photographiée,
-// et non à la buanderie précédemment dessinée : on retire ici les machines fictives.
-// Le mobilier est ajouté après la déclaration de groundBedroom().
+// Buanderie / salle de bains de 11,8 m² : au nord de la cage d'escalier (z=0..3.17).
+// Les machines et les rangements sont restitués à leur emplacement initial.
+for(let k=0;k<2;k++){
+  cube(levels[0].furniture,.28+k*.72,.06,.30,.64,.90,.69,mat.white);
+  cyl(levels[0].furniture,.59+k*.72,.53,.996,.23,.025,mat.dark,22);
+}
+cabinet(levels[0].furniture,2.3,.04,.3,.75,1.88,.65);
+cyl(levels[0].furniture,3.36,.10,1.1,.28,1.75,mat.white,20);
+for(let n=0;n<5;n++)cube(levels[0].furniture,.22,.55+n*.31,2.22,1.4,.06,.4,mat.wood,false);
 // Garages dégagés, avec rangements et atelier à l'arrière comme sur la nouvelle photo.
 function storage(g,x,z,y,w=1.45) {
   for(const xx of [x,x+w-.05])cube(g,xx,y,z,.05,1.78,.42,mat.metal,false);
@@ -409,92 +417,85 @@ function sofa(g,x,z,y){
 }
 function wardrobe(g,x,z,y,w=1.4){cube(g,x,y,z,w,2.03,.55,mat.wood);cube(g,x+w/2-.014,y+.05,z+.55,.026,1.88,.04,mat.warmwhite,false);for(const xx of [x+w*.45,x+w*.55])cube(g,xx,y+1.0,z+.57,.018,.21,.02,mat.metal,false);}
 function bureau(g,x,z,y){cube(g,x,y+.75,z,1.25,.08,.59,mat.white);for(const xx of [x+.04,x+1.17])for(const zz of [z+.05,z+.50])cube(g,xx,y+.02,zz,.045,.72,.045,mat.wood);cube(g,x+.20,y+.80,z+.14,.35,.022,.28,mat.dark);}
-// Chambre du niveau habitable : aménagement inspiré de la photographie fournie.
-// Emprise x=.15..3.78, z=.15..3.34 : le lit ne coupe ni la fenêtre sur x=0
-// ni le passage x=2.50..3.37 vers le palier (z=3.50).
+// Chambre 14,4 m² du REZ-DE-CHAUSSÉE, au sud de la cage d'escalier.
+// Coordonnées issues du plan fourni : x=.14..3.89, z=5.53..8.52.
+// Les passages latéraux restent dégagés : porte ouest (z~5.55..6.42),
+// porte est vers la loggia (z~7.22..8.11), fenêtre au sud sur z=8.57.
 function groundBedroom(g,y){
-  // Le groupe est légèrement reculé par rapport à la cloison arrière (z=3.10).
-  const bedroomObjects=new THREE.Group();
-  bedroomObjects.position.z=-.16;
-  g.add(bedroomObjects);
-  g=bedroomObjects;
   const oak=new THREE.MeshStandardMaterial({color:'#c9a57a',roughness:.87});
-  const oakEdge=new THREE.MeshStandardMaterial({color:'#a67e58',roughness:.88});
-  const cream=new THREE.MeshStandardMaterial({color:'#eee8dd',roughness:1});
+  const oakEdge=new THREE.MeshStandardMaterial({color:'#a67e58',roughness:.86});
+  const cream=new THREE.MeshStandardMaterial({color:'#eee8dd',roughness:.98});
   const cotton=new THREE.MeshStandardMaterial({color:'#f9f4e9',roughness:1});
   const linenBeige=new THREE.MeshStandardMaterial({color:'#d7c8b4',roughness:1});
-  const olive=new THREE.MeshStandardMaterial({color:'#8f9e86',roughness:1});
+  const sage=new THREE.MeshStandardMaterial({color:'#91a18a',roughness:1});
   const rattan=new THREE.MeshStandardMaterial({color:'#c68b44',roughness:.94,side:THREE.DoubleSide});
   const foliage=new THREE.MeshStandardMaterial({color:'#70876a',roughness:1});
 
-  // Tapis écru, lit double 160 × 200, tête de lit contre le mur plein est.
-  cube(g,1.40,y+.028,.62,2.25,.026,2.18,cream,false);
-  cube(g,1.61,y+.18,.85,2.11,.22,1.65,oak);
-  for(const bx of [1.69,3.56])for(const bz of [.93,2.35])
-    cube(g,bx,y+.035,bz,.075,.19,.075,oakEdge);
-  cube(g,1.66,y+.41,.90,1.98,.24,1.55,cotton);
-  // Couette et plaid au pied du lit, plis lisibles en vue plongeante.
-  cube(g,1.69,y+.658,.925,1.38,.08,1.50,linenBeige);
-  cube(g,1.73,y+.742,.95,.32,.027,1.45,olive,false);
-  for(const bz of [1.03,1.80]){
-    cube(g,3.16,y+.66,bz,.38,.115,.58,cotton);
-    cube(g,3.18,y+.78,bz+.08,.20,.035,.42,cream,false);
+  // Lit double avec tête côté escalier, mais écarté de la circulation latérale.
+  cube(g,1.20,y+.048,5.75,2.02,.027,2.47,cream,false);
+  cube(g,1.38,y+.18,5.94,1.70,.22,2.03,oak);
+  for(const bx of [1.46,2.94])for(const bz of [6.01,7.77])
+    cube(g,bx,y+.04,bz,.075,.16,.075,oakEdge);
+  cube(g,1.43,y+.40,6.02,1.60,.22,1.87,cotton);
+  cube(g,1.47,y+.622,6.73,1.52,.082,1.09,linenBeige);
+  cube(g,1.48,y+.708,7.46,1.50,.028,.32,sage,false);
+  for(const xx of [1.49,2.32]){
+    cube(g,xx,y+.635,6.12,.68,.115,.43,cotton);
+    cube(g,xx+.08,y+.756,6.16,.44,.028,.26,cream,false);
   }
-  cube(g,3.70,y+.33,.78,.135,.91,1.79,oak);
-  cube(g,3.66,y+.56,.85,.052,.56,1.65,linenBeige,false);
+  cube(g,1.33,y+.20,5.82,1.80,.91,.12,oak);
+  cube(g,1.41,y+.44,5.949,1.64,.53,.035,linenBeige,false);
 
-  // Deux petits chevets en bois, lampes et quelques livres.
-  for(const z of [.26,2.67]){
-    cube(g,3.14,y+.38,z,.45,.095,.36,oak);
-    for(const x of [3.19,3.51])for(const zz of [z+.05,z+.29])
-      cube(g,x,y+.04,zz,.035,.34,.035,oakEdge);
+  // Chevets compacts, pas de meubles devant les deux portes.
+  for(const xx of [.86,3.20]){
+    cube(g,xx,y+.33,5.88,.39,.14,.42,oak);
+    for(const legX of [xx+.05,xx+.31])
+      for(const zz of [5.94,6.21])cube(g,legX,y+.045,zz,.035,.29,.034,oakEdge);
   }
-  cyl(g,3.38,y+.48,.45,.052,.22,oakEdge,12);
-  const lampShade=new THREE.Mesh(new THREE.CylinderGeometry(.10,.15,.18,16),cream);
-  lampShade.position.set(3.38,y+.79,.45);g.add(lampShade);
-  cube(g,3.22,y+.48,2.74,.22,.032,.14,cotton,false);
-  cube(g,3.25,y+.52,2.76,.20,.025,.12,olive,false);
+  cyl(g,1.07,y+.47,6.07,.047,.20,oakEdge,12);
+  const shade=new THREE.Mesh(new THREE.CylinderGeometry(.10,.14,.19,16),cream);
+  shade.position.set(1.07,y+.75,6.07);g.add(shade);
+  cube(g,3.26,y+.48,6.04,.22,.038,.16,cotton,false);
 
-  // Commode bois clair à tiroirs crème, du côté libre de la fenêtre.
-  cube(g,.30,y+.05,2.70,1.18,.79,.43,oak);
-  cube(g,.35,y+.12,3.105,1.08,.64,.020,cream,false);
+  // Commode chêne / tiroirs ivoire sur le mur OUEST, au sud du passage.
+  cube(g,.24,y+.05,6.89,.51,.85,1.17,oak);
+  cube(g,.735,y+.14,6.97,.025,.69,1.01,cream,false);
   for(let i=0;i<3;i++){
-    cube(g,.36,y+.14+i*.21,3.133,1.06,.012,.008,oakEdge,false);
-    cube(g,.81,y+.21+i*.21,3.136,.16,.018,.018,oakEdge,false);
+    cube(g,.762,y+.16+i*.23,6.97,.009,.012,1.01,oakEdge,false);
+    cube(g,.776,y+.23+i*.23,7.40,.018,.022,.19,oakEdge,false);
   }
-  cube(g,.27,y+.84,2.67,1.24,.055,.49,oak);
-  // Bouquet et diffuseur identifiables sur la photo.
-  cyl(g,.59,y+.90,2.88,.070,.17,cotton,12);
-  for(const dx of [-.08,0,.08]){
-    trimLine(g,[.59,y+1.07,2.88],[.59+dx,y+1.24,2.88+dx],foliage);
-    sphere(g,.59+dx,y+1.25,2.88+dx,.052,cotton);
+  cube(g,.21,y+.90,6.86,.57,.053,1.23,oak);
+  cyl(g,.48,y+.957,7.08,.07,.15,cotton,12);
+  for(const dz of [-.09,0,.09]){
+    trimLine(g,[.48,y+1.10,7.08],[.48+dz*.25,y+1.32,7.08+dz],foliage);
+    sphere(g,.48+dz*.25,y+1.34,7.08+dz,.045,cotton);
   }
-  cyl(g,1.24,y+.90,2.88,.039,.14,cream,10);
+  cyl(g,.45,y+.957,7.78,.039,.13,cream,10);
   for(let k=0;k<3;k++)
-    trimLine(g,[1.24,y+1.01,2.88],[1.19+k*.04,y+1.27,2.84+k*.03],oakEdge);
+    trimLine(g,[.45,y+1.08,7.78],[.40+k*.05,y+1.28,7.77+k*.035],oakEdge);
 
-  // Store en lin au-dessus de la fenêtre à volets verts, sans cacher le vitrage.
-  cube(g,.19,y+2.13,.44,.075,.19,1.40,linenBeige,false);
-  cube(g,.20,y+2.10,.48,.045,.045,1.31,cream,false);
-
-  // Placard derrière des rideaux écrus, pliés contre le pan de mur droit.
-  cube(g,3.815,y+2.43,2.62,.035,.055,.59,oakEdge,false);
-  for(let i=0;i<9;i++){
-    const z=2.63+i*.062;
-    cube(g,3.805+(i%2)*.016,y+.06,z,.025,2.31,.061,i%2?cream:linenBeige,false);
+  // Rideaux de lin sur une niche de rangement contre le mur EST,
+  // au nord de la porte desservant la loggia (dont le passage est préservé).
+  cube(g,3.80,y+2.42,5.60,.045,.052,1.21,oakEdge,false);
+  for(let i=0;i<15;i++){
+    const zz=5.61+i*.078;
+    cube(g,3.79+(i%2)*.017,y+.07,zz,.037,2.28,.070,i%2?cream:linenBeige,false);
   }
-  // Climatisation discrète, au-dessus de la zone rideau/porte de la photo.
-  cube(g,3.725,y+2.30,2.77,.16,.25,.45,cotton,false);
-  cube(g,3.719,y+2.33,2.81,.012,.020,.37,oakEdge,false);
+  cube(g,3.76,y+2.24,5.81,.13,.23,.54,cotton,false);
+  cube(g,3.755,y+2.28,5.84,.014,.02,.44,oakEdge,false);
 
-  // Suspension en fibres tressées ajourées, analogue à celle de la photo.
-  const cx=2.47,cz=1.69;
-  cyl(g,cx,y+2.29,cz,.066,.21,mat.dark,14);
-  trimLine(g,[cx,y+2.29,cz],[cx,y+2.08,cz],mat.dark);
-  const rings=[[2.10,.24],[1.97,.34],[1.79,.32],[1.69,.22]];
-  for(const [height,radius] of rings){
-    const ring=new THREE.Mesh(new THREE.TorusGeometry(radius,.017,5,28),rattan);
-    ring.rotation.x=Math.PI/2;ring.position.set(cx,y+height,cz);ring.castShadow=false;g.add(ring);
+  // Store en lin AU-DESSUS de la fenêtre côté façade (z=8.57), sans l'obturer.
+  cube(g,.72,y+2.22,8.425,1.26,.18,.07,linenBeige,false);
+  cube(g,.76,y+2.19,8.418,1.18,.047,.052,cream,false);
+
+  // Abat-jour ajouré façon rotin, suspendu au centre de la chambre.
+  const cx=2.23,cz=6.97;
+  cyl(g,cx,y+2.27,cz,.065,.19,mat.dark,14);
+  trimLine(g,[cx,y+2.27,cz],[cx,y+2.06,cz],mat.dark);
+  const rings=[[2.07,.24],[1.94,.34],[1.75,.32],[1.65,.22]];
+  for(const [hh,rr] of rings){
+    const ring=new THREE.Mesh(new THREE.TorusGeometry(rr,.017,5,28),rattan);
+    ring.rotation.x=Math.PI/2;ring.position.set(cx,y+hh,cz);ring.castShadow=false;g.add(ring);
   }
   for(let i=0;i<22;i++){
     const a=i*Math.PI*2/22,co=Math.cos(a),si=Math.sin(a);
@@ -503,7 +504,7 @@ function groundBedroom(g,y){
       trimLine(g,[cx+co*r0,y+h0,cz+si*r0],[cx+co*r1,y+h1,cz+si*r1],rattan);
     }
   }
-  sphere(g,cx,y+1.87,cz,.058,mat.warmwhite);
+  sphere(g,cx,y+1.83,cz,.052,mat.warmwhite);
 }
 
 function kitchen(g,y){
@@ -1146,7 +1147,8 @@ for(const wx of [20.20,24.44]){
 // --- Room selection / photo references ---
 const rooms = [
   [{id:'garage1',name:'Garage 1',area:'35,3 m²',desc:'Garage sans voiture, avec rangement et établi en fond de pièce.',x:-4.3,z:.2,w:4.1,d:8.28,photo:'02-garage-entree.jpg'},
-   {id:'chambre-rdc',name:'Chambre du rez-de-chaussée',area:'11,8 m² (plan)',desc:'Chambre située à côté du WC sous escalier, avec parquet chêne, portes vertes, fenêtre à volets, lit double, rideaux écrus, commode et suspension en rotin. Surface du plan indicative.',x:.14,z:.15,w:3.75,d:2.8,photo:'13-chambre-bureau.jpg'},
+   {id:'buanderie-rdc',name:'Salle de bains / Buanderie',area:'11,8 m² (plan)',desc:'Au nord de l’escalier, pièce de service avec équipements de buanderie et rangements, conformément à l’emplacement du plan.',x:.14,z:.15,w:3.75,d:2.90,photo:'03-buanderie.jpg'},
+   {id:'chambre-rdc',name:'Chambre du rez-de-chaussée',area:'14,4 m² (plan)',desc:'Au sud de l’escalier, entre le garage gauche et la loggia droite : parquet chêne, lit double, deux chevets, commode claire, rideaux écrus et suspension en rotin. Accès latéraux dégagés.',x:.14,z:5.51,w:3.75,d:3.01,photo:'13-chambre-bureau.jpg'},
    {id:'garage2',name:'Garage 2',area:'22,7 m²',desc:'Second garage, sans voiture, avec espace atelier.',x:4.20,z:.16,w:3.99,d:5.76,photo:'02-garage-entree.jpg'},
    {id:'escalier-rdc',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Départ en haut à droite du plan, cinq marches vers la gauche, huit marches tournantes à gauche, puis cinq marches vers la droite jusqu’à l’étage. Pas de palier.',x:1.09,z:3.49,w:1.05,d:.83,photo:'04-entree.jpg'},
    {id:'wc-sous-escalier',name:'WC sous l’escalier',area:'Dimensions indicatives',desc:'WC pivotés de 90° sous la pente de l’escalier, porte tournée vers l’escalier ; parquet chêne, cuvette suspendue, lave-mains et tableau électrique.',x:.14,z:4.43,w:.79,d:.75,photo:'06-wc-rdc.jpg'},
@@ -1181,7 +1183,7 @@ for(let i=0;i<rooms.length;i++){
   }
 }
 const floorNames={all:'Vue extérieure',0:'Rez-de-jardin',1:'Premier étage',2:'Deuxième étage'};
-const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Chambre meublée au parquet chêne près des WC sous escalier, avec garages encaissés dans la roche et sans jardin au niveau bas. La terrasse et la piscine se trouvent au niveau supérieur.',1:'Escalier demi-tournant gauche, accès libre entre les deux volées, raccord de palier en parquet, séjour, cuisine et loggias.',2:'Deux chambres, salle de bains, WC et couloir.'};
+const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Salle de bains / buanderie (11,8 m²) au nord de l’escalier, chambre meublée (14,4 m²) au sud, garages creusés dans la roche ; terrasse et piscine au niveau supérieur.',1:'Escalier demi-tournant gauche, accès libre entre les deux volées, raccord de palier en parquet, séjour, cuisine et loggias.',2:'Deux chambres, salle de bains, WC et couloir.'};
 let activeFloor='all',selected=null,roofOn=true,furnished=true,overhead=false,motion=null;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 function tweenTo(pos,target,duration=730){motion={start:performance.now(),duration,fromP:camera.position.clone(),toP:pos.clone(),fromT:controls.target.clone(),toT:target.clone()};}
