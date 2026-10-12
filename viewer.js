@@ -252,10 +252,10 @@ function privacyBars(g,axis,c,a,b,y,h){
   else{cube(g,c,y+h*.2,a,.027,.028,b-a,mat.dark,false);cube(g,c,y+h*.82,a,.027,.028,b-a,mat.dark,false)}
 }
 function lowPartition(g,axis,c,a,b,y,height=.86,openings=[]){
-  wall(g,axis,c,a,b,y,height,.115,mat.interior,openings);
+  wall(g,axis,c,a,b,y,height,.115,mat.interior,openings.map(o=>[o[0],o[1],o[2],o[3],'']));
   // Cloison haute en vue extérieure ; coupe basse et passage dégagé en vue d'étage.
   const i=levels.findIndex(l=>l.cut===g);
-  if(i>=0)wall(levels[i].walls,axis,c,a,b,y,[2.67,2.66,2.76][i],.12,mat.interior,openings.map(o=>[o[0],o[1],0,2.15,'swing']));
+  if(i>=0)wall(levels[i].walls,axis,c,a,b,y,[2.67,2.66,2.76][i],.12,mat.interior,openings.map(o=>[o[0],o[1],0,2.15,o[4]==='solid'?'solid':'swing']));
 }
 function trimLine(g,a,b,color=mat.terracotta2){const dx=b[0]-a[0],dy=b[1]-a[1],dz=b[2]-a[2],dist=Math.hypot(dx,dy,dz);const o=new THREE.Mesh(new THREE.CylinderGeometry(.032,.032,dist,6),color);o.position.set((a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2);o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),new THREE.Vector3(dx,dy,dz).normalize());o.castShadow=false;g.add(o);}
 
@@ -279,7 +279,7 @@ const archMesh=new THREE.Mesh(new THREE.ExtrudeGeometry(archShape,{depth:.2,beve
 archMesh.position.set(4.29,.06,8.86);archMesh.castShadow=true;archMesh.receiveShadow=true;levels[0].trim.add(archMesh);
 // Ground interior: garage, technical / laundry, staircase and side garage.
 lowPartition(levels[0].cut,'z',0,.10,8.58,0,.78,[[5.55,6.42,0,.78,'']]);
-lowPartition(levels[0].cut,'z',4.04,.10,8.58,0,.78,[[6.30,7.15,0,.78,''],[7.22,8.11,0,.78,'']]);
+lowPartition(levels[0].cut,'z',4.04,.10,8.58,0,.78,[[6.30,7.15,0,.78,''],[7.22,8.11,0,.78,'solid']]);
 lowPartition(levels[0].cut,'z',2.18,3.40,5.37,0,.75,[[4.40,5.23,0,.75,'']]);
 lowPartition(levels[0].cut,'x',3.40,0,2.18,0,.76);
 lowPartition(levels[0].cut,'x',3.1,0,4,0,.76,[[2.51,3.34,0,.76,'']]);
@@ -311,8 +311,7 @@ cyl(levels[0].furniture,5.39,.06,6.11,.24,.75,mat.terracotta2,16);
 shutter(levels[0].trim,.16,1.00,8.84,.35,1.08);
 shutter(levels[0].trim,1.61,1.00,8.84,.34,1.08);
 privacyBars(levels[0].trim,'x',8.90,.68,1.46,1.08,.90);
-// Porte d'entrée verte en retrait du porche, séparée de l'ouverture du garage.
-wall(levels[0].walls,'z',4.08,7.16,8.38,0,2.60,.13,mat.interior,[[7.22,8.11,0,2.14,'solid']]);
+// Porte d'entrée verte dans la cloison du porche, distincte du garage ouvert.
 for(let z=0;z<8.7;z+=.36)cube(levels[0].cut,-4.48,.04,z,12.95,.012,.006,mat.warmwhite,false);
 
 // --- Main living floor. Main part 8.47m wide, 8.90m deep + west loggia. ---
