@@ -152,7 +152,17 @@ function wall(g, axis, constant, start, end, y, height, thickness, material, ope
       else cube(g,constant,y+low,a,thickness,high-low,b-a,material);
     }
   }
-  for(const o of openings){if(o[4]==='window'||o[4]==='sliding')addWindow(g,axis,constant,o[0],o[1],y+o[2],o[3]-o[2],o[4]==='sliding');else if(['door','french','swing','solid','garage'].includes(o[4]))addDoor(g,axis,constant,o[0],o[1],y+o[2],o[3]-o[2],o[4]);}
+  const level=levels.find(l=>l.walls===g);
+  if(level&&material===mat.stucco){
+    // Vue en coupe : suivre les véritables ouvertures de la façade à hauteur d'allège.
+    const lowOpenings=openings.filter(o=>o[2]<.72&&o[3]>.015).map(o=>[o[0],o[1],Math.max(0,o[2]),Math.min(.72,o[3]),'']);
+    wall(level.cut,axis,constant,start,end,y,.72,thickness,mat.interior,lowOpenings);
+  }
+  const detail=level&&material===mat.stucco?level.trim:g;
+  for(const o of openings){
+    if(o[4]==='window'||o[4]==='sliding')addWindow(detail,axis,constant,o[0],o[1],y+o[2],o[3]-o[2],o[4]==='sliding');
+    else if(['door','french','swing','solid','garage'].includes(o[4]))addDoor(detail,axis,constant,o[0],o[1],y+o[2],o[3]-o[2],o[4]);
+  }
 }
 // Huisseries alignées sur les réservations, et non vitrages plaqués sur un mur plein.
 function addWindow(g,axis,c,a,b,y,h,sliding=false){
@@ -251,11 +261,8 @@ function trimLine(g,a,b,color=mat.terracotta2){const dx=b[0]-a[0],dy=b[1]-a[1],d
 
 function openEdge(g,x0,x1,z,y,height=.62){cube(g,x0,y,z,x1-x0,height,.14,mat.interior);}
 function sideEdge(g,x,z0,z1,y,height=.62){cube(g,x,y,z0,.14,height,z1-z0,mat.interior);}
-// Small parapets remain visible in cut view to show the exact boundaries of each floor.
-openEdge(levels[0].cut,-4.48,8.47,0,0);openEdge(levels[0].cut,-4.48,-3.73,8.59,0);openEdge(levels[0].cut,-1.03,.64,8.59,0);openEdge(levels[0].cut,1.60,4.38,8.59,0);openEdge(levels[0].cut,8.09,8.47,8.59,0);sideEdge(levels[0].cut,-4.48,0,8.75,0);sideEdge(levels[0].cut,8.30,0,8.75,0);
-openEdge(levels[1].cut,0,8.47,0,2.72);openEdge(levels[1].cut,0,4.12,8.78,2.72);openEdge(levels[1].cut,8.3,8.47,8.78,2.72);sideEdge(levels[1].cut,0,0,8.88,2.72);sideEdge(levels[1].cut,8.29,0,8.88,2.72);
-openEdge(levels[2].cut,0,8.47,0,5.42);openEdge(levels[2].cut,0,8.47,6.68,5.42);sideEdge(levels[2].cut,0,0,6.83,5.42);sideEdge(levels[2].cut,8.29,0,6.83,5.42);
-
+// Les parapets extérieurs sont construits automatiquement par wall() à partir
+// des mêmes percements que les murs hauts. Une porte n'est jamais obstruée en coupe.
 // --- Ground floor: based on 12.95 × 8.77 m plan ---
 plankFloor(levels[0].slab,-4.48,0,12.95,8.77,.04,mat.concrete);
 wall(levels[0].walls,'x',0,-4.48,8.47,0,2.67,.22,mat.stucco,[[.75,1.83,1.08,2.05,'window']]);
@@ -272,7 +279,7 @@ const archMesh=new THREE.Mesh(new THREE.ExtrudeGeometry(archShape,{depth:.2,beve
 archMesh.position.set(4.29,.06,8.86);archMesh.castShadow=true;archMesh.receiveShadow=true;levels[0].trim.add(archMesh);
 // Ground interior: garage, technical / laundry, staircase and side garage.
 lowPartition(levels[0].cut,'z',0,.10,8.58,0,.78,[[5.55,6.42,0,.78,'']]);
-lowPartition(levels[0].cut,'z',4.04,.10,8.58,0,.78,[[6.30,7.15,0,.78,'']]);
+lowPartition(levels[0].cut,'z',4.04,.10,8.58,0,.78,[[6.30,7.15,0,.78,''],[7.22,8.11,0,.78,'']]);
 lowPartition(levels[0].cut,'z',2.18,3.40,5.37,0,.75,[[4.40,5.23,0,.75,'']]);
 lowPartition(levels[0].cut,'x',3.40,0,2.18,0,.76);
 lowPartition(levels[0].cut,'x',3.1,0,4,0,.76,[[2.51,3.34,0,.76,'']]);
@@ -304,7 +311,8 @@ cyl(levels[0].furniture,5.39,.06,6.11,.24,.75,mat.terracotta2,16);
 shutter(levels[0].trim,.16,1.00,8.84,.35,1.08);
 shutter(levels[0].trim,1.61,1.00,8.84,.34,1.08);
 privacyBars(levels[0].trim,'x',8.90,.68,1.46,1.08,.90);
-wall(levels[0].walls,'z',4.08,6.64,8.39,0,2.60,.14,mat.stucco,[[7.22,8.11,0,2.14,'solid']]);
+// Porte d'entrée verte en retrait du porche, séparée de l'ouverture du garage.
+wall(levels[0].walls,'z',4.08,7.16,8.38,0,2.60,.13,mat.interior,[[7.22,8.11,0,2.14,'solid']]);
 for(let z=0;z<8.7;z+=.36)cube(levels[0].cut,-4.48,.04,z,12.95,.012,.006,mat.warmwhite,false);
 
 // --- Main living floor. Main part 8.47m wide, 8.90m deep + west loggia. ---
@@ -451,6 +459,21 @@ function stairs(g,x,z,y){
   // Petite marche de seuil en haut de chaque volée.
   cube(g,right,y+h-.024,z+1.98,width,.035,.16,mat.wood,false);
 }
+// Garde-corps entourant uniquement les bords libres des trémies aux étages.
+function shaftRail(g,x0,z0,x1,z1,y){
+  const length=Math.hypot(x1-x0,z1-z0),count=Math.max(2,Math.ceil(length/.23));
+  for(let k=0;k<=count;k++){
+    const t=k/count;
+    cube(g,x0+(x1-x0)*t-.014,y,z0+(z1-z0)*t-.014,.028,.89,.028,mat.dark,false);
+  }
+  trimLine(g,[x0,y+.89,z0],[x1,y+.89,z1],mat.dark);
+}
+for(const floor of [1,2]){
+  const yy=floor===1?2.72:5.42;
+  shaftRail(levels[floor].architecture,2.18,3.43,2.18,4.38,yy);
+  shaftRail(levels[floor].architecture,.12,5.36,1.03,5.36,yy);
+}
+
 // Ground utility and mezzanine staircase.
 stairs(levels[0].architecture,.04,3.40,.05);
 bed(levels[1].furniture,.85,.65,1.88,2.03,y1,mat.linen);
