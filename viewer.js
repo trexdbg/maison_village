@@ -289,11 +289,9 @@ lowPartition(levels[0].cut,'x',3.1,0,4,0,.76,[[2.51,3.34,0,.76,'']]);
 lowPartition(levels[0].cut,'x',6.05,4.04,8.25,0,.76,[[4.49,5.40,0,.76,'']]);
 // Garage au rez-de-chaussée : deux volumes libres, sans voiture ni guidage de pneus.
 function cabinet(g,x,y,z,w,h,d,m=mat.warmwhite){cube(g,x,y,z,w,h,d,m);cube(g,x,y,z+d-.012,w,.02,.022,mat.wood,false);}
-// Utility room based on photo: washing machines, boiler, storage.
-for(let k=0;k<2;k++){cube(levels[0].furniture,.28+k*.72,.06,.30,.64,.90,.69,mat.white);cyl(levels[0].furniture,.59+k*.72,.53,.996,.23,.025,mat.dark,22)}
-cabinet(levels[0].furniture,2.3,.04,.3,.75,1.88,.65);
-cyl(levels[0].furniture,3.36,.10,1.1,.28,1.75,mat.white,20);
-for(let n=0;n<5;n++)cube(levels[0].furniture,.22,.55+n*.31,2.22,1.4,.06,.4,mat.wood,false);
+// La pièce accolée aux WC sous escalier correspond à la chambre photographiée,
+// et non à la buanderie précédemment dessinée : on retire ici les machines fictives.
+// Le mobilier est ajouté après la déclaration de groundBedroom().
 // Garages dégagés, avec rangements et atelier à l'arrière comme sur la nouvelle photo.
 function storage(g,x,z,y,w=1.45) {
   for(const xx of [x,x+w-.05])cube(g,xx,y,z,.05,1.78,.42,mat.metal,false);
@@ -410,6 +408,11 @@ function bureau(g,x,z,y){cube(g,x,y+.75,z,1.25,.08,.59,mat.white);for(const xx o
 // Emprise x=.15..3.78, z=.15..3.34 : le lit ne coupe ni la fenêtre sur x=0
 // ni le passage x=2.50..3.37 vers le palier (z=3.50).
 function groundBedroom(g,y){
+  // Le groupe est légèrement reculé par rapport à la cloison arrière (z=3.10).
+  const bedroomObjects=new THREE.Group();
+  bedroomObjects.position.z=-.16;
+  g.add(bedroomObjects);
+  g=bedroomObjects;
   const oak=new THREE.MeshStandardMaterial({color:'#c9a57a',roughness:.87});
   const oakEdge=new THREE.MeshStandardMaterial({color:'#a67e58',roughness:.88});
   const cream=new THREE.MeshStandardMaterial({color:'#eee8dd',roughness:1});
@@ -470,9 +473,9 @@ function groundBedroom(g,y){
   cube(g,.20,y+2.10,.48,.045,.045,1.31,cream,false);
 
   // Placard derrière des rideaux écrus, pliés contre le pan de mur droit.
-  cube(g,3.815,y+2.43,2.66,.035,.055,.64,oakEdge,false);
+  cube(g,3.815,y+2.43,2.62,.035,.055,.59,oakEdge,false);
   for(let i=0;i<9;i++){
-    const z=2.67+i*.068;
+    const z=2.63+i*.062;
     cube(g,3.805+(i%2)*.016,y+.06,z,.025,2.31,.061,i%2?cream:linenBeige,false);
   }
   // Climatisation discrète, au-dessus de la zone rideau/porte de la photo.
@@ -798,10 +801,12 @@ for(const floor of [1,2]){
   shaftRail(levels[floor].architecture,.12,5.36,1.03,5.36,yy);
 }
 
-// Ground utility and mezzanine staircase.
+// Rez-de-chaussée : chambre réelle jouxtant les WC sous escalier.
+groundBedroom(levels[0].furniture,.05);
 stairs(levels[0].architecture,.04,3.40,.05);
 underStairToilet(levels[0].architecture,.04,3.40,.05);
-groundBedroom(levels[1].furniture,y1);
+bed(levels[1].furniture,.85,.65,1.88,2.03,y1,mat.linen);
+wardrobe(levels[1].furniture,.2,2.68,y1,1.05);
 sofa(levels[1].furniture,4.47,2.30,y1);
 dining(levels[1].furniture,5.15,4.61,y1);
 // Mobilier et décoration supplémentaires inspirés des photographies.
@@ -1068,12 +1073,12 @@ for(const x of [14.4,15.4]){
 // --- Room selection / photo references ---
 const rooms = [
   [{id:'garage1',name:'Garage 1',area:'35,3 m²',desc:'Garage sans voiture, avec rangement et établi en fond de pièce.',x:-4.3,z:.2,w:4.1,d:8.28,photo:'02-garage-entree.jpg'},
-   {id:'technique',name:'Salle de bains (plan) / buanderie',area:'11,8 m² (plan)',desc:'Le plan nomme cet espace « Salle de bain » ; la photo fournie illustre son utilisation comme buanderie.',x:.14,z:.15,w:3.75,d:2.8,photo:'03-buanderie.jpg'},
+   {id:'chambre-rdc',name:'Chambre du rez-de-chaussée',area:'11,8 m² (plan)',desc:'Chambre située à côté du WC sous escalier, avec parquet chêne, portes vertes, fenêtre à volets, lit double, rideaux écrus, commode et suspension en rotin. Surface du plan indicative.',x:.14,z:.15,w:3.75,d:2.8,photo:'13-chambre-bureau.jpg'},
    {id:'garage2',name:'Garage 2',area:'22,7 m²',desc:'Second garage, sans voiture, avec espace atelier.',x:4.20,z:.16,w:3.99,d:5.76,photo:'02-garage-entree.jpg'},
    {id:'escalier-rdc',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Départ en haut à droite du plan, cinq marches vers la gauche, huit marches tournantes à gauche, puis cinq marches vers la droite jusqu’à l’étage. Pas de palier.',x:1.09,z:3.49,w:1.05,d:.83,photo:'04-entree.jpg'},
    {id:'wc-sous-escalier',name:'WC sous l’escalier',area:'Dimensions indicatives',desc:'WC photographiés sous la pente de l’escalier : parquet chêne, cuvette suspendue au fond, lave-mains à gauche et tableau électrique à droite.',x:.14,z:4.43,w:.79,d:.75,photo:'06-wc-rdc.jpg'},
    {id:'loggia0',name:'Loggia',area:'8,5 m²',desc:'Loggia au rez-de-chaussée.',x:4.2,z:6.15,w:4.0,d:2.38,photo:'02-garage-entree.jpg'}],
-  [{id:'chambre1',name:'Chambre 1',area:'13,2 m²',desc:'Chambre lumineuse d’après la photo : parquet chêne, lit double en lin, commode claire, suspension en rotin, rideaux écrus et portes vertes.',x:.15,z:.15,w:3.65,d:3.18,photo:'13-chambre-bureau.jpg'},
+  [{id:'chambre1',name:'Chambre 1',area:'13,2 m²',desc:'Chambre du premier étage, parquet et fenêtre sur l’extérieur.',x:.15,z:.15,w:3.65,d:3.18,photo:'13-chambre-bureau.jpg'},
    {id:'entree',name:'Entrée / distribution',area:'5,5 m²',desc:'Palier de distribution entre les pièces, contigu à la cage d’escalier.',x:2.25,z:3.63,w:1.57,d:2.04,photo:'04-entree.jpg'},
    {id:'escalier',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Deux volées parallèles et tournant balancé à gauche. Départ à droite en haut du plan ; WC sous le tournant au rez-de-chaussée.',x:.09,z:3.46,w:2.07,d:1.85,photo:'04-entree.jpg'},
    {id:'cuisine',name:'Cuisine',area:'9,2 m²',desc:'Cuisine aux façades anthracite et plan de travail aspect bois.',x:.15,z:6.09,w:3.65,d:2.65,photo:'16-cuisine.jpg'},
