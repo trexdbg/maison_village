@@ -119,7 +119,7 @@ const mat = {
 };
 
 const levels = [0,1,2].map(i=>{
-  const l={slab:new THREE.Group(),walls:new THREE.Group(),cut:new THREE.Group(),furniture:new THREE.Group(),hotspots:new THREE.Group(),labels:new THREE.Group(),trim:new THREE.Group()};
+  const l={slab:new THREE.Group(),walls:new THREE.Group(),cut:new THREE.Group(),architecture:new THREE.Group(),furniture:new THREE.Group(),hotspots:new THREE.Group(),labels:new THREE.Group(),trim:new THREE.Group()};
   for (const [name,g] of Object.entries(l)){g.name=`Etage ${i} / ${name}`;scene.add(g);}
   return l;
 });
@@ -242,7 +242,10 @@ for(let z=0;z<8.7;z+=.36)cube(levels[0].cut,-4.48,.04,z,12.95,.012,.006,mat.warm
 
 // --- Main living floor. Main part 8.47m wide, 8.90m deep + west loggia. ---
 const y1=2.72;
-plankFloor(levels[1].slab,0,0,8.47,8.90,y1,mat.tile);
+// Trémie réelle de l'escalier : le plancher est découpé, non recouvert par une dalle pleine.
+plankFloor(levels[1].slab,0,0,2.18,3.44,y1,mat.tile);
+plankFloor(levels[1].slab,0,5.36,2.18,3.54,y1,mat.tile);
+plankFloor(levels[1].slab,2.18,0,6.29,8.90,y1,mat.tile);
 plankFloor(levels[1].slab,-4.22,5.59,4.22,3.31,y1,mat.tile);
 // Walls: *real openings* instead of glazed panels pasted onto solid masonry.
 wall(levels[1].walls,'x',0,0,8.47,y1,2.66,.18,mat.stucco,[[1.15,2.33,.72,2.12,'window'],[4.97,7.15,.60,2.19,'sliding']]);
@@ -256,7 +259,8 @@ lowPartition(levels[1].cut,'x',5.95,0,3.96,y1,.74,[[1.03,1.95,0,.74,'']]);
 lowPartition(levels[1].cut,'x',6.35,4,8.29,y1,.72);
 // Stronger room flooring based on photographic details.
 plankFloor(levels[1].slab,.16,.16,3.62,3.18,y1+.018,mat.wood);
-plankFloor(levels[1].slab,0.16,3.58,3.65,2.17,y1+.018,mat.wood);
+plankFloor(levels[1].slab,2.18,3.58,1.63,2.17,y1+.018,mat.wood);
+plankFloor(levels[1].slab,.16,5.36,2.02,.39,y1+.018,mat.wood);
 plankFloor(levels[1].slab,4.12,.16,4.13,6.03,y1+.018,mat.tile);
 // Green privacy railing: balcony on street façade, characteristic of the real house.
 cube(levels[1].trim,4.60,3.49,8.99,3.50,.74,.09,mat.green,false);
@@ -276,7 +280,10 @@ privacyBars(levels[1].trim,'x',8.94,1.42,3.33,y1+.75,1.33);
 
 // --- Upper floor, square building footprint 8.47m by 6.83m. ---
 const y2=5.42;
-plankFloor(levels[2].slab,0,0,8.47,6.83,y2,mat.wood);
+// Trémie alignée sur celle de l'étage inférieur : 2,18 x 1,92 m.
+plankFloor(levels[2].slab,0,0,2.18,3.44,y2,mat.wood);
+plankFloor(levels[2].slab,0,5.36,2.18,1.47,y2,mat.wood);
+plankFloor(levels[2].slab,2.18,0,6.29,6.83,y2,mat.wood);
 wall(levels[2].walls,'x',0,0,8.47,y2,2.76,.18,mat.stucco,[[.83,1.98,.83,2.12,'window'],[5.30,6.85,.76,2.11,'window']]);
 wall(levels[2].walls,'x',6.66,0,8.47,y2,2.76,.18,mat.stucco,[[1.13,2.04,.87,2.04,'window'],[5.48,7.20,.88,2.11,'window']]);
 wall(levels[2].walls,'z',0,0,6.83,y2,2.76,.18,mat.stucco,[[.90,2.3,.83,2.15,'window']]);
@@ -288,7 +295,7 @@ lowPartition(levels[2].cut,'x',3.38,4.04,8.27,y2,.81);
 lowPartition(levels[2].cut,'x',5.25,0,2.51,y2,.81);
 // Colors & tile floors in wet rooms.
 plankFloor(levels[2].slab,.13,.12,2.24,3.18,y2+.015,mat.tile);
-plankFloor(levels[2].slab,.13,5.30,2.24,1.38,y2+.015,mat.tile);
+plankFloor(levels[2].slab,.13,5.38,2.24,1.30,y2+.015,mat.tile);
 // Signature emerald shutters on the street-facing windows.
 for(const x of [5.05,7.24])shutter(levels[2].trim,x,y2+.87,6.88,.35,1.28);
 for(const x of [.53,2.14])shutter(levels[2].trim,x,y2+.88,6.87,.28,1.15);
@@ -336,37 +343,48 @@ function bath(g,x,z,y){
 }
 function vanity(g,x,z,y){cube(g,x,y+.16,z,1.20,.67,.53,mat.pink);cube(g,x,y+.83,z,1.20,.09,.53,mat.white);cyl(g,x+.72,y+.90,z+.23,.20,.03,mat.warmwhite,20);cyl(g,x+.75,y+.96,z+.23,.025,.16,mat.metal,9)}
 function toilet(g,x,z,y){cube(g,x,y+.17,z,.42,.37,.65,mat.white);cyl(g,x+.22,y+.47,z+.33,.25,.09,mat.white,18);cube(g,x+.02,y+.49,z+.49,.38,.16,.10,mat.white)}
-// Escalier en L, 15 hauteurs, 2 volées et palier. Marche claire, nez de marche bois, garde-corps noir.
+// Escalier en U compact, reconstruit dans la trémie figurant sur les trois plans.
+// Deux volées parallèles en sens inverse et un palier tournant, sans empiéter sur le couloir.
+// Les marches sont des éléments d'architecture, indépendants de l'option mobilier.
 function stairs(g,x,z,y){
-  const rise=.18,run=.20,landing=1.24,width=.83;
-  // Première volée dans la longueur.
-  for(let i=0;i<6;i++){
-    const stepY=y+i*rise,stepZ=z+i*run;
-    cube(g,x,stepY,stepZ,width,rise+.035,run,mat.white);
-    cube(g,x,stepY+rise+.012,stepZ+.01,width,.022,.06,mat.wood,false);
+  const h=2.70, rise=h/16, left=x+.10, right=x+1.13, width=.85;
+  const tread=new THREE.MeshStandardMaterial({color:'#ece6db',roughness:.77});
+  const nosing=new THREE.MeshStandardMaterial({color:'#bd9b77',roughness:.78});
+  const steel=new THREE.MeshStandardMaterial({color:'#333f3d',metalness:.42,roughness:.45});
+  const step=(xx,zz,w,d,index)=>{
+    const top=y+index*rise;
+    cube(g,xx,top-.065,zz,w,.065,d,tread);
+    cube(g,xx,top-.014,zz+d-.046,w,.016,.046,nosing,false);
+    // Contremarche en retrait, pour lire chaque hauteur depuis la coupe.
+    cube(g,xx+.022,top-rise,zz+d-.044,w-.044,rise-.065,.035,mat.warmwhite,false);
+  };
+  // Volée montante arrière -> façade intérieure.
+  for(let i=0;i<7;i++)step(left,z+.56+(6-i)*.19,width,.19,i+1);
+  // Palier tournant au fond de la cage ; le demi-tour reste dans les 2,13 m.
+  cube(g,left,y+8*rise-.10,z+.055,1.88,.10,.505,tread);
+  cube(g,left,y+8*rise-.015,z+.51,1.88,.018,.046,nosing,false);
+  // Deuxième volée remontant en sens opposé.
+  for(let i=0;i<8;i++)step(right,z+.56+i*.18,width,.18,i+9);
+  // Limon central en métal, rampes inclinées et potelets verticaux.
+  for(let i=0;i<7;i++){
+    const zz=z+.65+(6-i)*.19,yy=y+(i+1)*rise;
+    cube(g,x+1.065,yy,zz,.035,.79,.035,steel,false);
   }
-  const ly=y+6*rise,lz=z+6*run;
-  cube(g,x,ly,lz,1.93,.16,.75,mat.white);
-  cube(g,x+.02,ly+.155,lz+.02,1.89,.018,.70,mat.tile,false);
-  // Seconde volée, à angle droit au-dessus du palier.
-  for(let i=0;i<9;i++){
-    const sx=x+.14+i*.195,sy=ly+i*rise;
-    cube(g,sx,sy,lz+.75,.195,rise+.04,.79,mat.white);
-    cube(g,sx+.01,sy+rise+.012,lz+.77,.172,.023,.055,mat.wood,false);
+  for(let i=0;i<8;i++){
+    const zz=z+.65+i*.18,yy=y+(i+9)*rise;
+    cube(g,x+1.065,yy,zz,.035,.79,.035,steel,false);
   }
-  // Muret blanc avec main courante sombre près de la première volée.
-  cube(g,x-.09,y,z-.02,.11,.94,1.46,mat.interior,false);
-  cube(g,x-.10,y+.94,z-.02,.13,.039,1.46,mat.wood,false);
-  // Montants fins de garde-corps sur le retour du palier.
-  for(let i=0;i<9;i++)cube(g,x+.11+i*.198,ly+.11,lz+1.48,.026,.88,.026,mat.dark,false);
-  trimLine(g,[x+.11,ly+1.01,lz+1.50],[x+1.85,ly+1.01,lz+1.50],mat.dark);
-  // Petit portillon noir à barreaux évoquant la photo du bas.
-  for(let i=0;i<8;i++)cube(g,x+1.88,y+.13,z+.14+i*.105,.025,1.02,.025,mat.dark,false);
-  trimLine(g,[x+1.88,y+1.17,z+.14],[x+1.88,y+1.17,z+.93],mat.dark);
+  trimLine(g,[x+1.082,y+rise+.79,z+1.85],[x+1.082,y+7*rise+.79,z+.65],steel);
+  trimLine(g,[x+1.082,y+9*rise+.79,z+.65],[x+1.082,y+h+.79,z+1.92],steel);
+  for(let i=0;i<5;i++)cube(g,left+i*.45,y+8*rise,z+.10,.029,.84,.029,steel,false);
+  trimLine(g,[left,y+8*rise+.84,z+.12],[right+width,y+8*rise+.84,z+.12],steel);
+  // Réservation de trémie lisible en vue de dessus, avec garde-corps léger.
+  cube(g,x+.045,y+.01,z+.04,.065,.32,1.91,mat.interior,false);
+  // Petite marche de seuil en haut de chaque volée.
+  cube(g,right,y+h-.024,z+1.98,width,.035,.16,mat.wood,false);
 }
-
 // Ground utility and mezzanine staircase.
-stairs(levels[0].furniture,.20,3.20,.05);
+stairs(levels[0].architecture,.04,3.40,.05);
 bed(levels[1].furniture,.85,.65,1.88,2.03,y1,mat.linen);
 wardrobe(levels[1].furniture,.2,2.68,y1,1.05);
 sofa(levels[1].furniture,4.47,2.30,y1);
@@ -388,7 +406,7 @@ for(let i=0;i<5;i++){
 cube(levels[1].furniture,7.64,y1+.28,1.28,.11,1.15,1.65,mat.wood);
 cube(levels[1].furniture,7.64,y1+.75,1.48,.06,.87,1.25,mat.dark,false);
 kitchen(levels[1].furniture,y1);
-stairs(levels[1].furniture,.20,3.32,y1);
+stairs(levels[1].architecture,.04,3.40,y1);
 // Loggia children's toys / shelves, following the photos.
 cabinet(levels[1].furniture,-3.82,y1+.02,6.12,1.08,.72,.45,mat.white);
 for(let i=0;i<3;i++)cube(levels[1].furniture,-3.71+i*.31,y1+.75,6.3,.24,.21,.24,i===1?mat.pink:mat.mint);
@@ -494,8 +512,8 @@ for(let i=0;i<rooms.length;i++){
   }
 }
 const floorNames={all:'Vue extérieure',0:'Rez-de-chaussée',1:'Premier étage',2:'Deuxième étage'};
-const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Deux garages sans voiture, buanderie, nouvel escalier et annexes.',1:'Séjour redécoré, cuisine, chambre, escalier et loggias.',2:'Deux chambres, salle de bains, WC et couloir.'};
-let activeFloor='all',selected=null,roofOn=true,furnished=true,overhead=false,motion=null;
+const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Deux garages sans voiture, salles annexes et escalier demi-tournant.',1:'Séjour redécoré, cuisine, chambre, escalier et loggias.',2:'Deux chambres, salle de bains, WC et couloir.'};
+let activeFloor='all',selected=null,roofOn=true,furnished=false,overhead=false,motion=null;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 function tweenTo(pos,target,duration=730){motion={start:performance.now(),duration,fromP:camera.position.clone(),toP:pos.clone(),fromT:controls.target.clone(),toT:target.clone()};}
 function updateMotion(t){if(!motion)return;const q=Math.min(1,(t-motion.start)/motion.duration);const e=q*q*(3-2*q);camera.position.lerpVectors(motion.fromP,motion.toP,e);controls.target.lerpVectors(motion.fromT,motion.toT,e);if(q>=1)motion=null;}
@@ -517,6 +535,7 @@ function renderVisibility(){
   const all=activeFloor==='all',idx=Number(activeFloor);
   levels.forEach((l,i)=>{
     l.walls.visible=all;
+    l.architecture.visible=all||i===idx||i===idx-1;
     l.cut.visible=!all&&i===idx;
     l.slab.visible=all||i<=idx;
     l.furniture.visible=furnished&&(all||i===idx);
@@ -535,7 +554,7 @@ function renderVisibility(){
 function chooseFloor(f){
   activeFloor=String(f);overhead=false;showRoom(null);renderVisibility();
   document.querySelectorAll('.floor-option').forEach(btn=>{const active=btn.dataset.floor===activeFloor;btn.classList.toggle('active',active);btn.setAttribute('aria-pressed',String(active));});
-  floorCaption.textContent=activeFloor==='all'?'Vue extérieure · volumes & extérieurs':`${floorNames[activeFloor]} · plan meublé interactif`;
+  floorCaption.textContent=activeFloor==='all'?'Vue extérieure · volumes & extérieurs':`${floorNames[activeFloor]} · architecture en coupe`;
   labelHint.textContent=activeFloor==='all'?'Choisissez un étage pour visiter l’intérieur':'Cliquez sur une pièce pour découvrir sa photo';
   if(activeFloor==='all')tweenTo(new THREE.Vector3(25,17,26),new THREE.Vector3(4,4,4.2));
   else {const y=activeFloor==='0'?.3:activeFloor==='1'?y1:y2;tweenTo(new THREE.Vector3(18,y+12,19),new THREE.Vector3(3.3,y+.35,4.35));}
