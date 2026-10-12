@@ -1182,9 +1182,9 @@ function rockCutFace(axis,at,from,to,bottom,top){
 }
 // Le terrain naturel est de la pierre continue sous le bâtiment et la piscine.
 // La roche reste dans les limites des volumes construits (aucune esplanade latérale).
-cube(exterior,-4.52,-.34,-2.25,21.59,.32,11.92,mat.bedrock,false);
+cube(exterior,-4.52,-.34,-2.25,17.97,.32,11.92,mat.bedrock,false);
 rockBank(-4.48,8.34,-.36,-4.91,-.02,1.85,23);
-rockBank(8.38,17.07,-2.32,-4.90,y1-.19,y1+1.10,16);
+rockBank(8.38,13.45,-2.32,-4.90,y1-.19,y1+1.10,12);
 // Talus latéral de gauche barré en rouge supprimé.
 
 // Cour et accès sur rue, au niveau bas de la maison.
@@ -1218,26 +1218,22 @@ rockCutFace('x',-4.50,-2.10,5.59,rockBaseY,terraceUnderside);
 rockCutFace('z',-2.12,-4.48,8.47,rockBaseY,terraceUnderside);
 // Suppression de la face rocheuse de la bande gauche extérieure.
 
-// Les quatre blocs de soubassement bordent la piscine excavée.
-// Ils ne débordent pas dans la réservation du bassin.
-rockFoundation(8.47,-2.10,8.60,2.22);
+// Trois côtés de dalle entourent le bassin : la bande à droite n'existe pas.
+// Le mur de la maison voisine rejoint directement la margelle est.
+rockFoundation(8.47,-2.10,4.98,2.22);
 rockFoundation(8.47,.12,1.04,4.30);
-rockFoundation(13.38,.12,3.69,4.30);
-rockFoundation(8.47,4.42,8.60,4.73);
+rockFoundation(8.47,4.42,4.98,4.73);
 // Roche au fond de la fouille, sous le bassin.
 rockFoundation(9.51,.12,3.87,4.30,y1-1.12);
-rockCutFace('x',17.07,-2.1,9.15,rockBaseY,terraceUnderside);
-rockCutFace('z',9.15,8.47,17.07,rockBaseY,terraceUnderside);
+rockCutFace('x',13.45,-2.1,9.15,rockBaseY,terraceUnderside);
+rockCutFace('z',9.15,8.47,13.45,rockBaseY,terraceUnderside);
 
-// Les dalles côté piscine se raccordent aux nouveaux cheminements : une
-// terrasse minérale CONTINUE autour du bâtiment, jamais une pelouse en bas.
-// Dallage supérieur en quatre surfaces qui laissent une vraie excavation.
-cube(exterior,8.47,y1-.17,-2.1,8.6,.23,2.22,mat.tile,false);
+// Dallage côté piscine : seulement l'arrière, le côté maison et l'avant.
+// Pas de terrasse à droite du bassin, où se trouve la maison voisine.
+cube(exterior,8.47,y1-.17,-2.1,4.98,.23,2.22,mat.tile,false);
 cube(exterior,8.47,y1-.17,.12,1.04,.23,4.30,mat.tile,false);
-cube(exterior,13.38,y1-.17,.12,3.69,.23,4.30,mat.tile,false);
-cube(exterior,8.47,y1-.17,4.42,8.6,.23,4.73,mat.tile,false);
-cube(exterior,16.82,y1-.16,-2.10,.23,1.42,11.2,mat.stucco);
-cube(exterior,8.6,y1-.04,-2.08,8.2,.07,.2,mat.warmwhite,false);
+cube(exterior,8.47,y1-.17,4.42,4.98,.23,4.73,mat.tile,false);
+cube(exterior,8.6,y1-.04,-2.08,4.75,.07,.2,mat.warmwhite,false);
 
 // Bassin creusé DANS la roche : fond, parois revêtues et eau abaissée sous
 // les margelles ; on voit la profondeur depuis la visite en surplomb.
@@ -1259,8 +1255,8 @@ for(let i=0;i<9;i++){
   wave.position.set(10.15+(i%3)*.95,y1-.305,1.05+(i%4)*.78);
   exterior.add(wave);
 }
-// Clôture de sécurité conservée à la cote du sol de terrasse.
-for(const [x0,z0,x1,z1] of [[9.20,-.17,13.66,-.17],[9.20,4.68,13.66,4.68],[9.20,-.17,9.20,4.68],[13.66,-.17,13.66,4.68]]){
+// Clôture sur les trois côtés libres ; le mur voisin ferme le côté droit.
+for(const [x0,z0,x1,z1] of [[9.20,-.17,13.38,-.17],[9.20,4.68,13.38,4.68],[9.20,-.17,9.20,4.68]]){
   const length=Math.hypot(x1-x0,z1-z0),n=Math.ceil(length/.26);
   for(let i=0;i<=n;i++){
     const t=i/n;
@@ -1289,11 +1285,10 @@ terraceGuard(-4.53,-2.00,-4.53,5.55);
 terraceParapet(-4.62,8.95,.14,.70);
 terraceParapet(-4.48,9.53,12.95,.16); // façade
 terraceParapet(-4.48,-2.19,12.95,.17); // arrière
-// Ancien rectangle de faux gazon supprimé : le dallage continue autour du bassin.
-cube(exterior,14.22,y1+.02,-2.12,.21,1.53,5.22,mat.stucco);
-cube(exterior,8.46,y1+.01,8.92,8.6,.83,.18,mat.stucco);
-for(let x=8.62;x<16.94;x+=.23)cube(exterior,x,y1+.79,9.14,.035,.67,.035,mat.green,false);
-trimLine(exterior,[8.55,y1+1.48,9.15],[17.01,y1+1.48,9.15],mat.green);
+// Garde-corps de façade arrêté au droit du mur de la maison voisine.
+cube(exterior,8.46,y1+.01,8.92,4.98,.83,.18,mat.stucco);
+for(let x=8.62;x<13.40;x+=.23)cube(exterior,x,y1+.79,9.14,.035,.67,.035,mat.green,false);
+trimLine(exterior,[8.55,y1+1.48,9.15],[13.44,y1+1.48,9.15],mat.green);
 
 // Rue et avaloir (pas de jardin au rez-de-jardin).
 for(let x=-5.7;x<4.8;x+=1.48)cube(exterior,x,.068,10.5,.85,.012,.085,mat.warmwhite,false);
@@ -1305,22 +1300,14 @@ function plant(g,x,z,y,s=.95){
     sphere(g,x+Math.cos(a)*.3*s,y+.96*s+(k%2)*.27*s,z+Math.sin(a)*.34*s,.53*s,k%2===0?mat.tree:mat.tree2);
   }
 }
-// Végétation décorative UNIQUEMENT en bacs sur la terrasse, pas en pleine terre.
-for(const [x,z,s] of [[15.48,-.91,.80]]){
-  cube(exterior,x-.35,y1+.06,z-.35,.70,.39,.70,mat.stone);
-  plant(exterior,x,z,y1+.42,s);
-}
-cube(exterior,9.10,y1+.06,-2.02,7.67,.39,.42,mat.stone);
-for(let x=9.30;x<16.55;x+=.58)sphere(exterior,x,y1+.49,-1.81,.29,mat.tree2);
-// Mobilier de terrasse conservé.
-for(const x of [14.4,15.4]){
-  cube(exterior,x,y1+.20,5.57,.58,.09,1.31,mat.dark);
-  cube(exterior,x,y1+.24,6.58,.57,.37,.08,mat.dark);
-}
+// Bacs végétalisés conservés uniquement sur le passage arrière existant.
+cube(exterior,9.10,y1+.06,-2.02,4.30,.39,.42,mat.stone);
+for(let x=9.30;x<13.36;x+=.58)sphere(exterior,x,y1+.49,-1.81,.29,mat.tree2);
+// Les transats de la fausse terrasse à droite sont supprimés.
 
-// --- Propriété voisine À L'EST : maison EN CONTRE-HAUT, hors de la terrasse. ---
-// Le trait jaune des annotations s'arrête au mur x=17.07. La surface à droite
-// (marquée en rouge) appartient à un autre bâti sur une parcelle plus élevée.
+// --- Propriété voisine À L'EST : maison EN CONTRE-HAUT, contre la piscine. ---
+// La limite est au bord droit du bassin (x≈13.45), sans dallage intercalaire.
+// La surface rayée en rouge est bâtie sur une parcelle plus élevée.
 // Volumétrie volontairement schématique : aucune ouverture/cote voisine attestée.
 const neighborProperty=new THREE.Group();
 neighborProperty.name='Contexte : maison voisine en contre-haut (indicatif)';
@@ -1329,13 +1316,13 @@ const neighborLevel=y1+2.12;  // le terrain voisin domine la plage de piscine
 const neighborWall=new THREE.MeshStandardMaterial({color:'#d7c5ac',roughness:.98});
 const neighborRoof=new THREE.MeshStandardMaterial({color:'#a76b4d',roughness:.94,side:THREE.DoubleSide});
 const neighborTrim=new THREE.MeshStandardMaterial({color:'#f0e9db',roughness:.83});
-// Surface barrée en rouge : suppression de l'ancienne esplanade de 12,6 × 14,7 m.
-// La parcelle voisine ne reçoit aucun dallage, uniquement le volume bâti en contre-haut.
-const nx=17.87,nz=-2.32,nw=6.30,nd=10.62,wallH=2.72;
+// Suppression de la terrasse à droite de la piscine : le bâti voisin jouxte le bassin.
+// Aucun dallage, transat ni jardinière entre la margelle et la maison voisine.
+const nx=13.65,nz=-2.32,nw=6.30,nd=10.62,wallH=2.72;
 cube(neighborProperty,nx-.08,rockBaseY,nz-.10,nw+.16,neighborLevel-rockBaseY,nd+.20,mat.bedrock,false);
-// Le mur séparatif reste indépendant de la terrasse de notre piscine.
-cube(neighborProperty,17.57,y1-.12,-2.24,.30,neighborLevel-y1+.28,11.02,mat.stone,false);
-cube(neighborProperty,17.55,neighborLevel+.08,-2.24,.35,.12,11.02,neighborTrim,false);
+// Le mur séparatif touche la margelle est, sans passerelle ni esplanade.
+cube(neighborProperty,13.43,y1-.12,-2.24,.30,neighborLevel-y1+.28,11.02,mat.stone,false);
+cube(neighborProperty,13.42,neighborLevel+.08,-2.24,.35,.12,11.02,neighborTrim,false);
 const eave=neighborLevel+wallH,ridge=eave+1.20,mid=nx+nw/2;
 cube(neighborProperty,nx,neighborLevel,nz,nw,wallH,nd,neighborWall,false);
 cube(neighborProperty,nx-.16,neighborLevel-.11,nz-.15,nw+.32,.17,nd+.30,neighborTrim,false);
@@ -1363,7 +1350,7 @@ for(const [edge,center] of [[nx-.35,mid],[nx+nw+.35,mid]]){
   }
 }
 trimLine(neighborProperty,[mid,ridge+.03,roofFront],[mid,ridge+.03,roofBack],neighborRoof);
-// Aucune fausse terrasse ni jardin ne prolonge le côté droit : uniquement le bâti voisin.
+// Côté droit du bassin : aucune terrasse ; la maison voisine est en limite immédiate.
 // La maison voisine se masque en vue des étages pour ne pas occulter la visite intérieure.
 
 // --- Room selection / photo references ---
