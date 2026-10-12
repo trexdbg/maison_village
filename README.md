@@ -168,3 +168,13 @@ La V11 contenait une erreur de localisation ; la V13 remplace expressément ses 
 - **Publication** : version affichée V16 et paramètres de cache des scripts renouvelés.
 
 Les positions et largeurs sont des indications de modélisation, à confirmer par relevé avant travaux.
+
+## Mise à jour V17 — porte de chambre et buanderie optimisée (12 octobre 2026)
+
+- **Chambre du rez-de-jardin** : la fenêtre / fermeture de la façade donnant côté loggia (x≈0,63–1,51 m sur z=8,57 m) est transformée en véritable ouverture de 88 cm avec porte verte pleine, similaire à celle du garage vers l'escalier. Les anciens volets, barreaux, store et rideaux à lattes barrés de rouge ont été supprimés. L'accès intérieur depuis la pièce de vie reste en place.
+- **Salle de bains / buanderie** : douche 92 × 92 cm reculée dans l'angle droit du fond ; meuble lavabo et miroir à sa gauche ; deux lave-linge avec hublots à gauche du lavabo. Les meubles qui gênaient cet alignement sont retirés.
+- **Rangements** : dressing pleine hauteur contre le mur séparant la salle de bains du garage 2, deuxième dressing contre la cloison séparant salle de bains et escalier. Un passage central reste libre.
+- **Entrée dans la buanderie** : porte verte battante de 83 cm à côté du dressing, percée dans la cloison côté escalier / WC. Porte visible aussi en coupe, sans obturer l'escalier ni modifier les WC.
+- **Publication** : libellés et plan actualisés, passage de la visite 3D à V17, renouvellement du cache de `viewer.js` et de `app.js`.
+
+Les dimensions sont celles de la maquette, et restent à vérifier par relevé sur place avant exécution.
