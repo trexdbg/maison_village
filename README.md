@@ -134,3 +134,17 @@ Correction à partir de la photographie annotée : le terrain inférieur reste r
 - Le talus rocheux arrière est arrêté à la limite propre à la maison présentée. La maquette reste en pierre au rez-de-jardin, tandis que la piscine et les terrasses sont au niveau supérieur.
 - La maison voisine est masquée lorsque l'on sélectionne un étage, pour faciliter l'inspection des pièces. Son aspect (dimensions, toiture, fenêtres) est **indicatif**, car seule sa présence et sa position en contre-haut sont confirmées.
 - Invalidation du cache avec `viewer.js?v=12-terrasse-voisin-20261012`.
+
+
+## Mise à jour V13 — rectification chambre et buanderie au RDC (12 octobre 2026)
+
+Correction d'une inversion de pièces dans la V11, à partir du plan coté fourni :
+
+- **Au nord de la cage d'escalier** (z=0,15–3,05 m) : **salle de bains / buanderie, 11,8 m²**, carrelage, machines, rangements. La chambre ne se trouve pas ici.
+- **Au sud de la cage d'escalier** (z=5,51–8,52 m) : **chambre, 14,4 m²**, entre le grand garage à gauche et la loggia à droite. Parquet clair, lit double, chevets, commode, rideaux et suspension en rotin inspirés de la photographie.
+- Les deux accès latéraux de la chambre, la fenêtre sur la façade et le dégagement de l'escalier ne sont pas obstrués par le mobilier.
+- Les deux espaces possèdent leurs propres marqueurs 3D et photos associées. La carte « Chambre du rez-de-chaussée » ouvre la bonne pièce ; les descriptifs et surfaces du site sont corrigés.
+- Mise à jour du chargement du script en V13 pour éviter qu'un navigateur affiche l'ancienne position des meubles depuis son cache.
+- La correction conserve les changements récents de la terrasse et de la maison voisine en contre-haut introduits en V12.
+
+La V11 contenait une erreur de localisation ; la V13 remplace expressément ses indications d'emplacement.
