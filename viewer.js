@@ -575,7 +575,8 @@ const rooms = [
    {id:'garage2',name:'Garage 2',area:'22,7 m²',desc:'Second garage, sans voiture, avec espace atelier.',x:4.20,z:.16,w:3.99,d:5.76,photo:'02-garage-entree.jpg'},
    {id:'loggia0',name:'Loggia',area:'8,5 m²',desc:'Loggia au rez-de-chaussée.',x:4.2,z:6.15,w:4.0,d:2.38,photo:'02-garage-entree.jpg'}],
   [{id:'chambre1',name:'Chambre 1',area:'13,2 m²',desc:'Chambre du premier étage, parquet et fenêtre sur l’extérieur.',x:.15,z:.15,w:3.65,d:3.18,photo:'13-chambre-bureau.jpg'},
-   {id:'entree',name:'Entrée / escalier',area:'5,5 m²',desc:'Entrée et distribution avec escalier central.',x:2.25,z:3.63,w:1.57,d:2.04,photo:'04-entree.jpg'},
+   {id:'entree',name:'Entrée / distribution',area:'5,5 m²',desc:'Palier de distribution entre les pièces, contigu à la cage d’escalier.',x:2.25,z:3.63,w:1.57,d:2.04,photo:'04-entree.jpg'},
+   {id:'escalier',name:'Escalier demi-tournant',area:'Trémie ≈ 2,18 × 1,92 m',desc:'Escalier en U à deux volées, 16 hauteurs et palier de retournement. Dimensions reconstruites à partir des plans.',x:.09,z:3.46,w:2.07,d:1.85,photo:'04-entree.jpg'},
    {id:'cuisine',name:'Cuisine',area:'9,2 m²',desc:'Cuisine aux façades anthracite et plan de travail aspect bois.',x:.15,z:6.09,w:3.65,d:2.65,photo:'16-cuisine.jpg'},
    {id:'sejour',name:'Salon / salle à manger',area:'24,4 m²',desc:'Pièce de vie claire, mur vert sauge, coin repas et canapé.',x:4.18,z:.15,w:4.10,d:6.02,photo:'12-sejour.jpg'},
    {id:'loggia1',name:'Loggia vitrée',area:'12,3 m²',desc:'Pièce vitrée donnant sur l’extérieur, utilisée comme espace de jeux.',x:-4.07,z:5.72,w:3.95,d:2.98,photo:'05-loggia.jpg'},
@@ -651,6 +652,11 @@ function chooseFloor(f){
   else {const y=activeFloor==='0'?.3:activeFloor==='1'?y1:y2;tweenTo(new THREE.Vector3(18,y+12,19),new THREE.Vector3(3.3,y+.35,4.35));}
 }
 function chooseRoom(id){const r=rooms[Number(activeFloor)]?.find(r=>r.id===id);if(r)showRoom(r);}
+function focusStairs(){
+  chooseFloor(1);
+  showRoom(rooms[1].find(r=>r.id==='escalier'));
+  tweenTo(new THREE.Vector3(5.25,6.4,7.6),new THREE.Vector3(1.2,3.85,4.43),900);
+}
 function focusRoom(){if(!selected||activeFloor==='all')return;const y=activeFloor==='0'?0:activeFloor==='1'?y1:y2;const x=selected.x+selected.w/2,z=selected.z+selected.d/2;tweenTo(new THREE.Vector3(x+Math.min(3.6,selected.w*1.05),y+3.5,z+Math.min(3.2,selected.d*1.12)),new THREE.Vector3(x,y+.65,z),850);}
 renderer.domElement.addEventListener('click',e=>{
   if(activeFloor==='all')return;
@@ -666,10 +672,11 @@ roofButton.addEventListener('click',()=>{roofOn=!roofOn;renderVisibility()});
 furnitureButton.addEventListener('click',()=>{furnished=!furnished;renderVisibility()});
 topButton.addEventListener('click',()=>{overhead=!overhead;renderVisibility();const idx=Number(activeFloor);const y=activeFloor==='all'?4:idx===0?.15:idx===1?y1:y2;const target=new THREE.Vector3(activeFloor==='all'?4.3:2.9,y,4);tweenTo(overhead?new THREE.Vector3(target.x+.04,y+22,target.z+.05):new THREE.Vector3(18,y+12,19),target);});
 document.querySelector('#btn-focus').addEventListener('click',focusRoom);
+document.querySelector('#btn-stairs').addEventListener('click',focusStairs);
 roomPhoto.addEventListener('click',()=>{const dialog=document.querySelector('#lightbox');document.querySelector('#lightbox-image').src=roomPhoto.src;document.querySelector('#lightbox-image').alt=roomPhoto.alt;document.querySelector('#lightbox-caption').textContent=roomPhoto.dataset.title||'';if(!dialog.open)dialog.showModal();});
 
 const observer=new ResizeObserver(()=>{const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)});observer.observe(host);
 function animate(t){requestAnimationFrame(animate);if(!document.hidden){updateMotion(t);controls.update();renderer.render(scene,camera)}}
 const loading=document.querySelector('#viewer-loading');if(loading)loading.remove();
 renderVisibility();showRoom(null);requestAnimationFrame(animate);
-window.houseViewer={chooseFloor,chooseRoom,focusRoom};window.dispatchEvent(new Event('house-viewer-ready'));
+window.houseViewer={chooseFloor,chooseRoom,focusRoom,focusStairs};window.dispatchEvent(new Event('house-viewer-ready'));
