@@ -116,3 +116,13 @@ Correction à partir de la photographie annotée : le terrain inférieur reste r
 - Garde-corps et murets bas ajoutés aux bords exposés, sans fermer les ouvertures du premier étage.
 - Piscine toujours excavée dans la roche au niveau de la terrasse, eau et margelles conservées.
 - Géométrie indicative : largeur de la circulation périphérique et des murets à ajuster selon relevé si besoin.
+
+## Mise à jour V11 — chambre du rez-de-chaussée photographiée (12 octobre 2026)
+
+- La pièce encadrée en jaune par le propriétaire, attenante aux WC sous escalier au **rez-de-chaussée**, est réinterprétée comme une **chambre** plutôt que comme la buanderie précédemment modélisée. L'étiquette historique « salle de bains » du plan est conservée comme réserve documentaire, la photo ayant priorité pour cette représentation.
+- Sol en parquet chêne clair et mobilier Three.js détaillé : lit double avec tête de lit, matelas, deux oreillers, couette, plaid, tapis écru, deux chevets, éclairages, commode chêne et tiroirs crème, fleurs, diffuseur, store, rideaux de lin et suspension ajourée en fibres tressées.
+- Meubles précédemment placés comme buanderie dans cette chambre retirés ; conservés : escalier, WC sous escalier et accès dégagés.
+- Mobilier visible par défaut, avec possibilité de le masquer ; carte « Chambre aménagée » ouvrant directement le bon niveau et la photo correspondante dans la maquette.
+- Script viewer.js versionné V11 pour recharger la nouvelle version sur GitHub Pages et actualiser la présentation.
+
+**À confirmer** : affectation définitive de cette pièce et surface indicative issue du plan (11,8 m²). Les dimensions et positions précises de l'ameublement restent illustratives, à vérifier sur place.
