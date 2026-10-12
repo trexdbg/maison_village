@@ -53,22 +53,22 @@
     </section>
 
     <section id="visite-3d" class="viewer-section section-pad">
-      <div class="wrap viewer-intro"><div><span class="eyebrow pale">02 — EXPLORATION INTERACTIVE</span><h2>Visitez la maison <em>autrement.</em></h2></div><p>Tournez autour du bâtiment, choisissez un niveau et sélectionnez une pièce pour retrouver sa surface. La géométrie est une interprétation simplifiée des plans.</p></div>
+      <div class="wrap viewer-intro"><div><span class="eyebrow pale">02 — EXPLORATION INTERACTIVE</span><h2>Visitez la maison <em>autrement.</em></h2></div><p>Découvrez une maison reconstruite et meublée en 3D d’après les plans cotés et les photos : façades, fenêtres, toiture, volumes et piscine. Sélectionnez une pièce pour comparer la maquette à sa photographie réelle.</p></div>
       <div class="viewer-layout wrap">
         <div class="viewer-main">
-          <div class="viewer-topline"><div class="live-dot"></div><span>MODÈLE 3D INTERACTIF</span><span class="viewer-hint">Glisser pour tourner · Molette pour zoomer</span></div>
+          <div class="viewer-topline"><div class="live-dot"></div><span>MODÈLE 3D INTERACTIF</span><span class="viewer-hint">Glisser : tourner · Molette : zoomer · Clic : pièce</span></div>
           <div id="viewer-canvas" role="region" aria-label="Maquette 3D interactive de la maison"><div id="viewer-loading"><span class="loader"></span><span>Préparation de la visite 3D…</span></div></div>
-          <div class="viewer-overlay-bottom"><span id="floor-caption">Vue d'ensemble · 3 niveaux</span><div><button type="button" id="btn-reset" class="icon-btn" aria-label="Réinitialiser la caméra" title="Réinitialiser la caméra">↺</button><button type="button" id="btn-roof" class="icon-btn" aria-pressed="true" title="Afficher ou masquer la toiture">⌂</button></div></div>
+          <div class="viewer-overlay-top" id="viewer-help">Choisissez un étage pour visiter l’intérieur</div><div class="viewer-overlay-bottom"><span id="floor-caption">Vue d'ensemble · 3 niveaux</span><div><button type="button" id="btn-reset" class="icon-btn" aria-label="Réinitialiser la caméra" title="Réinitialiser la caméra">↺</button><button type="button" id="btn-roof" class="icon-btn" aria-pressed="true" title="Afficher ou masquer la toiture" aria-label="Afficher ou masquer la toiture">⌂</button><button type="button" id="btn-top" class="icon-btn" aria-pressed="false" title="Vue de dessus" aria-label="Vue de dessus">▦</button></div></div>
         </div>
         <aside class="viewer-panel" aria-label="Commandes de visite">
-          <span class="eyebrow muted">NAVIGATION</span><h3>Explorez chaque<br />niveau.</h3><p>Choisissez un étage pour dévoiler les espaces de ce niveau.</p>
+          <span class="eyebrow muted">NAVIGATION</span><h3>Explorez chaque<br />niveau.</h3><p>Les coupes dévoilent les meubles et les pièces. Cliquez sur un espace dans la 3D pour afficher sa photo.</p>
           <div class="floor-list" role="group" aria-label="Choisir un niveau">
             <button class="floor-option active" data-floor="all" type="button" aria-pressed="true"><span class="floor-icon">◈</span><span><strong>Vue complète</strong><small>Volumes & extérieurs</small></span><span class="floor-chevron">↗</span></button>
             <button class="floor-option" data-floor="0" type="button" aria-pressed="false"><span class="floor-icon">00</span><span><strong>Rez-de-chaussée</strong><small>Garages & annexes</small></span><span class="floor-chevron">↗</span></button>
             <button class="floor-option" data-floor="1" type="button" aria-pressed="false"><span class="floor-icon">01</span><span><strong>Premier étage</strong><small>Séjour, cuisine & chambre</small></span><span class="floor-chevron">↗</span></button>
             <button class="floor-option" data-floor="2" type="button" aria-pressed="false"><span class="floor-icon">02</span><span><strong>Deuxième étage</strong><small>Chambres & salle de bains</small></span><span class="floor-chevron">↗</span></button>
           </div>
-          <div class="room-info" id="room-info" aria-live="polite"><span class="eyebrow muted">ESPACE SÉLECTIONNÉ</span><h4 id="room-name">Vue d'ensemble</h4><p id="room-detail">Cliquez sur une pièce colorée dans la visite 3D, ou choisissez un niveau.</p><span id="room-area"></span></div>
+          <div class="viewer-tools"><button id="btn-furniture" aria-pressed="true" type="button">🛋 Masquer les meubles</button><button id="btn-focus" type="button" disabled>⌖ Approcher la pièce</button></div><div class="room-info" id="room-info" aria-live="polite"><span class="eyebrow muted">ESPACE SÉLECTIONNÉ</span><h4 id="room-name">Vue d'ensemble</h4><p id="room-detail">Cliquez sur une pièce dans la maquette, ou choisissez un niveau.</p><span id="room-area"></span><div class="room-photo-wrap"><img id="room-photo" src="" alt="" hidden></div><small class="room-photo-caption">Photo réelle correspondant à l’espace sélectionné</small></div>
           <div class="viewer-key"><span><i style="background:#e9caa5"></i> Bâtiment</span><span><i style="background:#70bdca"></i> Piscine</span><span><i style="background:#9bbb99"></i> Pièces</span></div>
         </aside>
       </div>

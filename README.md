@@ -39,3 +39,17 @@ Le modèle 3D est une **maquette schématique reconstruite à partir des documen
 La 3D utilise Three.js `0.162.0` depuis jsDelivr et requiert une connexion Internet ainsi qu'un navigateur compatible WebGL. Le site principal reste lisible même si le chargement 3D est indisponible.
 
 Les photographies restent la propriété de leurs ayants droit ; ne les réutilisez pas sans autorisation. Ce dépôt et le site GitHub Pages sont publics.
+
+## Version 2 — modèle 3D enrichi (octobre 2026)
+
+Le module `viewer.js` a été reconstruit autour de géométries Three.js, sans intégration privée à Kazaplan :
+
+- Dimensions principales réinterprétées depuis les trois plans (emprise de 8,47 m au niveau supérieur, 6,83 m de profondeur à l'étage haut, 8,90 m pour le premier étage, selon les annotations transmises).
+- Façades avec ouvertures traversantes, huisseries, volets verts, balustrades, toit incliné et rangées de tuiles, garage et porche à arc.
+- Revêtements texturés générés localement (enduit, bois, carrelage et pierre), piscine sécurisée, terrasse, végétation.
+- Plan en coupe meublé par niveau : chambres, cuisine, salle de bains, séjour, buanderie, garages. Le mobilier et la disposition restent **illustratifs**, pas des relevés.
+- Consultation des photos originales directement depuis une pièce sélectionnée ; vue de dessus, affichage/masquage des meubles, cadrage sur une pièce, toiture affichable/masquable.
+
+**Précision** : les murs extérieurs et les dimensions proviennent d'une reconstitution manuelle sur la base des captures fournies ; les détails non lisibles (allèges, position exacte des portes/fenêtres, élévations, escaliers, toiture) sont approximés. Cela reste un outil de présentation, et non un modèle BIM technique.
+
+Kozikaza a fermé en 2025. Son successeur Kazaplan (Leroy Merlin) est un outil d'édition autonome ; ce site utilise Three.js sous licence libre pour fonctionner sans compte ni export propriétaire. Si un modèle GLB/GLTF exact est créé à l'avenir, il sera possible de le charger via Three.js.
