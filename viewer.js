@@ -677,7 +677,10 @@ function underStairToilet(parent,x,z,y){
   orientation.add(g);
   // Extension de 29 cm vers le pied de l'escalier, sous la volée basse.
   // Pivot 90° inchangé ; les marches et leur accès côté x=2.17 restent libres.
-  const za=z+1.00,zb=z+2.08;
+  // Façade DROITE : extension linéaire jusque devant la première marche.
+  // Après le pivot de 90°, zb=z+3.04 donne x global ≈ 2,175 m,
+  // au bord de la volée (x=2,17), sans fermer l'accès côté couloir.
+  const za=z+1.00,zb=z+3.04;
   const sinkOffset=.18, panelOffset=.24;
   const wallWhite=new THREE.MeshStandardMaterial({color:'#f4f3ef',roughness:.94,side:THREE.DoubleSide});
   const oak=new THREE.MeshStandardMaterial({map:canvasTexture('wood'),color:'#bd8d5f',roughness:.83});
@@ -697,7 +700,9 @@ function underStairToilet(parent,x,z,y){
   cube(g,x+.81,y+.055,za+.072,.038,.068,zb-za-.115,oak,false);
   cube(g,x+.085,y+.055,za+.065,.76,.068,.035,oak,false);
 
-  // Murs latéraux en coupe : l'ouverture d'accès du côté z=zb reste libre.
+  // Murs latéraux prolongés en ligne DROITE vers la première marche.
+  // Le débouché entre les deux petits retours (face z=zb) reste ouvert :
+  // pas de façade diagonale ni de cloison devant la première volée.
   cube(g,x+.068,y,za,.058,1.18,zb-za,wallWhite);
   cube(g,x+.837,y,za,.055,.94,zb-za,wallWhite);
   cube(g,x+.068,y,zb-.052,.070,1.25,.052,wallWhite);
@@ -1154,7 +1159,7 @@ const rooms = [
    {id:'chambre-rdc',name:'Chambre du rez-de-chaussée',area:'14,4 m² (plan)',desc:'Au sud de l’escalier, entre le garage gauche et la loggia droite : parquet chêne, lit double, deux chevets, commode claire, rideaux écrus et suspension en rotin. Accès latéraux dégagés.',x:.14,z:5.51,w:3.75,d:3.01,photo:'13-chambre-bureau.jpg'},
    {id:'garage2',name:'Garage 2',area:'22,7 m²',desc:'Second garage, sans voiture, avec espace atelier.',x:4.20,z:.16,w:3.99,d:5.76,photo:'02-garage-entree.jpg'},
    {id:'escalier-rdc',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Départ en haut à droite du plan, cinq marches vers la gauche, huit marches tournantes à gauche, puis cinq marches vers la droite jusqu’à l’étage. Pas de palier.',x:1.09,z:3.49,w:1.05,d:.83,photo:'04-entree.jpg'},
-   {id:'wc-sous-escalier',name:'WC sous l’escalier',area:'Dimensions indicatives',desc:'WC sous l’escalier agrandis jusqu’au pied de la volée basse ; cuvette suspendue, meuble vasque et tableau électrique, orientation à 90° conservée.',x:.13,z:4.39,w:1.10,d:.84,photo:'06-wc-rdc.jpg'},
+   {id:'wc-sous-escalier',name:'WC sous l’escalier',area:'Dimensions indicatives',desc:'WC prolongés d’environ 1 m avec façade droite jusqu’à la première marche ; vasque et tableau électrique conservés, accès escalier dégagé.',x:.13,z:4.39,w:2.05,d:.84,photo:'06-wc-rdc.jpg'},
    {id:'loggia0',name:'Loggia',area:'8,5 m²',desc:'Loggia au rez-de-chaussée.',x:4.2,z:6.15,w:4.0,d:2.38,photo:'02-garage-entree.jpg'}],
   [{id:'chambre1',name:'Chambre 1',area:'13,2 m²',desc:'Chambre du premier étage, parquet et fenêtre sur l’extérieur.',x:.15,z:.15,w:3.65,d:3.18,photo:'13-chambre-bureau.jpg'},
    {id:'entree',name:'Entrée / distribution',area:'5,5 m²',desc:'Palier de distribution entre les pièces, contigu à la cage d’escalier.',x:2.25,z:3.63,w:1.57,d:2.04,photo:'04-entree.jpg'},
