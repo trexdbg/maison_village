@@ -286,23 +286,34 @@ const archShape=new THREE.Shape();archShape.moveTo(0,0);archShape.lineTo(3.75,0)
 const archHole=new THREE.Path();archHole.moveTo(.18,0);archHole.lineTo(.18,1.87);archHole.absarc(1.875,1.87,1.695,Math.PI,0,true);archHole.lineTo(3.57,0);archHole.closePath();archShape.holes.push(archHole);
 const archMesh=new THREE.Mesh(new THREE.ExtrudeGeometry(archShape,{depth:.2,bevelEnabled:false,curveSegments:18}),mat.stucco);
 archMesh.position.set(4.29,.06,8.86);archMesh.castShadow=true;archMesh.receiveShadow=true;levels[0].trim.add(archMesh);
-// Ground interior: garage, technical / laundry, staircase and side garage.
-// Passage depuis l'ancien garage 1 (nouvelle pièce de vie) vers la circulation de l'escalier.
-// Porte de 82 cm au nord : on contourne la buanderie pour rejoindre le départ de la volée,
-// sans traverser la chambre ni fermer les marches à x≈2.18.
-lowPartition(levels[0].cut,'z',0,.10,8.58,0,.78,[[2.50,3.32,0,.78,''],[5.55,6.42,0,.78,'']]);
-// L'ancienne petite cloison devant la volée droite est retirée pour dégager le départ.
-lowPartition(levels[0].cut,'z',4.04,2.25,8.58,0,.78,[[6.30,7.15,0,.78,''],[7.22,8.11,0,.78,'solid']]);
-// Accès à la première volée et sortie du retour entièrement libres au RDC.
-// Aucune cloison ni porte battante sur x=2.18 : l'ancien mur barrait la
-// première marche (z=3.46 à 4.35) malgré l'ouverture placée en face du retour.
-// Les marches et leurs deux rampes conservent leur géométrie d'origine.
+// Rez-de-jardin : la chambre est privée et les deux garages sont isolés de la buanderie.
+// Suppression de l'ancien passage garage 1 → salle de bains. La seule porte de
+// la chambre reste celle côté pièce de vie (x=0, z=5.55..6.42).
+lowPartition(levels[0].cut,'z',0,.10,8.58,0,.78,[[5.55,6.42,0,.78,'swing']]);
+// Mur continu garage 2 / salle de bains (z<3.4) et garage 2 / chambre (z>5.37).
+// Porte d'entrée garage 2 → dégagement de l'escalier, pas dans la chambre ni la SDB.
+const stairGarageEntry={from:3.55,to:4.45,height:2.15};
+wall(levels[0].cut,'z',4.04,.10,8.58,0,.78,.115,mat.interior,
+  [[stairGarageEntry.from,stairGarageEntry.to,0,.78,'']]);
+wall(levels[0].walls,'z',4.04,.10,8.58,0,2.67,.12,mat.interior,
+  [[stairGarageEntry.from,stairGarageEntry.to,0,stairGarageEntry.height,'']]);
+addDoor(levels[0].trim,'z',4.04,stairGarageEntry.from,stairGarageEntry.to,0,stairGarageEntry.height,'solid');
+// Départ et arrivée de l'escalier inchangés ; aucune cloison devant x=2.18.
 lowPartition(levels[0].cut,'x',3.40,0,2.18,0,.76);
-// Cloison continue séparant la chambre de la cage d'escalier / des WC.
-// Accès à la chambre préservé par sa porte sur le mur ouest x=0, z=5.55..6.42.
+// Cloison pleine entre la chambre et la cage de l'escalier / les WC.
 lowPartition(levels[0].cut,'x',5.37,.10,3.94,0,.78);
+// La buanderie conserve uniquement sa porte sur le dégagement, côté z=3.1.
 lowPartition(levels[0].cut,'x',3.1,0,4,0,.76,[[2.51,3.34,0,.76,'']]);
-lowPartition(levels[0].cut,'x',6.05,4.04,8.25,0,.76,[[4.49,5.40,0,.76,'']]);
+// La porte de garage est située au fond de la loggia (z=6.05), pas sous
+// l'arche de la façade à z=8.57 : ouverture de 3,52 m et vrai volet roulant.
+// La loggia est ainsi couverte mais ouverte côté façade ; pas de porte
+// latérale supplémentaire donnant directement dans la chambre.
+const garageLoggiaDoor={from:4.43,to:7.95,height:2.36};
+wall(levels[0].cut,'x',6.05,4.04,8.25,0,.76,.115,mat.interior,
+  [[garageLoggiaDoor.from,garageLoggiaDoor.to,0,.76,'']]);
+wall(levels[0].walls,'x',6.05,4.04,8.25,0,2.67,.12,mat.interior,
+  [[garageLoggiaDoor.from,garageLoggiaDoor.to,0,garageLoggiaDoor.height,'']]);
+addDoor(levels[0].trim,'x',6.05,garageLoggiaDoor.from,garageLoggiaDoor.to,0,garageLoggiaDoor.height,'garage');
 // Garage au rez-de-chaussée : deux volumes libres, sans voiture ni guidage de pneus.
 function cabinet(g,x,y,z,w,h,d,m=mat.warmwhite){cube(g,x,y,z,w,h,d,m);cube(g,x,y,z+d-.012,w,.02,.022,mat.wood,false);}
 // Buanderie / salle de bains de 11,8 m² : au nord de la cage d'escalier (z=0..3.17).
@@ -385,9 +396,9 @@ cube(groundLiving,-3.46,.064,4.89,1.24,.012,.70,mat.linen,false);
 cube(groundLiving,-3.27,.38,5.08,.82,.065,.39,mat.wood);
 for(const xx of [-3.20,-2.55])for(const zz of [5.15,5.39])
   cube(groundLiving,xx,.09,zz,.034,.29,.034,mat.metal);
-storage(levels[0].furniture,6.26,4.74,.05,1.44);
-bench(levels[0].furniture,4.71,4.84,.05,1.31);
-cyl(levels[0].furniture,5.39,.06,6.11,.24,.75,mat.terracotta2,16);
+// Passage dégagé entre le volet roulant de la loggia et la porte de l'escalier.
+// Aucun banc / pot n'empiète sur le débouché du garage.
+storage(levels[0].furniture,6.26,1.36,.05,1.44);
 // Front small window & shutter.
 // Fenêtre réelle prise dans la maçonnerie, avec volet vert et barreaux.
 shutter(levels[0].trim,.16,1.00,8.84,.35,1.08);
@@ -1289,13 +1300,13 @@ trimLine(neighborProperty,[mid,ridge+.03,roofFront],[mid,ridge+.03,roofBack],nei
 
 // --- Room selection / photo references ---
 const rooms = [
-  [{id:'sejour-rdc',name:'Salon / cuisine / salle à manger',area:'35,3 m² (ancien garage)',desc:'Projet d’aménagement de l’ancien garage 1 : séjour meublé, cuisine, coin repas et baie vitrée à la place du rideau. L’accès principal à l’escalier passe par cette pièce. Photo : état initial.',x:-4.3,z:.2,w:4.1,d:8.28,photo:'02-garage-entree.jpg'},
-   {id:'buanderie-rdc',name:'Salle de bains / Buanderie',area:'11,8 m² (plan)',desc:'Au nord de l’escalier : buanderie conservée et nouvelle douche de 92 × 92 cm près des WC. Entrée vers l’escalier depuis la nouvelle pièce de vie.',x:.14,z:.15,w:3.75,d:2.90,photo:'03-buanderie.jpg'},
-   {id:'chambre-rdc',name:'Chambre du rez-de-chaussée',area:'14,4 m² (plan)',desc:'Chambre conservée avec son mobilier et sa porte côté nouvelle pièce de vie ; cloison pleine entre la chambre et l’escalier.',x:.14,z:5.51,w:3.75,d:3.01,photo:'13-chambre-bureau.jpg'},
-   {id:'garage2',name:'Garage 2',area:'22,7 m²',desc:'Second garage, sans voiture, avec espace atelier.',x:4.20,z:.16,w:3.99,d:5.76,photo:'02-garage-entree.jpg'},
+  [{id:'sejour-rdc',name:'Salon / cuisine / salle à manger',area:'35,3 m² (ancien garage)',desc:'Ancien garage 1 aménagé en pièce de vie avec baie vitrée, cuisine et coin repas. L’accès depuis le garage 2 mène directement au dégagement de l’escalier. Photo : état initial.',x:-4.3,z:.2,w:4.1,d:8.28,photo:'02-garage-entree.jpg'},
+   {id:'buanderie-rdc',name:'Salle de bains / Buanderie',area:'11,8 m² (plan)',desc:'Au nord de l’escalier : buanderie et douche de 92 × 92 cm près des WC ; murs fermés côté garages et porte depuis le dégagement.',x:.14,z:.15,w:3.75,d:2.90,photo:'03-buanderie.jpg'},
+   {id:'chambre-rdc',name:'Chambre du rez-de-chaussée',area:'14,4 m² (plan)',desc:'Chambre conservée avec son mobilier. Porte intérieure côté pièce de vie ; accès supprimé depuis garage 2 / loggia. Cloison pleine côté escalier.',x:.14,z:5.51,w:3.75,d:3.01,photo:'13-chambre-bureau.jpg'},
+   {id:'garage2',name:'Garage 2',area:'22,7 m²',desc:'Second garage, séparé de la buanderie et de la chambre. Porte directe vers l’escalier et volet roulant à l’arrière de la loggia, sous l’arche de la façade.',x:4.20,z:.16,w:3.99,d:5.76,photo:'02-garage-entree.jpg'},
    {id:'escalier-rdc',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Départ en haut à droite du plan, cinq marches vers la gauche, huit marches tournantes à gauche, puis cinq marches vers la droite jusqu’à l’étage. Pas de palier.',x:1.09,z:3.49,w:1.05,d:.83,photo:'04-entree.jpg'},
    {id:'wc-sous-escalier',name:'WC sous l’escalier',area:'Dimensions indicatives',desc:'WC prolongés d’environ 1 m avec façade droite jusqu’à la première marche ; lave-mains et tableau électrique rapprochés de la porte des WC, accès escalier dégagé.',x:.13,z:4.39,w:2.05,d:.84,photo:'06-wc-rdc.jpg'},
-   {id:'loggia0',name:'Loggia',area:'8,5 m²',desc:'Loggia au rez-de-chaussée.',x:4.2,z:6.15,w:4.0,d:2.38,photo:'02-garage-entree.jpg'}],
+   {id:'loggia0',name:'Loggia',area:'8,5 m²',desc:'Loggia ouverte sous l’arche : porte de garage roulante en fond, sans passage latéral vers la chambre.',x:4.2,z:6.15,w:4.0,d:2.38,photo:'02-garage-entree.jpg'}],
   [{id:'chambre1',name:'Chambre 1',area:'13,2 m²',desc:'Chambre du premier étage, parquet et fenêtre sur l’extérieur.',x:.15,z:.15,w:3.65,d:3.18,photo:'13-chambre-bureau.jpg'},
    {id:'entree',name:'Entrée / distribution',area:'5,5 m²',desc:'Palier de distribution entre les pièces, contigu à la cage d’escalier.',x:2.25,z:3.63,w:1.57,d:2.04,photo:'04-entree.jpg'},
    {id:'escalier',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Deux volées parallèles et tournant balancé à gauche. Départ à droite en haut du plan ; WC sous le tournant au rez-de-chaussée.',x:.09,z:3.46,w:2.07,d:1.85,photo:'04-entree.jpg'},
@@ -1326,7 +1337,7 @@ for(let i=0;i<rooms.length;i++){
   }
 }
 const floorNames={all:'Vue extérieure',0:'Rez-de-jardin',1:'Premier étage',2:'Deuxième étage'};
-const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Ancien garage 1 reconverti en salon / cuisine / salle à manger avec baie vitrée et entrée vers l’escalier. Douche près des WC, chambre cloisonnée et conservée ; garage 2 maintenu.',1:'Salon et télévision face au canapé, baie vers la loggia bureau, cuisine épurée avec accès à la loggia vitrée aménagée en salle à manger.',2:'Deux chambres, salle de bains, WC et couloir.'};
+const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Garage 2 relié directement à l’escalier, porte roulante au fond de la loggia et chambre isolée du garage. Buanderie fermée côté garages ; ancien garage 1 transformé en pièce de vie.',1:'Salon et télévision face au canapé, baie vers la loggia bureau, cuisine épurée avec accès à la loggia vitrée aménagée en salle à manger.',2:'Deux chambres, salle de bains, WC et couloir.'};
 let activeFloor='all',selected=null,roofOn=true,furnished=true,overhead=false,motion=null;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 function tweenTo(pos,target,duration=730){motion={start:performance.now(),duration,fromP:camera.position.clone(),toP:pos.clone(),fromT:controls.target.clone(),toT:target.clone()};}
