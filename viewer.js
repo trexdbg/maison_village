@@ -554,23 +554,136 @@ function stairs(parent,x,z,y){
   }
 }
 
-// WC du rez-de-chaussée exactement sous la zone gauche des marches tournantes,
-// en bas à gauche du plan. Son accès est du côté de la volée haute.
+// WC du rez-de-jardin : volume habillé sous les marches balancées.
+// Photo de référence : parquet chêne, WC suspendu au fond, lave-mains à
+// gauche et tableau électrique sur le mur droit. La porte reste ouverte en
+// coupe pour permettre de voir les équipements depuis la maquette.
+// Le plafond est l'intrados incliné de l'escalier, et non une dalle plate.
 function underStairToilet(parent,x,z,y){
   const g=new THREE.Group();
-  g.name='WC sous le tournant gauche de l escalier';
+  g.name='WC sous escalier - intérieur photographié et sous-face inclinée';
   parent.add(g);
   const za=z+1.00,zb=z+1.79;
-  cube(g,x+.095,y+.013,za,.80,.035,zb-za,mat.tile,false);
-  cube(g,x+.075,y,za,.09,1.20,zb-za,mat.interior);
-  cube(g,x+.075,y,za,.83,1.12,.075,mat.interior);
-  cube(g,x+.075,y,zb-.065,.83,1.10,.075,mat.interior);
-  // Petite cloison à droite, laissant l'entrée libre sous les marches hautes.
-  cube(g,x+.835,y,za,.075,1.12,.16,mat.interior);
-  toilet(g,x+.245,za+.09,y);
-  cube(g,x+.69,y+.73,za+.10,.16,.075,.24,mat.white);
-  cyl(g,x+.77,y+.81,za+.20,.045,.024,mat.metal,12);
-  cube(g,x+.72,y+1.00,za+.04,.13,.18,.018,mat.glassClear,false);
+  const wallWhite=new THREE.MeshStandardMaterial({color:'#f4f3ef',roughness:.94,side:THREE.DoubleSide});
+  const oak=new THREE.MeshStandardMaterial({map:canvasTexture('wood'),color:'#bd8d5f',roughness:.83});
+  const joint=new THREE.MeshStandardMaterial({color:'#896647',roughness:1});
+  const porcelain=new THREE.MeshStandardMaterial({color:'#fcfcfa',roughness:.29});
+  const chrome=new THREE.MeshStandardMaterial({color:'#abb4b8',metalness:.78,roughness:.23});
+  const panelGrey=new THREE.MeshStandardMaterial({color:'#d5d9d7',roughness:.75});
+  const panelInk=new THREE.MeshStandardMaterial({color:'#586260',roughness:.82});
+  const meterGreen=new THREE.MeshStandardMaterial({color:'#d4df16',roughness:.47});
+
+  // Lames de parquet miel dans l'axe de la petite pièce, avec plinthes chêne.
+  cube(g,x+.083,y+.013,za+.02,.778,.04,zb-za-.04,oak,false);
+  for(let i=1;i<5;i++){
+    cube(g,x+.083+i*.153,y+.053,za+.025,.003,.0015,zb-za-.05,joint,false);
+  }
+  cube(g,x+.085,y+.055,za+.072,.044,.068,zb-za-.115,oak,false);
+  cube(g,x+.81,y+.055,za+.072,.038,.068,zb-za-.115,oak,false);
+  cube(g,x+.085,y+.055,za+.065,.76,.068,.035,oak,false);
+
+  // Murs latéraux en coupe : l'ouverture d'accès du côté z=zb reste libre.
+  cube(g,x+.068,y,za,.058,1.18,zb-za,wallWhite);
+  cube(g,x+.837,y,za,.055,.94,zb-za,wallWhite);
+  cube(g,x+.068,y,zb-.052,.070,1.25,.052,wallWhite);
+  cube(g,x+.817,y,zb-.052,.073,1.08,.052,wallWhite);
+  cube(g,x+.145,y+.038,zb-.020,.66,.020,.048,oak,false);
+
+  // Pignon arrière en pente : la ligne supérieure suit le tournant.
+  const wallBack=new THREE.BufferGeometry();
+  wallBack.setAttribute('position',new THREE.Float32BufferAttribute([
+    x+.115,y,za+.024, x+.854,y,za+.024, x+.854,y+1.15,za+.024,
+    x+.115,y,za+.024, x+.854,y+1.15,za+.024, x+.115,y+1.94,za+.024
+  ],3));
+  wallBack.computeVertexNormals();
+  const back=new THREE.Mesh(wallBack,wallWhite);
+  back.receiveShadow=true;g.add(back);
+
+  // Sous-face de l'escalier, vue seulement d'en dessous : elle ne cache pas
+  // les marches ni les appareils quand on regarde la scène depuis le dessus.
+  // Au fond elle s'abaisse vers le tableau; elle remonte près de la porte.
+  const a=[x+.115,y+1.94,za+.035],b=[x+.854,y+1.15,za+.035];
+  const c=[x+.115,y+2.14,zb-.055],d=[x+.854,y+1.91,zb-.055];
+  const soffitGeometry=new THREE.BufferGeometry();
+  soffitGeometry.setAttribute('position',new THREE.Float32BufferAttribute([
+    ...a,...b,...c, ...b,...d,...c
+  ],3));
+  soffitGeometry.computeVertexNormals();
+  const soffit=new THREE.Mesh(soffitGeometry,new THREE.MeshStandardMaterial({
+    color:'#f5f4f1',roughness:.96,side:THREE.FrontSide
+  }));
+  soffit.castShadow=false;soffit.receiveShadow=true;g.add(soffit);
+
+  // WC suspendu à fond arrondi ; abattant annulaire et ouverture foncée.
+  const bowl=new THREE.Mesh(new THREE.SphereGeometry(1,28,16),porcelain);
+  bowl.scale.set(.182,.176,.240);
+  bowl.position.set(x+.491,y+.372,za+.306);
+  bowl.castShadow=true;bowl.receiveShadow=true;g.add(bowl);
+  cube(g,x+.347,y+.33,za+.076,.285,.176,.232,porcelain);
+  const waterOpening=new THREE.Mesh(new THREE.CircleGeometry(.135,32),
+    new THREE.MeshStandardMaterial({color:'#a9b3b0',roughness:.65,side:THREE.DoubleSide}));
+  waterOpening.rotation.x=-Math.PI/2;
+  waterOpening.scale.set(1,1.27,1);
+  waterOpening.position.set(x+.491,y+.542,za+.332);
+  g.add(waterOpening);
+  const seat=new THREE.Mesh(new THREE.TorusGeometry(.149,.018,10,32),porcelain);
+  seat.rotation.x=-Math.PI/2;
+  seat.scale.set(1,1.25,1);
+  seat.position.set(x+.491,y+.555,za+.332);
+  seat.castShadow=true;g.add(seat);
+  cube(g,x+.345,y+.590,za+.083,.292,.025,.050,porcelain,false);
+
+  // Commande de chasse à deux boutons encastrée au-dessus de la cuvette.
+  cube(g,x+.357,y+.904,za+.081,.273,.145,.020,porcelain,false);
+  for(const [xx,radius] of [[x+.441,.039],[x+.546,.026]]){
+    const button=new THREE.Mesh(new THREE.CircleGeometry(radius,24),chrome);
+    button.position.set(xx,y+.976,za+.105);g.add(button);
+    const middle=new THREE.Mesh(new THREE.CircleGeometry(radius*.83,24),porcelain);
+    middle.position.set(xx,y+.976,za+.107);g.add(middle);
+  }
+
+  // Petite grille de ventilation ronde dans le pignon, au-dessus à gauche.
+  const vent=new THREE.Mesh(new THREE.CircleGeometry(.067,26),porcelain);
+  vent.position.set(x+.280,y+1.50,za+.052);g.add(vent);
+  const ventRing=new THREE.Mesh(new THREE.TorusGeometry(.054,.009,7,28),chrome);
+  ventRing.position.set(x+.280,y+1.50,za+.057);g.add(ventRing);
+  for(let k=0;k<3;k++)
+    cube(g,x+.244,y+1.476+k*.016,za+.060,.073,.006,.005,panelInk,false);
+
+  // Lave-mains rectangulaire compact à gauche, posé sur un meuble blanc.
+  cube(g,x+.140,y+.064,za+.426,.232,.672,.307,porcelain);
+  cube(g,x+.130,y+.737,za+.408,.290,.068,.332,porcelain);
+  cube(g,x+.154,y+.805,za+.444,.226,.003,.243,wallWhite,false);
+  cube(g,x+.362,y+.348,za+.471,.010,.245,.013,chrome,false);
+  cube(g,x+.196,y+.819,za+.474,.020,.102,.020,chrome,false);
+  cube(g,x+.197,y+.910,za+.473,.092,.016,.018,chrome,false);
+  cube(g,x+.286,y+.870,za+.482,.018,.045,.017,chrome,false);
+  // Poignée de tiroir horizontale à la manière du meuble photographié.
+  cube(g,x+.352,y+.547,za+.485,.019,.017,.214,chrome,false);
+  // Brosse WC et petit porte-rouleau discrets, proches du lave-mains.
+  cyl(g,x+.220,y+.069,za+.309,.038,.132,chrome,18);
+  cube(g,x+.128,y+.699,za+.316,.100,.016,.018,chrome,false);
+  cyl(g,x+.170,y+.681,za+.340,.033,.042,porcelain,20);
+
+  // Tableau électrique blanc sur le mur de droite, avec rangées de disjoncteurs.
+  // Le relief des interrupteurs et les repères colorés évitent le bloc uni.
+  cube(g,x+.785,y+.216,za+.337,.045,1.18,.397,porcelain,false);
+  cube(g,x+.773,y+.251,za+.354,.020,1.105,.365,wallWhite,false);
+  for(let row=0;row<5;row++){
+    const yy=y+.330+row*.200;
+    cube(g,x+.763,yy,za+.368,.011,.145,.328,panelGrey,false);
+    cube(g,x+.753,yy+.011,za+.376,.007,.015,.308,row===2?meterGreen:panelInk,false);
+    for(let k=0;k<7;k++){
+      const zz=za+.382+k*.043;
+      cube(g,x+.750,yy+.049,zz,.009,.082,.034,porcelain,false);
+      cube(g,x+.742,yy+.094,zz+.010,.011,.028,.015,panelInk,false);
+    }
+  }
+  // Boîtier de compteur vert-jaune caractéristique de la photo.
+  cube(g,x+.737,y+1.430,za+.546,.084,.255,.175,meterGreen,false);
+  cube(g,x+.724,y+1.523,za+.573,.015,.087,.119,panelInk,false);
+  cube(g,x+.718,y+1.540,za+.586,.008,.061,.092,panelGrey,false);
+  cube(g,x+.724,y+1.458,za+.613,.012,.028,.040,chrome,false);
 }
 // Garde-corps entourant uniquement les bords libres des trémies aux étages.
 function shaftRail(g,x0,z0,x1,z1,y){
@@ -867,7 +980,7 @@ const rooms = [
    {id:'technique',name:'Salle de bains (plan) / buanderie',area:'11,8 m² (plan)',desc:'Le plan nomme cet espace « Salle de bain » ; la photo fournie illustre son utilisation comme buanderie.',x:.14,z:.15,w:3.75,d:2.8,photo:'03-buanderie.jpg'},
    {id:'garage2',name:'Garage 2',area:'22,7 m²',desc:'Second garage, sans voiture, avec espace atelier.',x:4.20,z:.16,w:3.99,d:5.76,photo:'02-garage-entree.jpg'},
    {id:'escalier-rdc',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Départ en haut à droite du plan, cinq marches vers la gauche, huit marches tournantes à gauche, puis cinq marches vers la droite jusqu’à l’étage. Pas de palier.',x:1.09,z:3.49,w:1.05,d:.83,photo:'04-entree.jpg'},
-   {id:'wc-sous-escalier',name:'WC sous l’escalier',area:'Dimensions indicatives',desc:'Toilettes et lave-mains placés sous les marches tournantes, dans la partie basse gauche du plan.',x:.14,z:4.43,w:.79,d:.75,photo:'06-wc-rdc.jpg'},
+   {id:'wc-sous-escalier',name:'WC sous l’escalier',area:'Dimensions indicatives',desc:'WC photographiés sous la pente de l’escalier : parquet chêne, cuvette suspendue au fond, lave-mains à gauche et tableau électrique à droite.',x:.14,z:4.43,w:.79,d:.75,photo:'06-wc-rdc.jpg'},
    {id:'loggia0',name:'Loggia',area:'8,5 m²',desc:'Loggia au rez-de-chaussée.',x:4.2,z:6.15,w:4.0,d:2.38,photo:'02-garage-entree.jpg'}],
   [{id:'chambre1',name:'Chambre 1',area:'13,2 m²',desc:'Chambre du premier étage, parquet et fenêtre sur l’extérieur.',x:.15,z:.15,w:3.65,d:3.18,photo:'13-chambre-bureau.jpg'},
    {id:'entree',name:'Entrée / distribution',area:'5,5 m²',desc:'Palier de distribution entre les pièces, contigu à la cage d’escalier.',x:2.25,z:3.63,w:1.57,d:2.04,photo:'04-entree.jpg'},
