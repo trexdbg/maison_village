@@ -321,11 +321,16 @@ plankFloor(levels[1].slab,0,0,2.18,3.44,y1,mat.tile);
 plankFloor(levels[1].slab,0,5.36,2.18,3.54,y1,mat.tile);
 plankFloor(levels[1].slab,2.18,0,6.29,8.90,y1,mat.tile);
 plankFloor(levels[1].slab,-4.22,5.59,4.22,3.31,y1,mat.tile);
-// Walls: *real openings* instead of glazed panels pasted onto solid masonry.
-wall(levels[1].walls,'x',0,0,8.47,y1,2.66,.18,mat.stucco,[[1.15,2.33,.72,2.12,'window'],[4.97,7.15,.60,2.19,'sliding']]);
+// Les deux ouvertures barrées côté chambre et séjour (z = 0) sont rebouchées
+// directement dans la géométrie 3D, y compris en vue en coupe.
+wall(levels[1].walls,'x',0,0,8.47,y1,2.66,.18,mat.stucco);
 wall(levels[1].walls,'x',8.72,0,8.47,y1,2.66,.18,mat.stucco,[[1.40,3.34,.81,2.11,'window'],[4.35,8.20,.71,2.36,'sliding']]);
-wall(levels[1].walls,'z',0,0,8.90,y1,2.66,.18,mat.stucco,[[.4,1.85,.75,2.1,'window'],[6.25,8.53,0,2.3,'sliding']]);
-wall(levels[1].walls,'z',8.29,0,8.90,y1,2.66,.18,mat.stucco,[[1.20,2.65,0,2.35,'french'],[4.35,5.80,.83,2.23,'window'],[6.62,8.50,.24,2.30,'sliding']]);
+// Suppression de la baie barrée sur le mur extérieur côté cuisine (x = 0).
+// La fenêtre non barrée située côté chambre est conservée.
+wall(levels[1].walls,'z',0,0,8.90,y1,2.66,.18,mat.stucco,[[.4,1.85,.75,2.1,'window']]);
+// Fenêtre barrée entre salle à manger et terrasse/piscine (x = 8.29) rebouchée ;
+// la porte-fenêtre et la baie de la loggia restent présentes.
+wall(levels[1].walls,'z',8.29,0,8.90,y1,2.66,.18,mat.stucco,[[1.20,2.65,0,2.35,'french'],[6.62,8.50,.24,2.30,'sliding']]);
 // Low partition walls, with cut door gaps.
 lowPartition(levels[1].cut,'z',3.96,.1,3.46,y1,.78);lowPartition(levels[1].cut,'z',3.96,3.46,5.93,y1,.82,[[4.20,5.04,0,.82,'']]);lowPartition(levels[1].cut,'z',3.96,6.00,8.9,y1,.77,[[7.02,7.94,0,.77,'']]);
 lowPartition(levels[1].cut,'x',3.50,0,3.96,y1,.74,[[2.50,3.37,0,.74,'']]);
