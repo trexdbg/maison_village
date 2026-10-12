@@ -84,3 +84,17 @@ Si GitHub Pages affiche une ancienne version, attendre la fin du déploiement pu
 - Fichiers HTML et JS versionnés V6 pour invalider l’ancien cache du navigateur.
 
 Ces volumes restent une interprétation approximative des photos et plans, et ne constituent pas des cotes de travaux.
+
+
+## Mise à jour V7 — escalier conforme au plan détaillé (12 octobre 2026)
+
+Le détail coté de l'escalier a conduit à remplacer l'ancienne géométrie en L par un **véritable escalier demi-tournant à gauche, à marches balancées**, sans palier rectangulaire :
+
+- **Départ à droite dans la volée supérieure du plan**, déplacement vers la gauche sur cinq marches ;
+- **Huit marches en éventail** autour d'un pivot à gauche, puis **cinq marches de retour vers la droite** dans la volée inférieure du dessin ;
+- Emprise du dessin d'environ **2,13 m × 1,77 m** (passages de 90 et 87 cm), au sein de la trémie conservée de **2,18 m × 1,92 m** ;
+- Chaque marche est un volume polygonal à hauteur progressive, avec contremarche et nez de marche, et les deux volées sont munies de mains courantes ;
+- **Toilettes replacées sous les marches tournantes, dans l'angle bas gauche du plan**, avec entrée côté escalier haut ;
+- Mise à jour de la sélection des pièces, de la caméra « Voir l'escalier » et de la version du script en **V7** pour éviter l'ancienne 3D en cache.
+
+Les 18 hauteurs de marche sont une représentation géométrique indicative et ne remplacent pas un relevé sur place.
