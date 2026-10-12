@@ -409,14 +409,29 @@ wall(levels[1].walls,'x',0,0,8.47,y1,2.66,.18,mat.stucco);
 wall(levels[1].walls,'x',8.72,0,8.47,y1,2.66,.18,mat.stucco,[[1.40,3.34,.81,2.11,'window'],[4.35,8.20,.71,2.36,'sliding']]);
 // Suppression de la baie barrée sur le mur extérieur côté cuisine (x = 0).
 // La fenêtre non barrée située côté chambre est conservée.
-// Le passage libre vers la loggia vitrée se situe au bout de la cuisine.
-wall(levels[1].walls,'z',0,0,8.90,y1,2.66,.18,mat.stucco,[[.4,1.85,.75,2.1,'window'],[6.32,7.63,0,2.35,'open']]);
+// Percement RÉEL du mur séparant la cuisine de la loggia vitrée.
+// Passage de 1,95 m de large, du sol au linteau (aucune menuiserie fermée).
+// Les réservations sont identiques en vue entière et en vue coupée.
+const kitchenGlazedLoggiaOpening={from:6.10,to:8.05,height:2.35};
+wall(levels[1].walls,'z',0,0,8.90,y1,2.66,.18,mat.stucco,[
+  [.40,1.85,.75,2.10,'window'],
+  [kitchenGlazedLoggiaOpening.from,kitchenGlazedLoggiaOpening.to,0,kitchenGlazedLoggiaOpening.height,'open']
+]);
+// Jambages et linteau fins : encadrement visible sans fermer le passage.
+for(const zz of [kitchenGlazedLoggiaOpening.from,kitchenGlazedLoggiaOpening.to-.045])
+  cube(levels[1].trim,-.025,y1+.025,zz,.225,2.305,.045,mat.white,false);
+cube(levels[1].trim,-.025,y1+2.335,kitchenGlazedLoggiaOpening.from,.225,.065,
+     kitchenGlazedLoggiaOpening.to-kitchenGlazedLoggiaOpening.from,mat.white,false);
 // Fenêtre barrée entre salle à manger et terrasse/piscine (x = 8.29) rebouchée ;
 // la porte-fenêtre et la baie de la loggia restent présentes.
 wall(levels[1].walls,'z',8.29,0,8.90,y1,2.66,.18,mat.stucco,[[1.20,2.65,0,2.35,'french'],[6.62,8.50,.24,2.30,'sliding']]);
 // Low partition walls, with cut door gaps.
-lowPartition(levels[1].cut,'z',3.96,.1,3.46,y1,.78);lowPartition(levels[1].cut,'z',3.96,3.46,5.93,y1,.82,[[4.20,5.04,0,.82,'']]);// Passage cuisine / loggia côté bureau, décalé pour adosser le plateau au mur.
-lowPartition(levels[1].cut,'z',3.96,6.00,8.9,y1,.77,[[6.33,7.28,0,.77,'']]);
+lowPartition(levels[1].cut,'z',3.96,.1,3.46,y1,.78);
+lowPartition(levels[1].cut,'z',3.96,3.46,5.93,y1,.82,[[4.20,5.04,0,.82,'']]);
+// Cloison CUISINE / LOGGIA (bureau) montée pleine hauteur, sans ouverture.
+// Contrairement aux autres cloisons coupées à ~80 cm, celle-ci reste entière
+// dans la vue du premier étage, conformément au repère rouge de la photo.
+lowPartition(levels[1].cut,'z',3.96,6.00,8.90,y1,2.66);
 lowPartition(levels[1].cut,'x',3.50,0,3.96,y1,.74,[[2.50,3.37,0,.74,'']]);
 lowPartition(levels[1].cut,'x',5.95,0,3.96,y1,.74,[[2.70,3.55,0,.74,'']]);
 // Baie vitrée du salon vers la loggia : vraie ouverture et panneaux coulissants.
@@ -429,8 +444,13 @@ plankFloor(levels[1].slab,4.12,.16,4.13,6.03,y1+.018,mat.tile);
 // Green privacy railing: balcony on street façade, characteristic of the real house.
 cube(levels[1].trim,4.60,3.49,8.99,3.50,.74,.09,mat.green,false);
 for(let v=4.7;v<=8.05;v+=.19)cube(levels[1].trim,v,3.51,9.09,.024,.7,.025,mat.mint,false);
-// First-floor loggias have glazed fronts, painted side edges.
-for(const x of [-4.22,-.15])cube(levels[1].trim,x,y1,5.59,.15,1.28,3.3,mat.stucco);
+// La loggia vitrée garde son allège LATÉRALE extérieure, mais PAS d'allège
+// continue à x=-.15 : celle-ci obturait en 3D l'ancienne ouverture cuisine/loggia
+// sur 1,28 m de hauteur, bien que le mur principal ait été percé.
+cube(levels[1].trim,-4.22,y1,5.59,.15,1.28,3.30,mat.stucco);
+// Courts retours de maçonnerie aux extrémités, hors du passage 6.10..8.05.
+cube(levels[1].trim,-.15,y1,5.59,.15,1.28,.41,mat.stucco);
+cube(levels[1].trim,-.15,y1,8.35,.15,1.28,.55,mat.stucco);
 // Fenêtre de la loggia vitrée : même allège, hauteur et type que la fenêtre de la loggia.
 // Le soubassement sous le vitrage accueille le buffet à vaisselle.
 wall(levels[1].walls,'x',8.72,-4.22,0,y1,2.66,.18,mat.stucco,[[-4.12,-.10,.71,2.36,'sliding']]);
@@ -1279,10 +1299,10 @@ const rooms = [
   [{id:'chambre1',name:'Chambre 1',area:'13,2 m²',desc:'Chambre du premier étage, parquet et fenêtre sur l’extérieur.',x:.15,z:.15,w:3.65,d:3.18,photo:'13-chambre-bureau.jpg'},
    {id:'entree',name:'Entrée / distribution',area:'5,5 m²',desc:'Palier de distribution entre les pièces, contigu à la cage d’escalier.',x:2.25,z:3.63,w:1.57,d:2.04,photo:'04-entree.jpg'},
    {id:'escalier',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Deux volées parallèles et tournant balancé à gauche. Départ à droite en haut du plan ; WC sous le tournant au rez-de-chaussée.',x:.09,z:3.46,w:2.07,d:1.85,photo:'04-entree.jpg'},
-   {id:'cuisine',name:'Cuisine',area:'9,2 m²',desc:'Cuisine linéaire épurée sans îlot, passage libre vers la loggia vitrée.',x:.15,z:6.09,w:3.65,d:2.65,photo:'16-cuisine.jpg'},
+   {id:'cuisine',name:'Cuisine',area:'9,2 m²',desc:'Cuisine linéaire épurée ; véritable passage ouvert de 1,95 m vers la loggia vitrée, sans allège.',x:.15,z:6.09,w:3.65,d:2.65,photo:'16-cuisine.jpg'},
    {id:'sejour',name:'Salon',area:'24,4 m²',desc:'Canapé face à la télévision sur le mur du fond ; baie coulissante vers la loggia.',x:4.18,z:.15,w:4.10,d:6.02,photo:'12-sejour.jpg'},
    {id:'loggia1',name:'Loggia vitrée / salle à manger',area:'12,3 m²',desc:'Table à manger avec quatre chaises et buffet à assiettes sous une fenêtre identique à celle de la loggia ; accès depuis la cuisine.',x:-4.07,z:5.72,w:3.95,d:2.98,photo:'05-loggia.jpg'},
-   {id:'loggia2',name:'Loggia / bureau',area:'7,5 m²',desc:'Bureau contre la cloison de la cuisine et petite bibliothèque sous la fenêtre ; grande baie vitrée vers le salon.',x:4.17,z:6.5,w:4.10,d:2.20,photo:'05-loggia.jpg'}],
+   {id:'loggia2',name:'Loggia / bureau',area:'7,5 m²',desc:'Bureau contre le mur plein hauteur séparant la cuisine, petite bibliothèque sous la fenêtre et baie vitrée vers le salon.',x:4.17,z:6.5,w:4.10,d:2.20,photo:'05-loggia.jpg'}],
   [{id:'sdb',name:'Salle de bains',area:'7,6 m²',desc:'Baignoire, vasque, grande faïence grège.',x:.17,z:.15,w:2.18,d:3.14,photo:'08-salle-de-bains.jpg'},
    {id:'couloir',name:'Couloir',area:'10,1 m²',desc:'Couloir desservant les chambres et la salle de bains.',x:2.66,z:.17,w:1.20,d:6.37,photo:'04-entree.jpg'},
    {id:'chambre2',name:'Chambre 2',area:'11,9 m²',desc:'Chambre avec lit double et rangements.',x:4.19,z:.16,w:4.07,d:3.07,photo:'14-chambre-parentale.jpg'},
