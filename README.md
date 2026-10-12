@@ -57,3 +57,20 @@ Kozikaza a fermé en 2025. Son successeur Kazaplan (Leroy Merlin) est un outil d
 ## Mise à jour V3 — 12 octobre 2026
 
 Le modèle Three.js publié comprend désormais des garages sans voiture, des rangements en fond de garage, un escalier en L avec palier et rambardes et une décoration enrichie du salon. Le code de la visite passe en version 3 avec des URLs de scripts renouvelées pour contourner le cache.
+
+
+## Mise à jour V4 — architecture d'après plans et photos (12 octobre 2026)
+
+Cette version privilégie **l'escalier, les percements et les volumes**, avant tout travail supplémentaire sur les meubles :
+
+- **Escalier demi-tournant** dans une emprise voisine de 2,18 × 1,92 m, avec deux volées opposées, palier, nez de marche et rampes. La hauteur de marche est déduite des 2,70 m entre niveaux, sans prétendre à un relevé sur place. La version précédente en L débordait de la cage d'escalier représentée sur les plans.
+- **Trémies traversantes** : les dalles du premier et du deuxième étages sont découpées à l'emplacement de la cage, au lieu de recouvrir les escaliers.
+- **Cloisons et portes** : murs intérieurs hauts avec passages, coupe des murs à hauteur de plan, portes pleines et portes vitrées distinguées.
+- **Ouvertures de façade** : huisseries, rails et meneaux de coulissants, fenêtres avec allèges, portes-fenêtres, volet de garage, porche ouvert et porte verte en retrait, volets extérieurs, ferronnerie.
+- **Loggias et toitures secondaires** : correction de la baie de la loggia, des débords en tuiles et des bandeaux de façade.
+- **Visite simplifiée** : mobilier masqué par défaut, bouton *Voir l'escalier*, sélection directe de la trémie et bouton de retour à la vue extérieure.
+- **Cache de GitHub Pages** : script de maquette chargé via une URL versionnée `viewer.js?v=4-arch-20261012` pour que la nouvelle géométrie remplace la V3.
+
+**Précision** : les plans fournis donnent des dimensions générales et la position des portes/fenêtres, mais pas tous les tableaux, appuis ni les relevés d'élévation. Les dimensions des menuiseries, la nature de certains ouvrants et l'escalier en U sont donc des **interprétations architecturales** à confirmer sur site. Ce modèle n'est pas un plan d'exécution.
+
+Si GitHub Pages affiche une ancienne version, attendre la fin du déploiement puis effectuer un rafraîchissement forcé (`Ctrl+Maj+R` ou équivalent). Pour inspecter l'escalier, ouvrir « Premier étage » puis cliquer sur « Voir l'escalier ».
