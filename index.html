@@ -58,21 +58,21 @@
         <div class="viewer-main">
           <div class="viewer-topline"><div class="live-dot"></div><span>MODÈLE 3D V3 · GARAGES SANS VOITURE · ESCALIER REFAIT</span><span class="viewer-hint">Glisser : tourner · Molette : zoomer · Clic : pièce</span></div>
           <div id="viewer-canvas" role="region" aria-label="Maquette 3D interactive de la maison"><div id="viewer-loading"><span class="loader"></span><span>Préparation de la visite 3D…</span></div></div>
-          <div class="viewer-overlay-top" id="viewer-help">Choisissez un étage pour visiter l’intérieur</div><div class="viewer-overlay-bottom"><span id="floor-caption">Vue d'ensemble · 3 niveaux</span><div><button type="button" id="btn-reset" class="icon-btn" aria-label="Réinitialiser la caméra" title="Réinitialiser la caméra">↺</button><button type="button" id="btn-roof" class="icon-btn" aria-pressed="true" title="Afficher ou masquer la toiture" aria-label="Afficher ou masquer la toiture">⌂</button><button type="button" id="btn-top" class="icon-btn" aria-pressed="false" title="Vue de dessus" aria-label="Vue de dessus">▦</button></div></div>
+          <div class="viewer-overlay-top" id="viewer-help">Choisissez un étage pour visiter l’intérieur</div><div class="viewer-overlay-bottom"><span id="floor-caption">Architecture V4 · 3 niveaux</span><div><button type="button" id="btn-reset" class="icon-btn" aria-label="Réinitialiser la caméra" title="Réinitialiser la caméra">↺</button><button type="button" id="btn-roof" class="icon-btn" aria-pressed="true" title="Afficher ou masquer la toiture" aria-label="Afficher ou masquer la toiture">⌂</button><button type="button" id="btn-top" class="icon-btn" aria-pressed="false" title="Vue de dessus" aria-label="Vue de dessus">▦</button></div></div>
         </div>
         <aside class="viewer-panel" aria-label="Commandes de visite">
-          <span class="eyebrow muted">NAVIGATION</span><h3>Explorez chaque<br />niveau.</h3><p>Les coupes dévoilent les meubles et les pièces. Cliquez sur un espace dans la 3D pour afficher sa photo.</p>
+          <span class="eyebrow muted">NAVIGATION</span><h3>Explorez chaque<br />niveau.</h3><p>Les coupes dévoilent les murs, les ouvertures et les trémies. Choisissez « Voir l’escalier » pour contrôler sa forme et ses dimensions.</p>
           <div class="floor-list" role="group" aria-label="Choisir un niveau">
             <button class="floor-option active" data-floor="all" type="button" aria-pressed="true"><span class="floor-icon">◈</span><span><strong>Vue complète</strong><small>Volumes & extérieurs</small></span><span class="floor-chevron">↗</span></button>
             <button class="floor-option" data-floor="0" type="button" aria-pressed="false"><span class="floor-icon">00</span><span><strong>Rez-de-chaussée</strong><small>Garages & annexes</small></span><span class="floor-chevron">↗</span></button>
             <button class="floor-option" data-floor="1" type="button" aria-pressed="false"><span class="floor-icon">01</span><span><strong>Premier étage</strong><small>Séjour, cuisine & chambre</small></span><span class="floor-chevron">↗</span></button>
             <button class="floor-option" data-floor="2" type="button" aria-pressed="false"><span class="floor-icon">02</span><span><strong>Deuxième étage</strong><small>Chambres & salle de bains</small></span><span class="floor-chevron">↗</span></button>
           </div>
-          <div class="viewer-tools"><button id="btn-furniture" aria-pressed="true" type="button">🛋 Masquer les meubles</button><button id="btn-focus" type="button" disabled>⌖ Approcher la pièce</button></div><div class="room-info" id="room-info" aria-live="polite"><span class="eyebrow muted">ESPACE SÉLECTIONNÉ</span><h4 id="room-name">Vue d'ensemble</h4><p id="room-detail">Cliquez sur une pièce dans la maquette, ou choisissez un niveau.</p><span id="room-area"></span><div class="room-photo-wrap"><img id="room-photo" src="" alt="" hidden></div><small class="room-photo-caption">Photo réelle correspondant à l’espace sélectionné</small></div>
+          <div class="viewer-tools"><button id="btn-stairs" type="button">↗ Voir l’escalier</button><button id="btn-furniture" aria-pressed="false" type="button">🛋 Afficher les meubles</button><button id="btn-focus" type="button" disabled>⌖ Approcher la pièce</button></div><div class="room-info" id="room-info" aria-live="polite"><span class="eyebrow muted">ESPACE SÉLECTIONNÉ</span><h4 id="room-name">Vue d'ensemble</h4><p id="room-detail">Cliquez sur une pièce dans la maquette, ou choisissez un niveau.</p><span id="room-area"></span><div class="room-photo-wrap"><img id="room-photo" src="" alt="" hidden></div><small class="room-photo-caption">Photo réelle correspondant à l’espace sélectionné</small></div>
           <div class="viewer-key"><span><i style="background:#e9caa5"></i> Bâtiment</span><span><i style="background:#70bdca"></i> Piscine</span><span><i style="background:#9bbb99"></i> Pièces</span></div>
         </aside>
       </div>
-      <p class="viewer-disclaimer wrap">Maquette de découverte non contractuelle. Position des cloisons, ouvertures, hauteurs et implantation extérieures schématiques, d'après les plans et photographies transmis.</p>
+      <p class="viewer-disclaimer wrap">Maquette 3D indicative, reconstruite à partir des plans et photos : trémies, portes, baies et fenêtres repérées mais non métrées sur site. Ne remplace pas un relevé d’architecte.</p>
     </section>
 
     <section id="espaces" class="spaces-section section-pad wrap">
@@ -94,6 +94,6 @@
   <footer class="site-footer"><div class="wrap footer-content"><a class="brand footer-brand" href="#haut"><span class="brand-symbol">⌂</span><span>MAISON<span class="brand-light">VILLAGE</span></span></a><span>Présentation informative · Plans et surfaces indicatifs · 2026</span><a href="#haut">Retour en haut ↑</a></div></footer>
   <dialog id="lightbox" class="lightbox" aria-label="Photographie en grand"><button id="lightbox-close" class="lightbox-close" type="button" aria-label="Fermer">×</button><button id="lightbox-prev" class="lightbox-prev" aria-label="Image précédente" type="button">‹</button><figure><img id="lightbox-image" src="" alt="" /><figcaption id="lightbox-caption"></figcaption></figure><button id="lightbox-next" class="lightbox-next" aria-label="Image suivante" type="button">›</button></dialog>
   <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"}}</script>
-  <script type="module" src="viewer.js?v=3"></script>
+  <script type="module" src="viewer.js?v=4-arch-20261012"></script>
 </body>
 </html>
