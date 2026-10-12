@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#173b36" />
+  <meta name="description" content="Découvrez cette maison de village à travers une galerie de photos, ses plans et une visite 3D interactive par niveau." />
+  <title>Maison Village — Visite & architecture 3D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#contenu">Aller au contenu</a>
+  <header class="site-header" id="haut">
+    <a class="brand" href="#haut" aria-label="Maison Village — accueil"><span class="brand-symbol">⌂</span><span>MAISON<span class="brand-light">VILLAGE</span><small>UNE VISITE À VOTRE RYTHME</small></span></a>
+    <nav aria-label="Navigation principale" id="navigation">
+      <a href="#decouvrir">La maison</a><a href="#visite-3d">Visite 3D</a><a href="#espaces">Les espaces</a><a href="#plans">Plans</a><a href="#galerie">Photos</a>
+    </nav>
+    <a class="nav-cta" href="#visite-3d">Explorer la maison <span>↗</span></a>
+    <button class="mobile-toggle" id="menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
+  </header>
+
+  <main id="contenu">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-photo photo-surface" style="--photo:url('assets/photos/01-facade.jpg')"><img src="assets/photos/01-facade.jpg" alt="Façade couleur sable de la maison avec volets verts, balcon et accès au garage" loading="eager" /></div>
+      <div class="hero-tint"></div>
+      <div class="hero-content wrap">
+        <span class="eyebrow hero-eyebrow"><span class="pulse"></span> MAISON DE VILLAGE · DÉCOUVERTE IMMERSIVE</span>
+        <h1 id="hero-title">Un lieu de vie.<br /><em>Trois niveaux</em><br />à découvrir.</h1>
+        <p>Explorez les volumes, les espaces de vie et les extérieurs de cette maison à travers ses photographies, ses plans et une maquette interactive.</p>
+        <div class="hero-actions"><a class="btn btn-light" href="#visite-3d">Commencer la visite 3D <span>↗</span></a><a class="btn btn-outline" href="#galerie">Voir les photographies <span>↓</span></a></div>
+      </div>
+      <div class="hero-bottom wrap"><span>01 / PRÉSENTATION</span><span>FAITES DÉFILER POUR DÉCOUVRIR <span class="down-arrow">↓</span></span></div>
+    </section>
+
+    <section id="decouvrir" class="intro-section section-pad wrap">
+      <div class="intro-heading"><div><span class="eyebrow muted">01 — À PROPOS</span><h2>Une maison aux espaces <span class="accent-serif">multiples.</span></h2></div><p>Des pièces lumineuses, une piscine, plusieurs espaces extérieurs et des niveaux distincts : découvrez l'organisation de cette maison grâce à ses plans et à ses images.</p></div>
+      <div class="stats-row">
+        <div class="stat"><strong>03</strong><span>chambres identifiées</span></div>
+        <div class="stat"><strong>24,4 <small>m²</small></strong><span>salon / salle à manger</span></div>
+        <div class="stat"><strong>13,9 <small>m²</small></strong><span>piscine (plan)</span></div>
+        <div class="stat"><strong>125,4 <small>m²</small></strong><span>terrasse indiquée (plan)</span></div>
+      </div>
+      <p class="data-note">Surfaces reprises des documents fournis, à titre indicatif. Elles ne constituent pas un mesurage officiel.</p>
+    </section>
+
+    <section class="image-story wrap" aria-label="Aperçu de la maison">
+      <div class="story-main photo-surface"><img src="assets/photos/11-sejour-piscine.jpg" alt="Séjour lumineux avec accès direct à la piscine" loading="lazy" /><span class="photo-label">La pièce de vie <span>↗</span></span></div>
+      <div class="story-side"><div class="story-image photo-surface"><img src="assets/photos/15-piscine.jpg" alt="Piscine bordée d'une terrasse et d'un espace vert" loading="lazy" /><span class="photo-label">La piscine <span>↗</span></span></div><div class="story-caption"><span class="eyebrow muted">INTÉRIEUR / EXTÉRIEUR</span><h3>De la lumière, de la vie, <em>de l'espace.</em></h3><p>Une circulation entre les pièces de vie et les espaces de plein air.</p></div></div>
+    </section>
+
+    <section id="visite-3d" class="viewer-section section-pad">
+      <div class="wrap viewer-intro"><div><span class="eyebrow pale">02 — EXPLORATION INTERACTIVE</span><h2>Visitez la maison <em>autrement.</em></h2></div><p>Tournez autour du bâtiment, choisissez un niveau et sélectionnez une pièce pour retrouver sa surface. La géométrie est une interprétation simplifiée des plans.</p></div>
+      <div class="viewer-layout wrap">
+        <div class="viewer-main">
+          <div class="viewer-topline"><div class="live-dot"></div><span>MODÈLE 3D INTERACTIF</span><span class="viewer-hint">Glisser pour tourner · Molette pour zoomer</span></div>
+          <div id="viewer-canvas" role="region" aria-label="Maquette 3D interactive de la maison"><div id="viewer-loading"><span class="loader"></span><span>Préparation de la visite 3D…</span></div></div>
+          <div class="viewer-overlay-bottom"><span id="floor-caption">Vue d'ensemble · 3 niveaux</span><div><button type="button" id="btn-reset" class="icon-btn" aria-label="Réinitialiser la caméra" title="Réinitialiser la caméra">↺</button><button type="button" id="btn-roof" class="icon-btn" aria-pressed="true" title="Afficher ou masquer la toiture">⌂</button></div></div>
+        </div>
+        <aside class="viewer-panel" aria-label="Commandes de visite">
+          <span class="eyebrow muted">NAVIGATION</span><h3>Explorez chaque<br />niveau.</h3><p>Choisissez un étage pour dévoiler les espaces de ce niveau.</p>
+          <div class="floor-list" role="group" aria-label="Choisir un niveau">
+            <button class="floor-option active" data-floor="all" type="button" aria-pressed="true"><span class="floor-icon">◈</span><span><strong>Vue complète</strong><small>Volumes & extérieurs</small></span><span class="floor-chevron">↗</span></button>
+            <button class="floor-option" data-floor="0" type="button" aria-pressed="false"><span class="floor-icon">00</span><span><strong>Rez-de-chaussée</strong><small>Garages & annexes</small></span><span class="floor-chevron">↗</span></button>
+            <button class="floor-option" data-floor="1" type="button" aria-pressed="false"><span class="floor-icon">01</span><span><strong>Premier étage</strong><small>Séjour, cuisine & chambre</small></span><span class="floor-chevron">↗</span></button>
+            <button class="floor-option" data-floor="2" type="button" aria-pressed="false"><span class="floor-icon">02</span><span><strong>Deuxième étage</strong><small>Chambres & salle de bains</small></span><span class="floor-chevron">↗</span></button>
+          </div>
+          <div class="room-info" id="room-info" aria-live="polite"><span class="eyebrow muted">ESPACE SÉLECTIONNÉ</span><h4 id="room-name">Vue d'ensemble</h4><p id="room-detail">Cliquez sur une pièce colorée dans la visite 3D, ou choisissez un niveau.</p><span id="room-area"></span></div>
+          <div class="viewer-key"><span><i style="background:#e9caa5"></i> Bâtiment</span><span><i style="background:#70bdca"></i> Piscine</span><span><i style="background:#9bbb99"></i> Pièces</span></div>
+        </aside>
+      </div>
+      <p class="viewer-disclaimer wrap">Maquette de découverte non contractuelle. Position des cloisons, ouvertures, hauteurs et implantation extérieures schématiques, d'après les plans et photographies transmis.</p>
+    </section>
+
+    <section id="espaces" class="spaces-section section-pad wrap">
+      <div class="section-head"><div><span class="eyebrow muted">03 — LES ESPACES</span><h2>Les pièces qui font <em>la maison.</em></h2></div><p>Les surfaces sont celles inscrites sur les plans. Sélectionnez un espace pour revenir à la maquette 3D.</p></div>
+      <div class="spaces-grid">
+        <button class="space-card space-wide" data-go-floor="1" data-room="sejour" type="button"><div class="space-photo photo-surface"><img src="assets/photos/12-sejour.jpg" alt="Salon et salle à manger aux murs vert sauge" loading="lazy" /></div><span class="space-meta">PREMIER ÉTAGE</span><strong>Salon / Salle à manger</strong><span class="space-bottom">24,4 m² <span>↗ Voir en 3D</span></span></button>
+        <button class="space-card" data-go-floor="1" data-room="cuisine" type="button"><div class="space-photo photo-surface"><img src="assets/photos/16-cuisine.jpg" alt="Cuisine contemporaine aux façades gris anthracite" loading="lazy" /></div><span class="space-meta">PREMIER ÉTAGE</span><strong>Cuisine</strong><span class="space-bottom">9,2 m² <span>↗ Voir en 3D</span></span></button>
+        <button class="space-card" data-go-floor="2" data-room="chambre2" type="button"><div class="space-photo photo-surface"><img src="assets/photos/14-chambre-parentale.jpg" alt="Chambre claire avec lit double" loading="lazy" /></div><span class="space-meta">DEUXIÈME ÉTAGE</span><strong>Chambre</strong><span class="space-bottom">11,9 m² (plan) <span>↗ Voir en 3D</span></span></button>
+        <button class="space-card" data-go-floor="2" data-room="sdb" type="button"><div class="space-photo photo-surface"><img src="assets/photos/08-salle-de-bains.jpg" alt="Salle de bains carrelée avec baignoire et meuble vasque" loading="lazy" /></div><span class="space-meta">DEUXIÈME ÉTAGE</span><strong>Salle de bains</strong><span class="space-bottom">7,6 m² <span>↗ Voir en 3D</span></span></button>
+      </div>
+    </section>
+
+    <section id="plans" class="plans-section section-pad"><div class="wrap"><div class="section-head"><div><span class="eyebrow muted">04 — L'ORGANISATION</span><h2>Une maison, <em>niveau par niveau.</em></h2></div><p>Consultez les plans d'origine, avec leurs dimensions, puis retrouvez chaque étage dans le module 3D.</p></div><div class="plan-tabs" role="tablist" aria-label="Plans par niveau"><button role="tab" aria-selected="true" class="active" data-plan="0" type="button">Rez-de-chaussée</button><button role="tab" aria-selected="false" data-plan="1" type="button">1er étage</button><button role="tab" aria-selected="false" data-plan="2" type="button">2e étage</button><button role="tab" aria-selected="false" data-plan="3" type="button">Perspective 3D</button></div><div class="plan-view"><div class="plan-image"><img id="plan-image" src="assets/plans/rez-de-chaussee.png" alt="Plan du rez-de-chaussée avec garages et annexes" loading="lazy" /></div><div class="plan-sidebar"><span class="eyebrow muted">PLAN ARCHITECTURAL</span><h3 id="plan-title">Rez-de-chaussée</h3><p id="plan-description">Deux garages indiqués sur le plan (35,3 m² et 22,7 m²), espaces annexes et escalier.</p><a id="plan-download" href="assets/plans/rez-de-chaussee.png" target="_blank" rel="noopener">Ouvrir le plan en grand ↗</a><button class="btn btn-dark" id="plan-to-3d" type="button">Explorer ce niveau en 3D ↗</button></div></div></div></section>
+
+    <section id="galerie" class="gallery-section section-pad wrap"><div class="section-head"><div><span class="eyebrow muted">05 — GALERIE</span><h2>Chaque détail <em>en images.</em></h2></div><p>Une sélection des photographies fournies : façade, pièces de vie, chambres, annexes et extérieurs.</p></div><div class="gallery-filters" role="group" aria-label="Filtrer les photos"><button class="active" data-filter="all" type="button">Toutes les photos</button><button data-filter="interieur" type="button">Intérieur</button><button data-filter="exterieur" type="button">Extérieur</button><button data-filter="annexes" type="button">Annexes</button></div><div class="gallery-grid" id="gallery-grid"></div></section>
+
+    <section class="closing-section"><div class="wrap closing-inner"><div><span class="eyebrow pale">ENVIE D'EN VOIR DAVANTAGE ?</span><h2>La maison vous ouvre<br /><em>ses portes.</em></h2></div><a class="btn btn-light" href="#visite-3d">Revenir à la visite 3D ↗</a></div></section>
+  </main>
+  <footer class="site-footer"><div class="wrap footer-content"><a class="brand footer-brand" href="#haut"><span class="brand-symbol">⌂</span><span>MAISON<span class="brand-light">VILLAGE</span></span></a><span>Présentation informative · Plans et surfaces indicatifs · 2026</span><a href="#haut">Retour en haut ↑</a></div></footer>
+  <dialog id="lightbox" class="lightbox" aria-label="Photographie en grand"><button id="lightbox-close" class="lightbox-close" type="button" aria-label="Fermer">×</button><button id="lightbox-prev" class="lightbox-prev" aria-label="Image précédente" type="button">‹</button><figure><img id="lightbox-image" src="" alt="" /><figcaption id="lightbox-caption"></figcaption></figure><button id="lightbox-next" class="lightbox-next" aria-label="Image suivante" type="button">›</button></dialog>
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"}}</script>
+  <script type="module" src="viewer.js"></script>
+</body>
+</html>
