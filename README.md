@@ -106,3 +106,13 @@ Les 18 hauteurs de marche sont une représentation géométrique indicative et n
 - La piscine est **creusée dans le massif rocheux**, avec réservation dans le dallage, fond et parois de bassin, margelles et eau abaissée sous le niveau de la terrasse ; aucun vide fictif en dessous.
 - L'ancien carré de gazon artificiel près du bassin est supprimé. La végétation décorative restante est placée en bacs sur la terrasse, pas dans un jardin au niveau bas.
 - Les dispositions intérieures et le palier du premier étage (V8) sont conservés. Le relief représente visuellement l'encaissement, sans prétendre à un relevé géotechnique.
+
+## Mise à jour V10 — Terrasse périphérique au premier étage (12 octobre 2026)
+
+Correction à partir de la photographie annotée : le terrain inférieur reste rocheux, **mais une terrasse carrelée praticable s'étend au niveau du premier étage**, autour du bâtiment et jusqu'à la piscine. Le rendu V9 laissait erronément apparaître de la roche à la place du dallage au-dessus des garages.
+
+- Dallage autour du bâtiment : passage arrière, bande latérale ouest, toit-terrasse du garage et retour en façade sur rue, raccordés aux dallages autour du bassin.
+- Soubassement en roche conservé à l'extérieur sous les surfaces de terrasse ; les garages ne sont pas remplis de roche (toitures-dalles au-dessus des volumes existants).
+- Garde-corps et murets bas ajoutés aux bords exposés, sans fermer les ouvertures du premier étage.
+- Piscine toujours excavée dans la roche au niveau de la terrasse, eau et margelles conservées.
+- Géométrie indicative : largeur de la circulation périphérique et des murets à ajuster selon relevé si besoin.
