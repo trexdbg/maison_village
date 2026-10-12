@@ -152,27 +152,85 @@ function wall(g, axis, constant, start, end, y, height, thickness, material, ope
       else cube(g,constant,y+low,a,thickness,high-low,b-a,material);
     }
   }
-  for(const o of openings){if(o[4]==='window'||o[4]==='sliding')addWindow(g,axis,constant,o[0],o[1],y+o[2],o[3]-o[2],o[4]==='sliding');else if(o[4]==='door')addDoor(g,axis,constant,o[0],o[1],y,o[3]);}
+  for(const o of openings){if(o[4]==='window'||o[4]==='sliding')addWindow(g,axis,constant,o[0],o[1],y+o[2],o[3]-o[2],o[4]==='sliding');else if(['door','french','swing','solid','garage'].includes(o[4]))addDoor(g,axis,constant,o[0],o[1],y+o[2],o[3]-o[2],o[4]);}
 }
+// Huisseries alignées sur les réservations, et non vitrages plaqués sur un mur plein.
 function addWindow(g,axis,c,a,b,y,h,sliding=false){
-  const t=.08;const width=b-a;const inset=.04;
+  const w=b-a,t=.065,bar=.047,depth=.115,segments=sliding?3:2;
   if(axis==='x'){
-    cube(g,a,y,c-.065,width,t,.10,mat.white,false);cube(g,a,y+h-t,c-.065,width,t,.10,mat.white,false);
-    cube(g,a,y,c-.065,t,h,.10,mat.white,false);cube(g,b-t,y,c-.065,t,h,.10,mat.white,false);
-    cube(g,a+inset,y+inset,c-.035,width-2*inset,h-2*inset,.017,mat.glass,false);
-    cube(g,(a+b)/2-.03,y,c-.068,.06,h,.10,mat.white,false);
-    if(sliding){for(let i=1;i<3;i++)cube(g,a+i*width/3-.025,y,c-.07,.045,h,.05,mat.white,false)}
+    cube(g,a,y,c-.074,w,t,depth,mat.white,false);
+    cube(g,a,y+h-t,c-.074,w,t,depth,mat.white,false);
+    cube(g,a,y,c-.074,t,h,depth,mat.white,false);
+    cube(g,b-t,y,c-.074,t,h,depth,mat.white,false);
+    cube(g,a+t,y+t,c-.027,w-2*t,h-2*t,.016,mat.glassClear,false);
+    for(let i=1;i<segments;i++)cube(g,a+i*w/segments-bar/2,y,c-.076,bar,h,.125,mat.white,false);
+    if(sliding){
+      cube(g,a,y+.095,c-.086,w,.018,.022,mat.metal,false);
+      cube(g,a,y+h-.105,c-.086,w,.018,.022,mat.metal,false);
+      cube(g,a+w*.64,y+h*.40,c-.091,.025,.19,.025,mat.metal,false);
+    }else{
+      cube(g,a+w*.5-.016,y+h*.44,c-.10,.031,.20,.026,mat.white,false);
+    }
+    cube(g,a-.04,y-.06,c-.102,w+.08,.07,.16,mat.stone,false);
   }else{
-    cube(g,c-.07,y,a,.10,t,width,mat.white,false);cube(g,c-.07,y+h-t,a,.10,t,width,mat.white,false);
-    cube(g,c-.07,y,a,.10,h,t,mat.white,false);cube(g,c-.07,y,b-t,.10,h,t,mat.white,false);
-    cube(g,c-.036,y+inset,a+inset,.02,h-2*inset,width-2*inset,mat.glass,false);
-    cube(g,c-.065,y,(a+b)/2-.027,.10,h,.055,mat.white,false);
+    cube(g,c-.074,y,a,depth,t,w,mat.white,false);
+    cube(g,c-.074,y+h-t,a,depth,t,w,mat.white,false);
+    cube(g,c-.074,y,a,depth,h,t,mat.white,false);
+    cube(g,c-.074,y,b-t,depth,h,t,mat.white,false);
+    cube(g,c-.026,y+t,a+t,.017,h-2*t,w-2*t,mat.glassClear,false);
+    for(let i=1;i<segments;i++)cube(g,c-.076,y,a+i*w/segments-bar/2,.125,h,bar,mat.white,false);
+    if(sliding){
+      cube(g,c-.095,y+.10,a,.025,.018,w,mat.metal,false);
+      cube(g,c-.096,y+h*.39,a+w*.63,.027,.19,.025,mat.metal,false);
+    }
+    cube(g,c-.102,y-.06,a-.04,.16,.07,w+.08,mat.stone,false);
   }
 }
-function addDoor(g,axis,c,a,b,y,height){
-  const d=.045;
-  if(axis==='x'){cube(g,a,y,c-.055,.05,height,.11,mat.metal,false);cube(g,b-.05,y,c-.055,.05,height,.11,mat.metal,false);cube(g,a,y+height-.07,c-.055,b-a,.07,.11,mat.metal,false);cube(g,a+.07,y+.05,c-.015,b-a-.14,height-.12,d,mat.glassClear,false)}
-  else {cube(g,c-.055,y,a,.11,height,.05,mat.metal,false);cube(g,c-.055,y,b-.05,.11,height,.05,mat.metal,false);cube(g,c-.055,y+height-.07,a,.11,.07,b-a,mat.metal,false);cube(g,c-.02,y+.05,a+.06,d,height-.12,b-a-.12,mat.glassClear,false)}
+function addDoor(g,axis,c,a,b,y,h,type='french'){
+  if(type==='open')return;
+  const w=b-a,frame=.065;
+  // Cadre périphérique, linteau et seuil.
+  if(axis==='x'){
+    cube(g,a,y,c-.08,frame,h,.13,mat.white,false);
+    cube(g,b-frame,y,c-.08,frame,h,.13,mat.white,false);
+    cube(g,a,y+h-.075,c-.08,w,.075,.13,mat.white,false);
+    cube(g,a,y-.035,c-.085,w,.035,.16,mat.stone,false);
+  }else{
+    cube(g,c-.08,y,a,.13,h,frame,mat.white,false);
+    cube(g,c-.08,y,b-frame,.13,h,frame,mat.white,false);
+    cube(g,c-.08,y+h-.075,a,.13,.075,w,mat.white,false);
+    cube(g,c-.085,y-.035,a,.16,.035,w,mat.stone,false);
+  }
+  if(type==='garage'){
+    const shutterMat=new THREE.MeshStandardMaterial({color:'#ecece8',metalness:.35,roughness:.45});
+    if(axis==='x'){
+      cube(g,a+frame,y+.03,c-.038,w-2*frame,h-.15,.045,shutterMat,false);
+      for(let i=1;i<18;i++)cube(g,a+frame,y+.03+i*(h-.15)/18,c-.07,w-2*frame,.014,.012,mat.warmwhite,false);
+    }else{
+      cube(g,c-.038,y+.03,a+frame,.045,h-.15,w-2*frame,shutterMat,false);
+      for(let i=1;i<18;i++)cube(g,c-.07,y+.03+i*(h-.15)/18,a+frame,.012,.014,w-2*frame,mat.warmwhite,false);
+    }
+    return;
+  }
+  const solid=type==='solid'||type==='swing';
+  const material=type==='solid'?mat.green:type==='swing'?mat.warmwhite:mat.glassClear;
+  if(axis==='x'){
+    cube(g,a+frame,y+.025,c-.021,w-2*frame,h-.115,.038,material,false);
+    if(solid){
+      for(let k=0;k<3;k++)cube(g,a+.14,y+.18+k*(h-.32)/3,c-.047,w-.28,(h-.39)/3,.014,type==='solid'?mat.mint:mat.white,false);
+    }else{
+      cube(g,(a+b)/2-.024,y+.04,c-.087,.048,h-.16,.13,mat.white,false);
+    }
+    cube(g,b-.19,y+h*.47,c-.075,.075,.023,.045,mat.metal,false);
+  }else{
+    cube(g,c-.021,y+.025,a+frame,.038,h-.115,w-2*frame,material,false);
+    if(solid){
+      for(let k=0;k<3;k++)cube(g,c-.047,y+.18+k*(h-.32)/3,a+.14,.014,(h-.39)/3,w-.28,type==='solid'?mat.mint:mat.white,false);
+    }else{
+      cube(g,c-.085,y+.04,(a+b)/2-.024,.13,h-.16,.048,mat.white,false);
+    }
+    cube(g,c-.076,y+h*.47,b-.19,.045,.023,.075,mat.metal,false);
+  }
 }
 function shutter(g,x,y,z,w,h){
   cube(g,x,y,z,w,h,.065,mat.green,false);
@@ -183,7 +241,12 @@ function privacyBars(g,axis,c,a,b,y,h){
   if(axis==='x'){cube(g,a,y+h*.2,c,b-a,.027,.028,mat.dark,false);cube(g,a,y+h*.82,c,b-a,.027,.028,mat.dark,false)}
   else{cube(g,c,y+h*.2,a,.027,.028,b-a,mat.dark,false);cube(g,c,y+h*.82,a,.027,.028,b-a,mat.dark,false)}
 }
-function lowPartition(g,axis,c,a,b,y,height=.86,openings=[]){wall(g,axis,c,a,b,y,height,.115,mat.interior,openings);}
+function lowPartition(g,axis,c,a,b,y,height=.86,openings=[]){
+  wall(g,axis,c,a,b,y,height,.115,mat.interior,openings);
+  // Cloison haute en vue extérieure ; coupe basse et passage dégagé en vue d'étage.
+  const i=levels.findIndex(l=>l.cut===g);
+  if(i>=0)wall(levels[i].walls,axis,c,a,b,y,[2.67,2.66,2.76][i],.12,mat.interior,openings.map(o=>[o[0],o[1],0,2.15,'swing']));
+}
 function trimLine(g,a,b,color=mat.terracotta2){const dx=b[0]-a[0],dy=b[1]-a[1],dz=b[2]-a[2],dist=Math.hypot(dx,dy,dz);const o=new THREE.Mesh(new THREE.CylinderGeometry(.032,.032,dist,6),color);o.position.set((a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2);o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),new THREE.Vector3(dx,dy,dz).normalize());o.castShadow=false;g.add(o);}
 
 function openEdge(g,x0,x1,z,y,height=.62){cube(g,x0,y,z,x1-x0,height,.14,mat.interior);}
@@ -195,24 +258,25 @@ openEdge(levels[2].cut,0,8.47,0,5.42);openEdge(levels[2].cut,0,8.47,6.68,5.42);s
 
 // --- Ground floor: based on 12.95 × 8.77 m plan ---
 plankFloor(levels[0].slab,-4.48,0,12.95,8.77,.04,mat.concrete);
-wall(levels[0].walls,'x',0,-4.48,8.47,0,2.67,.22,mat.stucco,[[-4.02,-1.13,0,2.21,'door'],[4.44,7.93,0,2.20,'door']]);
-wall(levels[0].walls,'x',8.57,-4.48,8.47,0,2.67,.22,mat.stucco,[[-3.70,-1.08,0,2.11,'door'],[.67,1.53,0,2.22,'door'],[4.40,8.08,0,2.20,'door']]);
+wall(levels[0].walls,'x',0,-4.48,8.47,0,2.67,.22,mat.stucco,[[.75,1.83,1.08,2.05,'window']]);
+wall(levels[0].walls,'x',8.57,-4.48,8.47,0,2.67,.22,mat.stucco,[[-3.70,-1.08,0,2.30,'garage'],[.63,1.51,1.00,2.06,'window'],[4.40,8.08,0,2.36,'open']]);
 wall(levels[0].walls,'z',-4.48,0,8.77,0,2.67,.2,mat.stucco);
 wall(levels[0].walls,'z',8.25,0,8.77,0,2.67,.2,mat.stucco);
 // Ground entry arch in the front facade; portal and one roll-up garage door.
-cube(levels[0].trim,-3.70,.04,8.83,2.61,2.13,.08,mat.white,false);
-for(let i=1;i<15;i++)cube(levels[0].trim,-3.70,.08+i*.135,8.92,2.61,.015,.015,mat.warmwhite,false);
-cube(levels[0].trim,.60,.05,8.83,.93,2.2,.09,mat.green,false);
-cube(levels[0].trim,.72,1.08,8.935,.075,.07,.03,mat.white,false);
+// Le rideau roulant est placé dans son ouverture, sans masquer le percement.
+cube(levels[0].trim,-3.76,-.025,8.80,2.78,.05,.25,mat.stone,false);
 // White plaster arch, not a rectangular garage front.
 const archShape=new THREE.Shape();archShape.moveTo(0,0);archShape.lineTo(3.75,0);archShape.lineTo(3.75,2.55);archShape.lineTo(0,2.55);archShape.closePath();
 const archHole=new THREE.Path();archHole.moveTo(.18,0);archHole.lineTo(.18,1.87);archHole.absarc(1.875,1.87,1.695,Math.PI,0,true);archHole.lineTo(3.57,0);archHole.closePath();archShape.holes.push(archHole);
 const archMesh=new THREE.Mesh(new THREE.ExtrudeGeometry(archShape,{depth:.2,bevelEnabled:false,curveSegments:18}),mat.stucco);
 archMesh.position.set(4.29,.06,8.86);archMesh.castShadow=true;archMesh.receiveShadow=true;levels[0].trim.add(archMesh);
 // Ground interior: garage, technical / laundry, staircase and side garage.
-for(const x of [0,4.04])lowPartition(levels[0].cut,'z',x,.10,8.58,0,.87);
-lowPartition(levels[0].cut,'x',3.1,0,4,0,.86);
-lowPartition(levels[0].cut,'x',6.05,4.04,8.25,0,.86);
+lowPartition(levels[0].cut,'z',0,.10,8.58,0,.78,[[5.55,6.42,0,.78,'']]);
+lowPartition(levels[0].cut,'z',4.04,.10,8.58,0,.78,[[6.30,7.15,0,.78,'']]);
+lowPartition(levels[0].cut,'z',2.18,3.40,5.37,0,.75,[[4.40,5.23,0,.75,'']]);
+lowPartition(levels[0].cut,'x',3.40,0,2.18,0,.76);
+lowPartition(levels[0].cut,'x',3.1,0,4,0,.76,[[2.51,3.34,0,.76,'']]);
+lowPartition(levels[0].cut,'x',6.05,4.04,8.25,0,.76,[[4.49,5.40,0,.76,'']]);
 // Garage au rez-de-chaussée : deux volumes libres, sans voiture ni guidage de pneus.
 function cabinet(g,x,y,z,w,h,d,m=mat.warmwhite){cube(g,x,y,z,w,h,d,m);cube(g,x,y,z+d-.012,w,.02,.022,mat.wood,false);}
 // Utility room based on photo: washing machines, boiler, storage.
@@ -236,8 +300,11 @@ storage(levels[0].furniture,6.26,4.74,.05,1.44);
 bench(levels[0].furniture,4.71,4.84,.05,1.31);
 cyl(levels[0].furniture,5.39,.06,6.11,.24,.75,mat.terracotta2,16);
 // Front small window & shutter.
-addWindow(levels[0].walls,'x',8.82,-.20,1.15,1.02,1.07);
-shutter(levels[0].trim,.0,1.05,8.955,.45,1.05);
+// Fenêtre réelle prise dans la maçonnerie, avec volet vert et barreaux.
+shutter(levels[0].trim,.16,1.00,8.84,.35,1.08);
+shutter(levels[0].trim,1.61,1.00,8.84,.34,1.08);
+privacyBars(levels[0].trim,'x',8.90,.68,1.46,1.08,.90);
+wall(levels[0].walls,'z',4.08,6.64,8.39,0,2.60,.14,mat.stucco,[[7.22,8.11,0,2.14,'solid']]);
 for(let z=0;z<8.7;z+=.36)cube(levels[0].cut,-4.48,.04,z,12.95,.012,.006,mat.warmwhite,false);
 
 // --- Main living floor. Main part 8.47m wide, 8.90m deep + west loggia. ---
@@ -249,14 +316,14 @@ plankFloor(levels[1].slab,2.18,0,6.29,8.90,y1,mat.tile);
 plankFloor(levels[1].slab,-4.22,5.59,4.22,3.31,y1,mat.tile);
 // Walls: *real openings* instead of glazed panels pasted onto solid masonry.
 wall(levels[1].walls,'x',0,0,8.47,y1,2.66,.18,mat.stucco,[[1.15,2.33,.72,2.12,'window'],[4.97,7.15,.60,2.19,'sliding']]);
-wall(levels[1].walls,'x',8.72,0,8.47,y1,2.66,.18,mat.stucco,[[.90,2.12,.80,2.00,'window'],[4.55,7.92,0,2.35,'sliding']]);
+wall(levels[1].walls,'x',8.72,0,8.47,y1,2.66,.18,mat.stucco,[[1.40,3.34,.81,2.11,'window'],[4.35,8.20,.71,2.36,'sliding']]);
 wall(levels[1].walls,'z',0,0,8.90,y1,2.66,.18,mat.stucco,[[.4,1.85,.75,2.1,'window'],[6.25,8.53,0,2.3,'sliding']]);
-wall(levels[1].walls,'z',8.29,0,8.90,y1,2.66,.18,mat.stucco,[[1.40,3.34,.81,2.11,'window'],[4.20,5.53,0,2.26,'door']]);
+wall(levels[1].walls,'z',8.29,0,8.90,y1,2.66,.18,mat.stucco,[[1.20,2.65,0,2.35,'french'],[4.35,5.80,.83,2.23,'window'],[6.62,8.50,.24,2.30,'sliding']]);
 // Low partition walls, with cut door gaps.
-lowPartition(levels[1].cut,'z',3.96,.1,3.46,y1,.78);lowPartition(levels[1].cut,'z',3.96,3.46,5.93,y1,.82);lowPartition(levels[1].cut,'z',3.96,6.00,8.9,y1,.77);
+lowPartition(levels[1].cut,'z',3.96,.1,3.46,y1,.78);lowPartition(levels[1].cut,'z',3.96,3.46,5.93,y1,.82,[[4.20,5.04,0,.82,'']]);lowPartition(levels[1].cut,'z',3.96,6.00,8.9,y1,.77,[[7.02,7.94,0,.77,'']]);
 lowPartition(levels[1].cut,'x',3.50,0,3.96,y1,.74,[[2.50,3.37,0,.74,'']]);
-lowPartition(levels[1].cut,'x',5.95,0,3.96,y1,.74,[[1.03,1.95,0,.74,'']]);
-lowPartition(levels[1].cut,'x',6.35,4,8.29,y1,.72);
+lowPartition(levels[1].cut,'x',5.95,0,3.96,y1,.74,[[2.70,3.55,0,.74,'']]);
+lowPartition(levels[1].cut,'x',6.35,4,8.29,y1,.72,[[5.17,7.48,0,.72,'']]);
 // Stronger room flooring based on photographic details.
 plankFloor(levels[1].slab,.16,.16,3.62,3.18,y1+.018,mat.wood);
 plankFloor(levels[1].slab,2.18,3.58,1.63,2.17,y1+.018,mat.wood);
@@ -273,7 +340,7 @@ for(let v=-4.17;v<-.16;v+=.82)cube(levels[1].trim,v,y1+.14,8.74,.045,2.20,.085,m
 cube(levels[1].trim,-4.2,y1+.2,5.6,4.0,2.05,.03,mat.glassClear,false);
 // Right loggia partition with full height opening.
 for(const x of [4.0,8.29])cube(levels[1].trim,x,y1,6.3,.15,1.2,2.6,mat.stucco);
-addWindow(levels[1].trim,'x',8.73,4.09,8.31,y1+.2,2.24,true);
+// La baie de la loggia figure déjà dans son ouverture en façade, sans vitrage doublé.
 // Window shutters and barred first-floor bedroom window.
 shutter(levels[1].trim,0.87,y1+.75,8.97,.39,1.45);
 privacyBars(levels[1].trim,'x',8.94,1.42,3.33,y1+.75,1.33);
@@ -288,17 +355,18 @@ wall(levels[2].walls,'x',0,0,8.47,y2,2.76,.18,mat.stucco,[[.83,1.98,.83,2.12,'wi
 wall(levels[2].walls,'x',6.66,0,8.47,y2,2.76,.18,mat.stucco,[[1.13,2.04,.87,2.04,'window'],[5.48,7.20,.88,2.11,'window']]);
 wall(levels[2].walls,'z',0,0,6.83,y2,2.76,.18,mat.stucco,[[.90,2.3,.83,2.15,'window']]);
 wall(levels[2].walls,'z',8.29,0,6.83,y2,2.76,.18,mat.stucco,[[1.07,2.34,.88,2.11,'window']]);
-lowPartition(levels[2].cut,'z',2.52,.08,3.48,y2,.83);
-lowPartition(levels[2].cut,'z',4.05,.08,6.75,y2,.83);
+lowPartition(levels[2].cut,'z',2.52,.08,3.48,y2,.83,[[1.06,1.91,0,.83,'']]);
+lowPartition(levels[2].cut,'z',2.52,3.48,6.75,y2,.83,[[4.46,5.30,0,.83,''],[5.82,6.58,0,.83,'']]);
+lowPartition(levels[2].cut,'z',4.05,.08,6.75,y2,.83,[[1.22,2.12,0,.83,''],[3.98,4.88,0,.83,'']]);
 lowPartition(levels[2].cut,'x',3.46,0,2.50,y2,.81);
 lowPartition(levels[2].cut,'x',3.38,4.04,8.27,y2,.81);
-lowPartition(levels[2].cut,'x',5.25,0,2.51,y2,.81);
+lowPartition(levels[2].cut,'x',5.36,0,2.51,y2,.81);
 // Colors & tile floors in wet rooms.
 plankFloor(levels[2].slab,.13,.12,2.24,3.18,y2+.015,mat.tile);
 plankFloor(levels[2].slab,.13,5.38,2.24,1.30,y2+.015,mat.tile);
 // Signature emerald shutters on the street-facing windows.
 for(const x of [5.05,7.24])shutter(levels[2].trim,x,y2+.87,6.88,.35,1.28);
-for(const x of [.53,2.14])shutter(levels[2].trim,x,y2+.88,6.87,.28,1.15);
+privacyBars(levels[2].trim,'x',6.77,1.15,2.03,y2+.83,1.28);
 
 // Naturalistic stylised objects, inspired by the user-supplied real interior photographs.
 function bed(g,x,z,w,d,y,accent=mat.linen,headOnZ=true){
