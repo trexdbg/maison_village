@@ -406,6 +406,98 @@ function sofa(g,x,z,y){
 }
 function wardrobe(g,x,z,y,w=1.4){cube(g,x,y,z,w,2.03,.55,mat.wood);cube(g,x+w/2-.014,y+.05,z+.55,.026,1.88,.04,mat.warmwhite,false);for(const xx of [x+w*.45,x+w*.55])cube(g,xx,y+1.0,z+.57,.018,.21,.02,mat.metal,false);}
 function bureau(g,x,z,y){cube(g,x,y+.75,z,1.25,.08,.59,mat.white);for(const xx of [x+.04,x+1.17])for(const zz of [z+.05,z+.50])cube(g,xx,y+.02,zz,.045,.72,.045,mat.wood);cube(g,x+.20,y+.80,z+.14,.35,.022,.28,mat.dark);}
+// Chambre du niveau habitable : aménagement inspiré de la photographie fournie.
+// Emprise x=.15..3.78, z=.15..3.34 : le lit ne coupe ni la fenêtre sur x=0
+// ni le passage x=2.50..3.37 vers le palier (z=3.50).
+function groundBedroom(g,y){
+  const oak=new THREE.MeshStandardMaterial({color:'#c9a57a',roughness:.87});
+  const oakEdge=new THREE.MeshStandardMaterial({color:'#a67e58',roughness:.88});
+  const cream=new THREE.MeshStandardMaterial({color:'#eee8dd',roughness:1});
+  const cotton=new THREE.MeshStandardMaterial({color:'#f9f4e9',roughness:1});
+  const linenBeige=new THREE.MeshStandardMaterial({color:'#d7c8b4',roughness:1});
+  const olive=new THREE.MeshStandardMaterial({color:'#8f9e86',roughness:1});
+  const rattan=new THREE.MeshStandardMaterial({color:'#c68b44',roughness:.94,side:THREE.DoubleSide});
+  const foliage=new THREE.MeshStandardMaterial({color:'#70876a',roughness:1});
+
+  // Tapis écru, lit double 160 × 200, tête de lit contre le mur plein est.
+  cube(g,1.40,y+.028,.62,2.25,.026,2.18,cream,false);
+  cube(g,1.61,y+.18,.85,2.11,.22,1.65,oak);
+  for(const bx of [1.69,3.56])for(const bz of [.93,2.35])
+    cube(g,bx,y+.035,bz,.075,.19,.075,oakEdge);
+  cube(g,1.66,y+.41,.90,1.98,.24,1.55,cotton);
+  // Couette et plaid au pied du lit, plis lisibles en vue plongeante.
+  cube(g,1.69,y+.658,.925,1.38,.08,1.50,linenBeige);
+  cube(g,1.73,y+.742,.95,.32,.027,1.45,olive,false);
+  for(const bz of [1.03,1.80]){
+    cube(g,3.16,y+.66,bz,.38,.115,.58,cotton);
+    cube(g,3.18,y+.78,bz+.08,.20,.035,.42,cream,false);
+  }
+  cube(g,3.70,y+.33,.78,.135,.91,1.79,oak);
+  cube(g,3.66,y+.56,.85,.052,.56,1.65,linenBeige,false);
+
+  // Deux petits chevets en bois, lampes et quelques livres.
+  for(const z of [.26,2.67]){
+    cube(g,3.14,y+.38,z,.45,.095,.36,oak);
+    for(const x of [3.19,3.51])for(const zz of [z+.05,z+.29])
+      cube(g,x,y+.04,zz,.035,.34,.035,oakEdge);
+  }
+  cyl(g,3.38,y+.48,.45,.052,.22,oakEdge,12);
+  const lampShade=new THREE.Mesh(new THREE.CylinderGeometry(.10,.15,.18,16),cream);
+  lampShade.position.set(3.38,y+.79,.45);g.add(lampShade);
+  cube(g,3.22,y+.48,2.74,.22,.032,.14,cotton,false);
+  cube(g,3.25,y+.52,2.76,.20,.025,.12,olive,false);
+
+  // Commode bois clair à tiroirs crème, du côté libre de la fenêtre.
+  cube(g,.30,y+.05,2.70,1.18,.79,.43,oak);
+  cube(g,.35,y+.12,3.105,1.08,.64,.020,cream,false);
+  for(let i=0;i<3;i++){
+    cube(g,.36,y+.14+i*.21,3.133,1.06,.012,.008,oakEdge,false);
+    cube(g,.81,y+.21+i*.21,3.136,.16,.018,.018,oakEdge,false);
+  }
+  cube(g,.27,y+.84,2.67,1.24,.055,.49,oak);
+  // Bouquet et diffuseur identifiables sur la photo.
+  cyl(g,.59,y+.90,2.88,.070,.17,cotton,12);
+  for(const dx of [-.08,0,.08]){
+    trimLine(g,[.59,y+1.07,2.88],[.59+dx,y+1.24,2.88+dx],foliage);
+    sphere(g,.59+dx,y+1.25,2.88+dx,.052,cotton);
+  }
+  cyl(g,1.24,y+.90,2.88,.039,.14,cream,10);
+  for(let k=0;k<3;k++)
+    trimLine(g,[1.24,y+1.01,2.88],[1.19+k*.04,y+1.27,2.84+k*.03],oakEdge);
+
+  // Store en lin au-dessus de la fenêtre à volets verts, sans cacher le vitrage.
+  cube(g,.19,y+2.13,.44,.075,.19,1.40,linenBeige,false);
+  cube(g,.20,y+2.10,.48,.045,.045,1.31,cream,false);
+
+  // Placard derrière des rideaux écrus, pliés contre le pan de mur droit.
+  cube(g,3.815,y+2.43,2.66,.035,.055,.64,oakEdge,false);
+  for(let i=0;i<9;i++){
+    const z=2.67+i*.068;
+    cube(g,3.805+(i%2)*.016,y+.06,z,.025,2.31,.061,i%2?cream:linenBeige,false);
+  }
+  // Climatisation discrète, au-dessus de la zone rideau/porte de la photo.
+  cube(g,3.725,y+2.30,2.77,.16,.25,.45,cotton,false);
+  cube(g,3.719,y+2.33,2.81,.012,.020,.37,oakEdge,false);
+
+  // Suspension en fibres tressées ajourées, analogue à celle de la photo.
+  const cx=2.47,cz=1.69;
+  cyl(g,cx,y+2.29,cz,.066,.21,mat.dark,14);
+  trimLine(g,[cx,y+2.29,cz],[cx,y+2.08,cz],mat.dark);
+  const rings=[[2.10,.24],[1.97,.34],[1.79,.32],[1.69,.22]];
+  for(const [height,radius] of rings){
+    const ring=new THREE.Mesh(new THREE.TorusGeometry(radius,.017,5,28),rattan);
+    ring.rotation.x=Math.PI/2;ring.position.set(cx,y+height,cz);ring.castShadow=false;g.add(ring);
+  }
+  for(let i=0;i<22;i++){
+    const a=i*Math.PI*2/22,co=Math.cos(a),si=Math.sin(a);
+    for(let j=0;j<rings.length-1;j++){
+      const [h0,r0]=rings[j], [h1,r1]=rings[j+1];
+      trimLine(g,[cx+co*r0,y+h0,cz+si*r0],[cx+co*r1,y+h1,cz+si*r1],rattan);
+    }
+  }
+  sphere(g,cx,y+1.87,cz,.058,mat.warmwhite);
+}
+
 function kitchen(g,y){
   // Graphite fronts, light oak worktop and L-shape as photographed.
   cube(g,.17,y,.30,3.51,.88,.64,mat.charcoal);cube(g,.16,y+.88,.28,3.55,.075,.67,mat.wood);
@@ -709,8 +801,7 @@ for(const floor of [1,2]){
 // Ground utility and mezzanine staircase.
 stairs(levels[0].architecture,.04,3.40,.05);
 underStairToilet(levels[0].architecture,.04,3.40,.05);
-bed(levels[1].furniture,.85,.65,1.88,2.03,y1,mat.linen);
-wardrobe(levels[1].furniture,.2,2.68,y1,1.05);
+groundBedroom(levels[1].furniture,y1);
 sofa(levels[1].furniture,4.47,2.30,y1);
 dining(levels[1].furniture,5.15,4.61,y1);
 // Mobilier et décoration supplémentaires inspirés des photographies.
@@ -982,7 +1073,7 @@ const rooms = [
    {id:'escalier-rdc',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Départ en haut à droite du plan, cinq marches vers la gauche, huit marches tournantes à gauche, puis cinq marches vers la droite jusqu’à l’étage. Pas de palier.',x:1.09,z:3.49,w:1.05,d:.83,photo:'04-entree.jpg'},
    {id:'wc-sous-escalier',name:'WC sous l’escalier',area:'Dimensions indicatives',desc:'WC photographiés sous la pente de l’escalier : parquet chêne, cuvette suspendue au fond, lave-mains à gauche et tableau électrique à droite.',x:.14,z:4.43,w:.79,d:.75,photo:'06-wc-rdc.jpg'},
    {id:'loggia0',name:'Loggia',area:'8,5 m²',desc:'Loggia au rez-de-chaussée.',x:4.2,z:6.15,w:4.0,d:2.38,photo:'02-garage-entree.jpg'}],
-  [{id:'chambre1',name:'Chambre 1',area:'13,2 m²',desc:'Chambre du premier étage, parquet et fenêtre sur l’extérieur.',x:.15,z:.15,w:3.65,d:3.18,photo:'13-chambre-bureau.jpg'},
+  [{id:'chambre1',name:'Chambre 1',area:'13,2 m²',desc:'Chambre lumineuse d’après la photo : parquet chêne, lit double en lin, commode claire, suspension en rotin, rideaux écrus et portes vertes.',x:.15,z:.15,w:3.65,d:3.18,photo:'13-chambre-bureau.jpg'},
    {id:'entree',name:'Entrée / distribution',area:'5,5 m²',desc:'Palier de distribution entre les pièces, contigu à la cage d’escalier.',x:2.25,z:3.63,w:1.57,d:2.04,photo:'04-entree.jpg'},
    {id:'escalier',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Deux volées parallèles et tournant balancé à gauche. Départ à droite en haut du plan ; WC sous le tournant au rez-de-chaussée.',x:.09,z:3.46,w:2.07,d:1.85,photo:'04-entree.jpg'},
    {id:'cuisine',name:'Cuisine',area:'9,2 m²',desc:'Cuisine aux façades anthracite et plan de travail aspect bois.',x:.15,z:6.09,w:3.65,d:2.65,photo:'16-cuisine.jpg'},
@@ -1013,7 +1104,7 @@ for(let i=0;i<rooms.length;i++){
 }
 const floorNames={all:'Vue extérieure',0:'Rez-de-jardin',1:'Premier étage',2:'Deuxième étage'};
 const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Garages encaissés dans la roche, sans jardin au niveau bas. Terrasse continue au premier étage tout autour de la maison, jusqu’à la piscine creusée dans la roche.',1:'Escalier demi-tournant gauche, accès libre entre les deux volées, raccord de palier en parquet, séjour, cuisine et loggias.',2:'Deux chambres, salle de bains, WC et couloir.'};
-let activeFloor='all',selected=null,roofOn=true,furnished=false,overhead=false,motion=null;
+let activeFloor='all',selected=null,roofOn=true,furnished=true,overhead=false,motion=null;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 function tweenTo(pos,target,duration=730){motion={start:performance.now(),duration,fromP:camera.position.clone(),toP:pos.clone(),fromT:controls.target.clone(),toT:target.clone()};}
 function updateMotion(t){if(!motion)return;const q=Math.min(1,(t-motion.start)/motion.duration);const e=q*q*(3-2*q);camera.position.lerpVectors(motion.fromP,motion.toP,e);controls.target.lerpVectors(motion.fromT,motion.toT,e);if(q>=1)motion=null;}
