@@ -849,8 +849,8 @@ for(let i=0;i<rooms.length;i++){
     marker.scale.set(Math.min(2.27,Math.max(1.25,r.w*.55)),.46,1);levels[i].labels.add(marker);
   }
 }
-const floorNames={all:'Vue extérieure',0:'Rez-de-chaussée',1:'Premier étage',2:'Deuxième étage'};
-const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Deux garages sans voiture, escalier demi-tournant gauche conforme au plan et WC sous le tournant.',1:'Escalier demi-tournant gauche, accès libre entre les deux volées, raccord de palier en parquet, séjour, cuisine et loggias.',2:'Deux chambres, salle de bains, WC et couloir.'};
+const floorNames={all:'Vue extérieure',0:'Rez-de-jardin',1:'Premier étage',2:'Deuxième étage'};
+const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Garages entièrement encaissés dans la roche, sans jardin. Piscine excavée dans le massif rocheux sous la terrasse ; escalier demi-tournant gauche et WC sous les marches.',1:'Escalier demi-tournant gauche, accès libre entre les deux volées, raccord de palier en parquet, séjour, cuisine et loggias.',2:'Deux chambres, salle de bains, WC et couloir.'};
 let activeFloor='all',selected=null,roofOn=true,furnished=false,overhead=false,motion=null;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 function tweenTo(pos,target,duration=730){motion={start:performance.now(),duration,fromP:camera.position.clone(),toP:pos.clone(),fromT:controls.target.clone(),toT:target.clone()};}
