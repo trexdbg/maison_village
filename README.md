@@ -157,3 +157,14 @@ La V11 contenait une erreur de localisation ; la V13 remplace expressément ses 
 - Conservation d'un **volume de maison voisine en contre-haut**, entièrement séparé par un mur de soutènement ; son soubassement est limité à l'emprise bâtie. Volumétrie de contexte indicative.
 - Le rez-de-jardin reste encaissé dans la roche, la piscine excavée reste au niveau terrasse, et les corrections intérieures V13 sont conservées.
 - Actualisation du script à `viewer.js?v=14-suppression-zones-rouges-20261012` pour éviter le cache GitHub Pages.
+
+## Mise à jour V16 — accès du rez-de-jardin (12 octobre 2026)
+
+- **Chambre** : suppression du passage latéral depuis le garage 2 / la loggia, qui pouvait faire croire que la porte d'entrée donnait directement dans la chambre. L'accès intérieur côté ancienne pièce de vie est conservé ; la séparation chambre / escalier reste pleine.
+- **Garage 2 → escalier** : nouvelle porte pleine de 90 cm directement sur le dégagement, dans le mur côté garage, à proximité du départ de l'escalier. Les marches, les WC sous escalier et leur entrée ne sont pas déplacés.
+- **Garage 2 → loggia** : vraie porte de garage à volet roulant (ouverture indicative 3,52 × 2,36 m), au fond de la loggia et en retrait de l'arche extérieure ; suppression de l'ancien petit passage à cet endroit. Le passage devant la porte est dégagé en déplaçant le rangement et en retirant le banc et la jardinière.
+- **Salle de bains / buanderie** : mur côté garage 1 et mur côté garage 2 refermés ; la pièce conserve son accès depuis le couloir de l'escalier et la douche précédemment ajoutée.
+- **Coupe 3D** : nouvelles réservations dans les murs bas et hauts, porte d'entrée et volet roulant visibles en mode d'exploration de l'étage ; descriptifs du niveau mis à jour.
+- **Publication** : version affichée V16 et paramètres de cache des scripts renouvelés.
+
+Les positions et largeurs sont des indications de modélisation, à confirmer par relevé avant travaux.
