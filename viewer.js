@@ -274,8 +274,9 @@ plankFloor(levels[0].slab,.14,5.53,3.75,2.99,.09,mat.wood);
 // Sol chaleureux sur tout l'ancien garage 1, désormais salon / cuisine / salle à manger.
 plankFloor(levels[0].slab,-4.27,.15,4.11,8.33,.09,mat.wood);
 wall(levels[0].walls,'x',0,-4.48,8.47,0,2.67,.22,mat.stucco,[[.75,1.83,1.08,2.05,'window']]);
-// Ancien garage 1 transformé en séjour : baie vitrée coulissante à la place de la porte de garage.
-wall(levels[0].walls,'x',8.57,-4.48,8.47,0,2.67,.22,mat.stucco,[[-3.70,-1.08,0,2.34,'sliding'],[.63,1.51,1.00,2.06,'window'],[4.40,8.08,0,2.36,'open']]);
+// Séjour : grande baie conservée. Chambre : la fenêtre / fermeture coulissante
+// repérée en rouge côté loggia est remplacée par une porte battante verte de 88 cm.
+wall(levels[0].walls,'x',8.57,-4.48,8.47,0,2.67,.22,mat.stucco,[[-3.70,-1.08,0,2.34,'sliding'],[.63,1.51,0,2.15,'solid'],[4.40,8.08,0,2.36,'open']]);
 wall(levels[0].walls,'z',-4.48,0,8.77,0,2.67,.2,mat.stucco);
 wall(levels[0].walls,'z',8.25,0,8.77,0,2.67,.2,mat.stucco);
 // Arche de l'entrée du garage 2 conservée ; la porte du garage 1 devient une baie vitrée.
@@ -302,8 +303,15 @@ addDoor(levels[0].trim,'z',4.04,stairGarageEntry.from,stairGarageEntry.to,0,stai
 lowPartition(levels[0].cut,'x',3.40,0,2.18,0,.76);
 // Cloison pleine entre la chambre et la cage de l'escalier / les WC.
 lowPartition(levels[0].cut,'x',5.37,.10,3.94,0,.78);
-// La buanderie conserve uniquement sa porte sur le dégagement, côté z=3.1.
-lowPartition(levels[0].cut,'x',3.1,0,4,0,.76,[[2.51,3.34,0,.76,'']]);
+// Dressing contre le mur de l'escalier, puis porte dans ce même mur :
+// accès exclusif à la buanderie depuis le dégagement escalier / WC.
+// La porte et son percement restent visibles aussi en mode coupe du RDC.
+const bathroomStairDoor={from:2.51,to:3.34,height:2.15};
+wall(levels[0].cut,'x',3.10,0,4,0,.76,.115,mat.interior,
+  [[bathroomStairDoor.from,bathroomStairDoor.to,0,.76,'']]);
+wall(levels[0].walls,'x',3.10,0,4,0,2.67,.12,mat.interior,
+  [[bathroomStairDoor.from,bathroomStairDoor.to,0,bathroomStairDoor.height,'']]);
+addDoor(levels[0].trim,'x',3.10,bathroomStairDoor.from,bathroomStairDoor.to,0,bathroomStairDoor.height,'solid');
 // La porte de garage est située au fond de la loggia (z=6.05), pas sous
 // l'arche de la façade à z=8.57 : ouverture de 3,52 m et vrai volet roulant.
 // La loggia est ainsi couverte mais ouverte côté façade ; pas de porte
@@ -316,16 +324,33 @@ wall(levels[0].walls,'x',6.05,4.04,8.25,0,2.67,.12,mat.interior,
 addDoor(levels[0].trim,'x',6.05,garageLoggiaDoor.from,garageLoggiaDoor.to,0,garageLoggiaDoor.height,'garage');
 // Garage au rez-de-chaussée : deux volumes libres, sans voiture ni guidage de pneus.
 function cabinet(g,x,y,z,w,h,d,m=mat.warmwhite){cube(g,x,y,z,w,h,d,m);cube(g,x,y,z+d-.012,w,.02,.022,mat.wood,false);}
-// Buanderie / salle de bains de 11,8 m² : au nord de la cage d'escalier (z=0..3.17).
-// Les machines et les rangements sont restitués à leur emplacement initial.
-for(let k=0;k<2;k++){
-  cube(levels[0].furniture,.28+k*.72,.06,.30,.64,.90,.69,mat.white);
-  cyl(levels[0].furniture,.59+k*.72,.53,.996,.23,.025,mat.dark,22);
+// Buanderie / salle de bains de 11,8 m² : sur le mur du fond z≈0, de
+// DROITE à GAUCHE : douche, lavabo, puis deux machines. Passage libre au centre.
+function laundryMachine(g,x,z,y){
+  cube(g,x,y+.055,z,.64,.87,.67,mat.white);
+  cube(g,x+.04,y+.76,z+.679,.56,.12,.013,mat.warmwhite,false);
+  cube(g,x+.07,y+.80,z+.697,.13,.05,.008,mat.dark,false);
+  for(let i=0;i<3;i++)cube(g,x+.37+i*.055,y+.805,z+.697,.026,.018,.008,mat.metal,false);
+  const drum=new THREE.Mesh(new THREE.CircleGeometry(.215,32),mat.charcoal);
+  drum.position.set(x+.32,y+.445,z+.687);g.add(drum);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(.226,.025,9,40),mat.metal);
+  ring.position.set(x+.32,y+.445,z+.700);g.add(ring);
+  const inner=new THREE.Mesh(new THREE.CircleGeometry(.161,32),mat.glassClear);
+  inner.position.set(x+.32,y+.445,z+.706);g.add(inner);
 }
-cabinet(levels[0].furniture,2.3,.04,.3,.75,1.88,.65);
-cyl(levels[0].furniture,3.36,.10,1.1,.28,1.75,mat.white,20);
-// Douche indépendante 92 x 92 cm à côté des WC, dans l'angle de la buanderie.
-// L'ancien rayonnage au sud-ouest est retiré : la circulation depuis la pièce de vie reste libre.
+laundryMachine(levels[0].furniture,.24,.28,.05);
+laundryMachine(levels[0].furniture,.98,.28,.05);
+// Meuble vasque immédiatement à gauche de la douche, miroir sur le mur du fond.
+cube(levels[0].furniture,1.84,.055,.28,.77,.78,.56,mat.warmwhite);
+cube(levels[0].furniture,1.82,.835,.26,.81,.08,.60,mat.wood);
+cube(levels[0].furniture,1.96,.912,.37,.53,.035,.35,mat.white,false);
+cube(levels[0].furniture,2.04,.950,.45,.36,.005,.22,mat.glassClear,false);
+trimLine(levels[0].furniture,[2.36,1.00,.50],[2.36,1.18,.50],mat.metal);
+trimLine(levels[0].furniture,[2.36,1.18,.50],[2.21,1.18,.50],mat.metal);
+cube(levels[0].architecture,1.92,1.22,.215,.60,.82,.025,mat.white,false);
+cube(levels[0].architecture,1.96,1.27,.238,.52,.72,.010,mat.glassClear,false);
+// Douche indépendante 92 × 92 cm dans l'angle du fond à droite (x≈3, z≈0).
+// Ouverte du côté de l'allée centrale, sans empiéter sur la porte de l'escalier.
 function showerRdc(g,x,z,y){
   const tray=new THREE.MeshStandardMaterial({color:'#f7f7f3',roughness:.36});
   const joints=new THREE.MeshStandardMaterial({color:'#afada6',roughness:.87});
@@ -348,7 +373,32 @@ function showerRdc(g,x,z,y){
   head.position.set(x+.38,y+1.78,z+.09);g.add(head);
   cube(g,x+.08,y+1.00,z+.08,.10,.09,.022,tray,false);
 }
-showerRdc(levels[0].architecture,.28,1.64,.05);
+showerRdc(levels[0].architecture,2.94,.22,.05);
+// Deux dressings pleine hauteur adossés aux cloisons : côté garage 2 (est)
+// et côté escalier (sud). Ils ne bouchent ni la douche ni la porte des WC.
+function bathroomDressing(g,x,z,y,w,d,face){
+  const woodTop=mat.wood,door=mat.warmwhite,groove=mat.wood;
+  cube(g,x,y+.06,z,w,2.09,d,door);
+  cube(g,x-.015,y+2.15,z-.015,w+.03,.085,d+.03,woodTop,false);
+  cube(g,x,y+.06,z,w,.065,d,woodTop,false);
+  if(face==='west'){
+    // Portes ouvrant vers l'intérieur de la SDB, pas vers le garage.
+    const cz=z+d/2;
+    cube(g,x-.018,y+.15,z+.045,.022,1.88,d-.09,mat.white,false);
+    cube(g,x-.039,y+.16,cz,.026,1.88,.015,groove,false);
+    for(const zz of [z+d*.44,z+d*.57])
+      cube(g,x-.046,y+1.02,zz,.024,.17,.025,mat.metal,false);
+  }else{
+    // Portes sur la face nord, à l'écart de la porte d'accès de la SDB.
+    const cx=x+w/2;
+    cube(g,x+.045,y+.15,z-.019,w-.09,1.88,.021,mat.white,false);
+    cube(g,cx,y+.16,z-.037,.015,1.88,.024,groove,false);
+    for(const xx of [cx-.10,cx+.085])
+      cube(g,xx,y+1.02,z-.049,.025,.17,.024,mat.metal,false);
+  }
+}
+bathroomDressing(levels[0].furniture,3.42,1.36,.05,.49,1.40,'west');
+bathroomDressing(levels[0].furniture,.37,2.50,.05,1.80,.49,'north');
 // L'ancien garage 1 devient une pièce de vie ; seul le garage 2 garde ses rangements.
 function storage(g,x,z,y,w=1.45) {
   for(const xx of [x,x+w-.05])cube(g,xx,y,z,.05,1.78,.42,mat.metal,false);
@@ -399,11 +449,8 @@ for(const xx of [-3.20,-2.55])for(const zz of [5.15,5.39])
 // Passage dégagé entre le volet roulant de la loggia et la porte de l'escalier.
 // Aucun banc / pot n'empiète sur le débouché du garage.
 storage(levels[0].furniture,6.26,1.36,.05,1.44);
-// Front small window & shutter.
-// Fenêtre réelle prise dans la maçonnerie, avec volet vert et barreaux.
-shutter(levels[0].trim,.16,1.00,8.84,.35,1.08);
-shutter(levels[0].trim,1.61,1.00,8.84,.34,1.08);
-privacyBars(levels[0].trim,'x',8.90,.68,1.46,1.08,.90);
+// Façade chambre : le vitrage, les anciens volets et les barreaux ont été
+// supprimés ; la porte verte pleine est insérée dans le mur par wall().
 // Porte d'entrée verte dans la cloison du porche, distincte du garage ouvert.
 for(let z=0;z<8.7;z+=.36)cube(levels[0].cut,-4.48,.04,z,12.95,.012,.006,mat.warmwhite,false);
 
@@ -557,8 +604,9 @@ function loggiaSideboard(g,x,z,y){
 }
 // Chambre 14,4 m² du REZ-DE-CHAUSSÉE, au sud de la cage d'escalier.
 // Coordonnées issues du plan fourni : x=.14..3.89, z=5.53..8.52.
-// Les passages latéraux restent dégagés : porte ouest (z~5.55..6.42),
-// porte est vers la loggia (z~7.22..8.11), fenêtre au sud sur z=8.57.
+// Porte ouest vers la pièce de vie maintenue (z≈5.55..6.42).
+// Porte verte côté loggia sur la façade sud (x≈.63..1.51, z=8.57).
+// L'ancienne fermeture à lattes est retirée côté garage (x≈3.8).
 function groundBedroom(g,y){
   const oak=new THREE.MeshStandardMaterial({color:'#c9a57a',roughness:.87});
   const oakEdge=new THREE.MeshStandardMaterial({color:'#a67e58',roughness:.86});
@@ -612,19 +660,8 @@ function groundBedroom(g,y){
   for(let k=0;k<3;k++)
     trimLine(g,[.45,y+1.08,7.78],[.40+k*.05,y+1.28,7.77+k*.035],oakEdge);
 
-  // Rideaux de lin sur une niche de rangement contre le mur EST,
-  // au nord de la porte desservant la loggia (dont le passage est préservé).
-  cube(g,3.80,y+2.42,5.60,.045,.052,1.21,oakEdge,false);
-  for(let i=0;i<15;i++){
-    const zz=5.61+i*.078;
-    cube(g,3.79+(i%2)*.017,y+.07,zz,.037,2.28,.070,i%2?cream:linenBeige,false);
-  }
-  cube(g,3.76,y+2.24,5.81,.13,.23,.54,cotton,false);
-  cube(g,3.755,y+2.28,5.84,.014,.02,.44,oakEdge,false);
-
-  // Store en lin AU-DESSUS de la fenêtre côté façade (z=8.57), sans l'obturer.
-  cube(g,.72,y+2.22,8.425,1.26,.18,.07,linenBeige,false);
-  cube(g,.76,y+2.19,8.418,1.18,.047,.052,cream,false);
+  // Les anciens rideaux à lattes coulissantes côté garage ainsi que le
+  // store de la fenêtre remplacée par une porte sont supprimés.
 
   // Abat-jour ajouré façon rotin, suspendu au centre de la chambre.
   const cx=2.23,cz=6.97;
@@ -1301,12 +1338,12 @@ trimLine(neighborProperty,[mid,ridge+.03,roofFront],[mid,ridge+.03,roofBack],nei
 // --- Room selection / photo references ---
 const rooms = [
   [{id:'sejour-rdc',name:'Salon / cuisine / salle à manger',area:'35,3 m² (ancien garage)',desc:'Ancien garage 1 aménagé en pièce de vie avec baie vitrée, cuisine et coin repas. L’accès depuis le garage 2 mène directement au dégagement de l’escalier. Photo : état initial.',x:-4.3,z:.2,w:4.1,d:8.28,photo:'02-garage-entree.jpg'},
-   {id:'buanderie-rdc',name:'Salle de bains / Buanderie',area:'11,8 m² (plan)',desc:'Au nord de l’escalier : buanderie et douche de 92 × 92 cm près des WC ; murs fermés côté garages et porte depuis le dégagement.',x:.14,z:.15,w:3.75,d:2.90,photo:'03-buanderie.jpg'},
-   {id:'chambre-rdc',name:'Chambre du rez-de-chaussée',area:'14,4 m² (plan)',desc:'Chambre conservée avec son mobilier. Porte intérieure côté pièce de vie ; accès supprimé depuis garage 2 / loggia. Cloison pleine côté escalier.',x:.14,z:5.51,w:3.75,d:3.01,photo:'13-chambre-bureau.jpg'},
+   {id:'buanderie-rdc',name:'Salle de bains / Buanderie',area:'11,8 m² (plan)',desc:'Au nord de l’escalier : douche au fond à droite, lavabo à côté puis deux machines. Deux dressings contre les murs du garage et de l’escalier, avec porte d’entrée verte depuis le dégagement de l’escalier / WC.',x:.14,z:.15,w:3.75,d:2.90,photo:'03-buanderie.jpg'},
+   {id:'chambre-rdc',name:'Chambre du rez-de-chaussée',area:'14,4 m² (plan)',desc:'Chambre conservée avec son mobilier et l’accès depuis la pièce de vie. Porte verte battante côté loggia à la place de l’ancienne fermeture coulissante, lattes supprimées. Cloison pleine côté escalier.',x:.14,z:5.51,w:3.75,d:3.01,photo:'13-chambre-bureau.jpg'},
    {id:'garage2',name:'Garage 2',area:'22,7 m²',desc:'Second garage, séparé de la buanderie et de la chambre. Porte directe vers l’escalier et volet roulant à l’arrière de la loggia, sous l’arche de la façade.',x:4.20,z:.16,w:3.99,d:5.76,photo:'02-garage-entree.jpg'},
    {id:'escalier-rdc',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Départ en haut à droite du plan, cinq marches vers la gauche, huit marches tournantes à gauche, puis cinq marches vers la droite jusqu’à l’étage. Pas de palier.',x:1.09,z:3.49,w:1.05,d:.83,photo:'04-entree.jpg'},
    {id:'wc-sous-escalier',name:'WC sous l’escalier',area:'Dimensions indicatives',desc:'WC prolongés d’environ 1 m avec façade droite jusqu’à la première marche ; lave-mains et tableau électrique rapprochés de la porte des WC, accès escalier dégagé.',x:.13,z:4.39,w:2.05,d:.84,photo:'06-wc-rdc.jpg'},
-   {id:'loggia0',name:'Loggia',area:'8,5 m²',desc:'Loggia ouverte sous l’arche : porte de garage roulante en fond, sans passage latéral vers la chambre.',x:4.2,z:6.15,w:4.0,d:2.38,photo:'02-garage-entree.jpg'}],
+   {id:'loggia0',name:'Loggia',area:'8,5 m²',desc:'Loggia ouverte sous l’arche, volet roulant au fond du garage 2 et nouvelle porte verte de la chambre sur la façade latérale.',x:4.2,z:6.15,w:4.0,d:2.38,photo:'02-garage-entree.jpg'}],
   [{id:'chambre1',name:'Chambre 1',area:'13,2 m²',desc:'Chambre du premier étage, parquet et fenêtre sur l’extérieur.',x:.15,z:.15,w:3.65,d:3.18,photo:'13-chambre-bureau.jpg'},
    {id:'entree',name:'Entrée / distribution',area:'5,5 m²',desc:'Palier de distribution entre les pièces, contigu à la cage d’escalier.',x:2.25,z:3.63,w:1.57,d:2.04,photo:'04-entree.jpg'},
    {id:'escalier',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Deux volées parallèles et tournant balancé à gauche. Départ à droite en haut du plan ; WC sous le tournant au rez-de-chaussée.',x:.09,z:3.46,w:2.07,d:1.85,photo:'04-entree.jpg'},
@@ -1337,7 +1374,7 @@ for(let i=0;i<rooms.length;i++){
   }
 }
 const floorNames={all:'Vue extérieure',0:'Rez-de-jardin',1:'Premier étage',2:'Deuxième étage'};
-const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Garage 2 relié directement à l’escalier, porte roulante au fond de la loggia et chambre isolée du garage. Buanderie fermée côté garages ; ancien garage 1 transformé en pièce de vie.',1:'Salon et télévision face au canapé, baie vers la loggia bureau, cuisine épurée avec accès à la loggia vitrée aménagée en salle à manger.',2:'Deux chambres, salle de bains, WC et couloir.'};
+const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Porte verte depuis la loggia vers la chambre, garage 2 relié à l’escalier et volet roulant au fond de la loggia. Buanderie réorganisée : douche, vasque, machines et deux dressings ; porte intérieure depuis l’escalier / WC.',1:'Salon et télévision face au canapé, baie vers la loggia bureau, cuisine épurée avec accès à la loggia vitrée aménagée en salle à manger.',2:'Deux chambres, salle de bains, WC et couloir.'};
 let activeFloor='all',selected=null,roofOn=true,furnished=true,overhead=false,motion=null;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 function tweenTo(pos,target,duration=730){motion={start:performance.now(),duration,fromP:camera.position.clone(),toP:pos.clone(),fromT:controls.target.clone(),toT:target.clone()};}
