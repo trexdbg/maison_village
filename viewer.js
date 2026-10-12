@@ -407,9 +407,9 @@ function bathroomDressing(g,x,z,y,w,d,face){
 }
 bathroomDressing(levels[0].furniture,3.42,1.36,.05,.49,1.40,'west');
 bathroomDressing(levels[0].furniture,.37,2.50,.05,1.80,.49,'north');
-// Cumulus mural : à côté du dressing contre le mur du garage, côté douche.
-// Position demandée par la flèche rouge : en bout de dressing, sans obstruer
-// les machines ni la circulation depuis l'escalier. Ballon surélevé.
+// Cumulus fixé côté douche, à l'extrémité de l'AUTRE dressing
+// (dressing transversal entre buanderie et escalier, z=2.50).
+// Placé au BOUT de la flèche rouge, pas à son origine près de la porte.
 function waterHeaterRdc(g,x,z,y){
   const tank=new THREE.MeshStandardMaterial({color:'#f5f6f3',metalness:.12,roughness:.52});
   const grey=new THREE.MeshStandardMaterial({color:'#aab5b7',metalness:.62,roughness:.3});
@@ -420,11 +420,11 @@ function waterHeaterRdc(g,x,z,y){
   for(const dx of [-.09,.09]){
     cyl(g,x+dx,y+.99,z,.018,.26,grey,10);
   }
-  // Supports de fixation discrets contre la cloison est.
-  cube(g,x+.15,y+1.22,z-.03,.11,.07,.06,mat.metal,false);
-  cube(g,x+.15,y+2.35,z-.03,.11,.07,.06,mat.metal,false);
+  // Supports tournés vers la face nord du dressing transversal, derrière le ballon.
+  cube(g,x-.03,y+1.22,z+.15,.06,.07,.11,mat.metal,false);
+  cube(g,x-.03,y+2.35,z+.15,.06,.07,.11,mat.metal,false);
 }
-waterHeaterRdc(levels[0].furniture,3.10,1.20,.05);
+waterHeaterRdc(levels[0].furniture,.65,2.21,.05);
 // L'ancien garage 1 devient une pièce de vie ; seul le garage 2 garde ses rangements.
 function storage(g,x,z,y,w=1.45) {
   for(const xx of [x,x+w-.05])cube(g,xx,y,z,.05,1.78,.42,mat.metal,false);
@@ -1357,7 +1357,7 @@ trimLine(neighborProperty,[mid,ridge+.03,roofFront],[mid,ridge+.03,roofBack],nei
 // --- Room selection / photo references ---
 const rooms = [
   [{id:'sejour-rdc',name:'Salon / cuisine / salle à manger',area:'35,3 m² (ancien garage)',desc:'Ancien garage 1 aménagé en pièce de vie avec baie vitrée, cuisine et coin repas. L’accès depuis le garage 2 mène directement au dégagement de l’escalier. Photo : état initial.',x:-4.3,z:.2,w:4.1,d:8.28,photo:'02-garage-entree.jpg'},
-   {id:'buanderie-rdc',name:'Salle de bains / Buanderie',area:'11,8 m² (plan)',desc:'Buanderie : douche contre le mur du fond à gauche, lavabo adjacent, puis deux machines à droite. Cumulus à côté du dressing côté garage, à son extrémité proche de la douche. Deux dressings conservés et porte verte vers le dégagement escalier / WC.',x:.14,z:.15,w:3.75,d:2.90,photo:'03-buanderie.jpg'},
+   {id:'buanderie-rdc',name:'Salle de bains / Buanderie',area:'11,8 m² (plan)',desc:'Buanderie : douche contre le mur du fond à gauche, lavabo adjacent, puis deux machines à droite. Cumulus au bout du dressing transversal, côté douche, au point indiqué par la flèche rouge. Deux dressings conservés et porte verte vers le dégagement escalier / WC.',x:.14,z:.15,w:3.75,d:2.90,photo:'03-buanderie.jpg'},
    {id:'chambre-rdc',name:'Chambre du rez-de-chaussée',area:'14,4 m² (plan)',desc:'Chambre conservée avec sa fenêtre d’origine en façade, ses volets et barreaux. Porte verte dans son emplacement d’origine sur le mur latéral donnant sur la loggia ; accès depuis la pièce de vie et cloison de l’escalier conservés.',x:.14,z:5.51,w:3.75,d:3.01,photo:'13-chambre-bureau.jpg'},
    {id:'garage2',name:'Garage 2',area:'22,7 m²',desc:'Second garage, séparé de la buanderie et de la chambre. Porte directe vers l’escalier et volet roulant à l’arrière de la loggia, sous l’arche de la façade.',x:4.20,z:.16,w:3.99,d:5.76,photo:'02-garage-entree.jpg'},
    {id:'escalier-rdc',name:'Escalier demi-tournant gauche',area:'Marches dans 2,13 × 1,77 m (plan)',desc:'Départ en haut à droite du plan, cinq marches vers la gauche, huit marches tournantes à gauche, puis cinq marches vers la droite jusqu’à l’étage. Pas de palier.',x:1.09,z:3.49,w:1.05,d:.83,photo:'04-entree.jpg'},
@@ -1393,7 +1393,7 @@ for(let i=0;i<rooms.length;i++){
   }
 }
 const floorNames={all:'Vue extérieure',0:'Rez-de-jardin',1:'Premier étage',2:'Deuxième étage'};
-const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Porte de chambre côté loggia rétablie sur le mur latéral et fenêtre de façade conservée. Buanderie : douche au fond à gauche, vasque à côté, machines à droite, cumulus déplacé près de l’extrémité du dressing côté garage et porte depuis l’escalier / WC.',1:'Salon et télévision face au canapé, baie vers la loggia bureau, cuisine épurée avec accès à la loggia vitrée aménagée en salle à manger.',2:'Deux chambres, salle de bains, WC et couloir.'};
+const descriptions={all:'Sélectionnez un niveau pour voir les murs en coupe et l’aménagement intérieur.',0:'Porte de chambre côté loggia rétablie sur le mur latéral et fenêtre de façade conservée. Buanderie : douche au fond à gauche, vasque à côté, machines à droite, cumulus placé au bout du dressing transversal côté douche et porte depuis l’escalier / WC.',1:'Salon et télévision face au canapé, baie vers la loggia bureau, cuisine épurée avec accès à la loggia vitrée aménagée en salle à manger.',2:'Deux chambres, salle de bains, WC et couloir.'};
 let activeFloor='all',selected=null,roofOn=true,furnished=true,overhead=false,motion=null;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 function tweenTo(pos,target,duration=730){motion={start:performance.now(),duration,fromP:camera.position.clone(),toP:pos.clone(),fromT:controls.target.clone(),toT:target.clone()};}
