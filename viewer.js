@@ -345,7 +345,7 @@ for(const x of [-4.22,-.15])cube(levels[1].trim,x,y1,5.59,.15,1.28,3.3,mat.stucc
 addWindow(levels[1].trim,'x',8.72,-4.12,-.10,y1+.18,2.25,true);
 for(let v=-4.17;v<-.16;v+=.82)cube(levels[1].trim,v,y1+.14,8.74,.045,2.20,.085,mat.white,false);
 // Rear of left loggia is a glazed room.
-cube(levels[1].trim,-4.2,y1+.2,5.6,4.0,2.05,.03,mat.glassClear,false);
+addWindow(levels[1].trim,'x',5.58,-4.05,-.12,y1+.16,2.26,true);
 // Right loggia partition with full height opening.
 for(const x of [4.0,8.29])cube(levels[1].trim,x,y1,6.3,.15,1.2,2.6,mat.stucco);
 // La baie de la loggia figure déjà dans son ouverture en façade, sans vitrage doublé.
@@ -529,6 +529,21 @@ for(let z=-.30;z<7.1;z+=.41){trimLine(roof,[-.20,roofY(z)+.016,z],[8.70,roofY(z)
 trimLine(roof,[-.35,roofY(7.13)-.06,7.14],[8.76,roofY(7.13)-.06,7.14],mat.white);
 for(const x of [.08,8.38]){trimLine(levels[2].trim,[x,8.11,7.1],[x,5.3,7.1],mat.white)}
 
+// Toitures basses des loggias et bandeau de tuiles au-dessus des baies de la rue.
+// La toiture principale est plus haute, sur le seul bloc de 8,47 × 6,83 m.
+cube(roof,-4.35,5.30,5.48,4.49,.16,3.54,mat.stone,false);
+cube(roof,-4.38,5.45,5.45,4.54,.045,3.64,mat.terracotta,false);
+cube(roof,3.93,5.30,6.68,4.66,.16,2.40,mat.stone,false);
+cube(roof,3.89,5.45,6.65,4.73,.045,2.48,mat.terracotta,false);
+cube(roof,-4.42,5.40,8.97,13.06,.12,.19,mat.warmwhite,false);
+for(let x=-4.32;x<8.58;x+=.28){
+  const lip=new THREE.Mesh(new THREE.CylinderGeometry(.066,.066,.27,8),mat.terracotta2);
+  lip.rotation.z=Math.PI/2;lip.position.set(x,5.49,9.08);roof.add(lip);
+}
+// Encadrements et enduit autour du balcon, d'après la photographie de façade.
+cube(levels[1].trim,4.27,y1+2.44,8.89,4.05,.16,.28,mat.stone,false);
+cube(levels[1].trim,.83,y1+2.18,8.88,2.63,.075,.25,mat.white,false);
+
 // --- Street, terrace, pool and planting as seen in the reference photos. ---
 cube(exterior,-7,-.23,-5,28,.22,22,mat.lawn,false);
 cube(exterior,-6.6,-.08,8.85,16,.12,6.40,mat.concrete,false);
@@ -571,7 +586,7 @@ for(const x of [14.4,15.4]){cube(exterior,x,y1+.20,5.57,.58,.09,1.31,mat.dark);c
 // --- Room selection / photo references ---
 const rooms = [
   [{id:'garage1',name:'Garage 1',area:'35,3 m²',desc:'Garage sans voiture, avec rangement et établi en fond de pièce.',x:-4.3,z:.2,w:4.1,d:8.28,photo:'02-garage-entree.jpg'},
-   {id:'technique',name:'Buanderie / annexe',area:'11,8 m² (plan)',desc:'Pièce annexe et buanderie équipée (usage exact à confirmer).',x:.14,z:.15,w:3.75,d:2.8,photo:'03-buanderie.jpg'},
+   {id:'technique',name:'Salle de bains (plan) / buanderie',area:'11,8 m² (plan)',desc:'Le plan nomme cet espace « Salle de bain » ; la photo fournie illustre son utilisation comme buanderie.',x:.14,z:.15,w:3.75,d:2.8,photo:'03-buanderie.jpg'},
    {id:'garage2',name:'Garage 2',area:'22,7 m²',desc:'Second garage, sans voiture, avec espace atelier.',x:4.20,z:.16,w:3.99,d:5.76,photo:'02-garage-entree.jpg'},
    {id:'loggia0',name:'Loggia',area:'8,5 m²',desc:'Loggia au rez-de-chaussée.',x:4.2,z:6.15,w:4.0,d:2.38,photo:'02-garage-entree.jpg'}],
   [{id:'chambre1',name:'Chambre 1',area:'13,2 m²',desc:'Chambre du premier étage, parquet et fenêtre sur l’extérieur.',x:.15,z:.15,w:3.65,d:3.18,photo:'13-chambre-bureau.jpg'},
