@@ -188,3 +188,10 @@ Les dimensions sont celles de la maquette, et restent à vérifier par relevé s
 - **Site** : modèles et descriptions actualisés en V18, avec invalidation du cache de `viewer.js` et `app.js`.
 
 Les implantations restent indicatives et doivent être vérifiées sur place avant toute réalisation.
+
+## Mise à jour V22 — Garage 1 vidé (13 octobre 2026)
+
+- Le garage 1 (35,3 m²) retrouve une présentation de **garage vide** : cuisine, salle à manger, salon, télévision et mobilier supprimés.
+- Le parquet fictif du garage est retiré ; la dalle béton de base reste visible.
+- Aucun changement aux murs, aux autres pièces ou aux ouvertures : la baie vitrée déjà modélisée est conservée.
+- Les libellés de la maquette, la présentation du site et la description du plan sont mis à jour ; scripts versionnés V22 pour éviter le cache.
