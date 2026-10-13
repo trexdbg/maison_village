@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <script src="app.js?v=18-fenetre-porte-cumulus-20261012" defer></script>
+  <script src="app.js?v=22-retour-garage-20261013" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#contenu">Aller au contenu</a>
@@ -64,7 +64,7 @@
           <span class="eyebrow muted">NAVIGATION</span><h3>Explorez chaque<br />niveau.</h3><p>Les coupes dévoilent les murs, les ouvertures et les trémies. Choisissez « Voir l’escalier » pour contrôler sa forme et ses dimensions.</p>
           <div class="floor-list" role="group" aria-label="Choisir un niveau">
             <button class="floor-option active" data-floor="all" type="button" aria-pressed="true"><span class="floor-icon">◈</span><span><strong>Vue complète</strong><small>Volumes & extérieurs</small></span><span class="floor-chevron">↗</span></button>
-            <button class="floor-option" data-floor="0" type="button" aria-pressed="false"><span class="floor-icon">00</span><span><strong>Rez-de-jardin</strong><small>Séjour 35,3 m² · Chambre & douche</small></span><span class="floor-chevron">↗</span></button>
+            <button class="floor-option" data-floor="0" type="button" aria-pressed="false"><span class="floor-icon">00</span><span><strong>Rez-de-jardin</strong><small>Deux garages · Chambre & douche</small></span><span class="floor-chevron">↗</span></button>
             <button class="floor-option" data-floor="1" type="button" aria-pressed="false"><span class="floor-icon">01</span><span><strong>Premier étage</strong><small>Séjour, cuisine & chambre</small></span><span class="floor-chevron">↗</span></button>
             <button class="floor-option" data-floor="2" type="button" aria-pressed="false"><span class="floor-icon">02</span><span><strong>Deuxième étage</strong><small>Chambres & salle de bains</small></span><span class="floor-chevron">↗</span></button>
           </div>
@@ -78,7 +78,7 @@
     <section id="espaces" class="spaces-section section-pad wrap">
       <div class="section-head"><div><span class="eyebrow muted">03 — LES ESPACES</span><h2>Les pièces qui font <em>la maison.</em></h2></div><p>Les surfaces sont celles inscrites sur les plans. Sélectionnez un espace pour revenir à la maquette 3D.</p></div>
       <div class="spaces-grid">
-        <button class="space-card" data-go-floor="0" data-room="sejour-rdc" type="button"><div class="space-photo photo-surface"><img src="assets/photos/02-garage-entree.jpg" alt="Ancien garage 1 avant sa transformation en pièce de vie" loading="lazy" /></div><span class="space-meta">REZ-DE-CHAUSSÉE · PROJET 3D (PHOTO AVANT)</span><strong>Salon / Cuisine / Salle à manger</strong><span class="space-bottom">35,3 m² <span>↗ Voir en 3D</span></span></button>
+        <button class="space-card" data-go-floor="0" data-room="garage1" type="button"><div class="space-photo photo-surface"><img src="assets/photos/02-garage-entree.jpg" alt="Garage 1" loading="lazy" /></div><span class="space-meta">REZ-DE-CHAUSSÉE · GARAGE VIDE</span><strong>Garage 1</strong><span class="space-bottom">35,3 m² <span>↗ Voir en 3D</span></span></button>
         <button class="space-card space-wide" data-go-floor="1" data-room="sejour" type="button"><div class="space-photo photo-surface"><img src="assets/photos/12-sejour.jpg" alt="Salon et salle à manger aux murs vert sauge" loading="lazy" /></div><span class="space-meta">PREMIER ÉTAGE</span><strong>Salon / Salle à manger</strong><span class="space-bottom">24,4 m² <span>↗ Voir en 3D</span></span></button>
         <button class="space-card" data-go-floor="1" data-room="cuisine" type="button"><div class="space-photo photo-surface"><img src="assets/photos/16-cuisine.jpg" alt="Cuisine contemporaine aux façades gris anthracite" loading="lazy" /></div><span class="space-meta">PREMIER ÉTAGE</span><strong>Cuisine</strong><span class="space-bottom">9,2 m² <span>↗ Voir en 3D</span></span></button>
         <button class="space-card" data-go-floor="0" data-room="chambre-rdc" type="button"><div class="space-photo photo-surface"><img src="assets/photos/13-chambre-bureau.jpg" alt="Chambre claire aux portes vertes et au parquet chêne" loading="lazy" /></div><span class="space-meta">REZ-DE-CHAUSSÉE · AU SUD DE L’ESCALIER</span><strong>Chambre du rez-de-chaussée</strong><span class="space-bottom">14,4 m² (plan) <span>↗ Voir en 3D</span></span></button>
@@ -96,6 +96,6 @@
   <footer class="site-footer"><div class="wrap footer-content"><a class="brand footer-brand" href="#haut"><span class="brand-symbol">⌂</span><span>MAISON<span class="brand-light">VILLAGE</span></span></a><span>Présentation informative · Plans et surfaces indicatifs · 2026</span><a href="#haut">Retour en haut ↑</a></div></footer>
   <dialog id="lightbox" class="lightbox" aria-label="Photographie en grand"><button id="lightbox-close" class="lightbox-close" type="button" aria-label="Fermer">×</button><button id="lightbox-prev" class="lightbox-prev" aria-label="Image précédente" type="button">‹</button><figure><img id="lightbox-image" src="" alt="" /><figcaption id="lightbox-caption"></figcaption></figure><button id="lightbox-next" class="lightbox-next" aria-label="Image suivante" type="button">›</button></dialog>
   <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"}}</script>
-  <script type="module" src="viewer.js?v=21-cumulus-pointe-fleche-20261012"></script>
+  <script type="module" src="viewer.js?v=22-retour-garage-20261013"></script>
 </body>
 </html>
